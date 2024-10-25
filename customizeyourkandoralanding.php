@@ -87,6 +87,10 @@
   const viewport = new Viewport(editor);
   document.querySelector('.kandora-3d-customizer').appendChild(viewport.dom);
 
+  // Initialize renderer
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
   // zoom to 2
   editor.camera.zoom = 2;
 
@@ -108,114 +112,176 @@
   const resizer = new Resizer(editor);
   document.querySelector('.kandora-3d-customizer').appendChild(resizer.dom);
 
+  // Function to change the texture of an object by its name
+  function changeTextureByName(objectName, texturePath) {
+      console.log('Changing texture of object with name:', objectName);
+      const textureLoader = new THREE.TextureLoader();
+      textureLoader.load(texturePath, function (newTexture) {
+          // Set the wrapping mode of the texture
+          newTexture.wrapS = THREE.RepeatWrapping;
+          newTexture.wrapT = THREE.RepeatWrapping;
+          newTexture.needsUpdate = true;
+
+          // Traverse the model to find the texture with the specified ID
+          const kandora = editor.scene.getObjectByName('kandrora_model');
+          if (kandora) {
+              kandora.traverse(function (child) {
+                  console.log('Child: texture', child);
+                  if (child.isMesh && child.name === objectName) {
+                      console.log('Found object texture:', child);
+                      if (Array.isArray(child.material)) {
+                          child.material.forEach(mat => {
+                              console.log('Found object texture:', mat);
+                              mat.map = newTexture;
+                              mat.needsUpdate = true;
+                          });
+                      } else {
+                          console.log('Found object texture:', child);
+                          child.material.map = newTexture;
+                          child.material.needsUpdate = true;
+                      }
+
+                      // Log UV coordinates
+                      // if (child.geometry && child.geometry.attributes && child.geometry.attributes.uv) {
+                      //     console.log('UV coordinates:', child.geometry.attributes.uv.array);
+                      // } else {
+                      //     console.warn('No UV coordinates found for this mesh.');
+                      // }
+
+                      // Move the camera to the affected object and update the scene, camera should move with coordinates and feels like animated but not immediately jump to scene
+                      moveCameraToObject(child);
+                      editor.signals.sceneGraphChanged.dispatch();
+
+                      
+
+
+                  
+                      console.log('Texture updated for object with name:', objectName);
+                  }
+              });
+          } else {
+              console.error('Model "kandrora_model" not found in the scene.');
+          }
+      }, undefined, function (error) {
+          console.error('An error happened while loading the new texture:', error);
+      });
+  }
+
+  // Attach the function to the window object to make it globally accessible
+  window.changeTextureByName = changeTextureByName;
+
+  // Function to move the camera to the affected object
+  function moveCameraToObject(object) {
+      const box = new THREE.Box3().setFromObject(object);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const fov = editor.camera.fov * (Math.PI / 180);
+      let cameraZ = Math.abs(maxDim / 4 * Math.tan(fov * 2));
+
+      cameraZ *= 1.5; // Add some distance to the camera
+
+      editor.camera.position.set(center.x, center.y, center.z + cameraZ);
+      editor.camera.lookAt(center);
+      editor.camera.updateProjectionMatrix();
+  }
+
   // Auto save state function
   editor.storage.init(function () {
-    editor.storage.get(async function (state) {
-      // if (isLoadingFromHash) return;
+      editor.storage.get(async function (state) {
+          // if (isLoadingFromHash) return;
 
-      if (state !== undefined) {
-        await editor.fromJSON(state);
+          if (state !== undefined) {
+              await editor.fromJSON(state);
+          }
+
+          // de-select
+          editor.select(null);
+
+          // Check if the model is already present
+          const existingModel = editor.scene.getObjectByName('kandrora_model');
+          if (!existingModel) {
+              // Load .glb file (Kandora) only if it's not already in the scene
+              const loader = new GLTFLoader();
+              loader.load('assets/5.glb?noCache=' + (new Date()).getTime(), function (gltf) {
+                  const kandora = gltf.scene;
+                  kandora.name = 'kandrora_model'; // Assign a unique name
+                  kandora.position.set(0, -1.3, 0); // Set position as needed
+                  editor.addObject(kandora);
+
+                  // Assuming the texture is part of the loaded model
+                  kandora.traverse(function (child) {
+                      // get detail of the name and model
+                      console.log('Name:', child.name); // Log the name
+                      console.log('Type:', child.type); // Log the type
+
+                      if (child.isMesh) {
+                          console.log('Mesh found:', child); // Log the mesh
+                          const material = child.material;
+                          // if (Array.isArray(material)) {
+                          //     material.forEach(mat => {
+                          //         const texture = mat.map; // Access the texture
+                          //         if (texture) {
+                          //             console.log('Texture ID:', texture.id); // Log the texture ID
+                          //         } else {
+                          //             console.log('No texture found in material:', mat); // Log if no texture is found
+                          //         }
+                          //     });
+                          // } else {
+                          //     const texture = material.map; // Access the texture
+                          //     if (texture) {
+                          //         console.log('Texture ID:', texture.id); // Log the texture ID
+                          //     } else {
+                          //         console.log('No texture found in material:', material); // Log if no texture is found
+                          //     }
+                          // }
+                      } else {
+                          console.log('Non-mesh child found:', child); // Log non-mesh children
+                      }
+                  });
+
+              }, undefined, function (error) {
+                  console.error('An error happened while loading the model:', error);
+              });
+          }
+      });
+
+      let timeout;
+      function saveState() {
+          if (editor.config.getKey('autosave') === false) {
+              return;
+          }
+
+          clearTimeout(timeout);
+
+          timeout = setTimeout(function () {
+              editor.signals.savingStarted.dispatch();
+
+              timeout = setTimeout(function () {
+                  editor.storage.set(editor.toJSON());
+                  editor.signals.savingFinished.dispatch();
+              }, 100);
+          }, 1000);
       }
 
-//   de-select
-  editor.select(null);
-
-    //   const selected = editor.config.getKey('selected');
-    //   if (selected !== undefined) {
-    //     // editor.selectByUuid(selected);
-    //   }
-
-      // Check if the model is already present
-    
-      const existingModel = editor.scene.getObjectByName('kandrora_model');
-      if (!existingModel) {
-        // Load .glb file (Kandora) only if it's not already in the scene
-        const loader = new GLTFLoader();
-        loader.load('assets/5.glb?noCache=' + (new Date()).getTime(), function (gltf) {
-          const kandora = gltf.scene;
-          kandora.name = 'kandrora_model'; // Assign a unique name
-          kandora.position.set(0, -1.3, 0); // Set position as needed
-          editor.addObject(kandora);
-
-         
-      
-          // Assuming the texture is part of the loaded model
-          kandora.traverse(function (child) {
-
-            //get detail of the name and model
-            console.log('Name:', child.name); // Log the name
-            console.log('Type:', child.type); // Log the type
-
-
-            if (child.isMesh) {
-                console.log('Mesh found:', child); // Log the mesh
-                const material = child.material;
-                // if (Array.isArray(material)) {
-                //     material.forEach(mat => {
-                      
-                //         const texture = mat.map; // Access the texture
-                //         if (texture) {
-                //             console.log('Texture ID:', texture.id); // Log the texture ID
-                //         } else {
-                //             console.log('No texture found in material:', mat); // Log if no texture is found
-                //         }
-                //     });
-                // } else {
-                //     const texture = material.map; // Access the texture
-                //     if (texture) {
-                //         console.log('Texture ID:', texture.id); // Log the texture ID
-                //     } else {
-                //         console.log('No texture found in material:', material); // Log if no texture is found
-                //     }
-                // }
-            } else {
-                console.log('Non-mesh child found:', child); // Log non-mesh children
-            }
-        });
-
-        }, undefined, function (error) {
-          console.error('An error happened while loading the model:', error);
-        });
-      }
-    });
-
-    
-
-    let timeout;
-    function saveState() {
-      if (editor.config.getKey('autosave') === false) {
-        return;
-      }
-
-      clearTimeout(timeout);
-
-      timeout = setTimeout(function () {
-        editor.signals.savingStarted.dispatch();
-
-        timeout = setTimeout(function () {
-          editor.storage.set(editor.toJSON());
-          editor.signals.savingFinished.dispatch();
-        }, 100);
-      }, 1000);
-    }
-
-    const signals = editor.signals;
-    signals.geometryChanged.add(saveState);
-    signals.objectAdded.add(saveState);
-    signals.objectChanged.add(saveState);
-    signals.objectRemoved.add(saveState);
-    signals.materialChanged.add(saveState);
-    signals.sceneBackgroundChanged.add(saveState);
-    signals.sceneEnvironmentChanged.add(saveState);
-    signals.sceneFogChanged.add(saveState);
-    signals.sceneGraphChanged.add(saveState);
-    signals.scriptChanged.add(saveState);
-    signals.historyChanged.add(saveState);
+      const signals = editor.signals;
+      signals.geometryChanged.add(saveState);
+      signals.objectAdded.add(saveState);
+      signals.objectChanged.add(saveState);
+      signals.objectRemoved.add(saveState);
+      signals.materialChanged.add(saveState);
+      signals.sceneBackgroundChanged.add(saveState);
+      signals.sceneEnvironmentChanged.add(saveState);
+      signals.sceneFogChanged.add(saveState);
+      signals.sceneGraphChanged.add(saveState);
+      signals.scriptChanged.add(saveState);
+      signals.historyChanged.add(saveState);
   });
 
   // Resize
   function onWindowResize() {
-    editor.signals.windowResize.dispatch();
+      editor.signals.windowResize.dispatch();
   }
 
   window.addEventListener('resize', onWindowResize);
@@ -223,139 +289,15 @@
 
   // ServiceWorker
   if ('serviceWorker' in navigator) {
-    try {
-      navigator.serviceWorker.register('sw.js');
-    } catch (error) {
-      console.error('Service Worker registration failed:', error);
-    }
+      try {
+          navigator.serviceWorker.register('sw.js');
+      } catch (error) {
+          console.error('Service Worker registration failed:', error);
+      }
   }
 </script>
 
-<script>
-function changeTextureById(textureId, newTextureUrl) {
-    console.log('Changing texture with ID:', textureId);
-    // Load the new texture
-    const textureLoader = new THREE.TextureLoader();
-    textureLoader.load(newTextureUrl, function (newTexture) {
-        // Traverse the model to find the texture with the specified ID
-        const kandora = editor.scene.getObjectByName('kandrora_model');
-        if (kandora) {
-            kandora.traverse(function (child) {
-              
-                if (child.isMesh) {
-                    const material = child.material;
-                    if (Array.isArray(material)) {
-                        material.forEach(mat => {
-                            if (mat.map) {
-                                console.log('Found texture ID:', mat.map.id);
-                                if (mat.map.id === textureId) {
-                                    mat.map = newTexture; // Replace the texture
-                                    mat.needsUpdate = true; // Ensure the material is updated
-                                    console.log('Texture replaced for material:', mat);
-                                    return; // Early return to stop further traversal
-                                }
-                            } else {
-                                console.log('No texture map found in material:', mat);
-                            }
-                        });
-                    } else {
-                        if (material.map) {
-                            console.log('Found texture ID:', material.map.id);
-                            if (material.map.id === textureId) {
-                                material.map = newTexture; // Replace the texture
-                                material.needsUpdate = true; // Ensure the material is updated
-                                console.log('Texture replaced for material:', material);
-                                return; // Early return to stop further traversal
-                            }
-                        } else {
-                            console.log('No texture map found in material:', material);
-                        }
-                    }
-                } else {
-                    console.log('Non-mesh child found:', child);
-                }
-            });
-        } else {
-            console.error('Model "kandrora_model" not found in the scene.');
-        }
-    }, undefined, function (error) {
-        console.error('An error happened while loading the new texture:', error);
-    });
-}
 
-
-// Function to change the texture of an object by its name
-function changeTextureByName(objectName, texturePath) {
-        console.log('Changing texture of object with name:', objectName);
-        const textureLoader = new THREE.TextureLoader();
-        textureLoader.load(texturePath, function (newTexture) {
-    // Set the wrapping mode of the texture
-    newTexture.wrapS = THREE.RepeatWrapping;
-    newTexture.wrapT = THREE.RepeatWrapping;
-    newTexture.needsUpdate = true;
-
-    // Traverse the model to find the texture with the specified ID
-    const kandora = editor.scene.getObjectByName('kandrora_model');
-    if (kandora) {
-        kandora.traverse(function (child) {
-            console.log('Child: texture', child);
-            if (child.isMesh && child.name === objectName) {
-                console.log('Found object texture:', child);
-                if (Array.isArray(child.material)) {
-                    child.material.forEach(mat => {
-                        console.log('Found object texture:', mat);
-                        mat.map = newTexture;
-                        mat.needsUpdate = true;
-                    });
-                } else {
-                    console.log('Found object texture:', child);
-                    child.material.map = newTexture;
-                    child.material.needsUpdate = true;
-                }
-
-                // Log UV coordinates
-                if (child.geometry && child.geometry.attributes && child.geometry.attributes.uv) {
-                    console.log('UV coordinates:', child.geometry.attributes.uv.array);
-                } else {
-                    console.warn('No UV coordinates found for this mesh.');
-                }
-            }
-        });
-
-        // Request a render update
-        // editor.render(); // Ensure this function exists and triggers a re-render
-        console.log('Texture updated for object with name:', objectName);
-    } else {
-        console.error('Model "kandrora_model" not found in the scene.');
-    }
-}, undefined, function (error) {
-    console.error('An error happened while loading the new texture:', error);
-});
-   }
-
-
-
-// Function to change the color of an object by its name
-function changeObjectColorByName(scene, objectName, color) {
-  console.log('Changing color of object with name:', objectName);
-    scene.traverse(function (child) {
-        if (child.isMesh && child.name === objectName) {
-          console.log('Found object:', child);
-            if (Array.isArray(child.material)) {
-                child.material.forEach(mat => {
-                    mat.color.set(color);
-                });
-            } else {
-                child.material.color.set(color);
-            }
-        }
-    });
-}
-
-
-      
-
-</script>
 <?php include 'header.php' ?>
 <section class="pages-navigation bg-FAFAFA">
   <div class="container-1820">
