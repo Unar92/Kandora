@@ -807,25 +807,25 @@ function changeObjectColorByName(scene, objectName, color) {
             <div class="images-option mt-0">
               <ul class="image-border">
                 <li>
-                  <div class="img">
+                  <div class="img"   onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/Stiches1.png')">
                     <img src="assets/images/customizeyourkandora/8-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">1 Stitche</h4>
                 </li>
                 <li>
-                  <div class="img">
+                  <div class="img" onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/Stiches2.png')">
                     <img src="assets/images/customizeyourkandora/12-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">4 Stitches</h4>
                 </li>
                 <li>
-                  <div class="img">
+                  <div class="img" onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/Stiches3.png')">
                     <img src="assets/images/customizeyourkandora/4-stitches-with-embroidery.png" alt="" />
                   </div>
                   <h4 class="stitch_style">6 Stitches with Embroidery</h4>
                 </li>
                 <li>
-                  <div class="img">
+                  <div class="img" onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/Stiches4.png')">
                     <img src="assets/images/customizeyourkandora/12-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">8 Stitches</h4>
@@ -843,55 +843,56 @@ function changeObjectColorByName(scene, objectName, color) {
             <div class="images-option mt-0">
               <ul class="image-border">
                 <li>
-                  <div class="img">
-                    <img onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stiches3.png')" src="assets/images/customizeyourkandora/embroidery-style-1.png" alt="" />
+              
+                  <div class="img" onclick="changeTextureByName('Embriodery_plane', 'assets/images/customizeyourkandora/embroidery/tarboosh01.png')">
+                    <img  src="assets/images/customizeyourkandora/embroidery-style-1.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 1</h4>
                 </li>
                 <li>
-                  <div class="img">
+                  <div class="img" onclick="changeTextureByName('Embriodery_plane', 'assets/images/customizeyourkandora/embroidery/tarboosh02.png')">
                     <img src="assets/images/customizeyourkandora/embroidery-style-2.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 2</h4>
                 </li>
                 <li>
-                  <div class="img">
+                  <div class="img" onclick="changeTextureByName('Embriodery_plane', 'assets/images/customizeyourkandora/embroidery/tarboosh03.png')">
                     <img src="assets/images/customizeyourkandora/embroidery-style-3.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 3</h4>
                 </li>
                 <li>
-                  <div class="img">
+                  <div class="img" onclick="changeTextureByName('Embriodery_plane', 'assets/images/customizeyourkandora/embroidery/tarboosh04.png')">
                     <img src="assets/images/customizeyourkandora/embroidery-style-4.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 4</h4>
                 </li>
                 <li>
-                  <div class="img">
+                  <div class="img" onclick="changeTextureByName('Embriodery_plane', 'assets/images/customizeyourkandora/embroidery/tarboosh05.png')">
                     <img src="assets/images/customizeyourkandora/embroidery-style-1.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 5</h4>
                 </li>
                 <li>
-                  <div class="img">
+                  <div class="img" onclick="changeTextureByName('Embriodery_plane', 'assets/images/customizeyourkandora/embroidery/tarboosh06.png')">
                     <img src="assets/images/customizeyourkandora/embroidery-style-2.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 6</h4>
                 </li>
                 <li>
-                  <div class="img">
+                  <div class="img" onclick="changeTextureByName('Embriodery_plane', 'assets/images/customizeyourkandora/embroidery/tarboosh07.png')">
                     <img src="assets/images/customizeyourkandora/embroidery-style-3.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 7</h4>
                 </li>
                 <li>
-                  <div class="img">
+                  <div class="img" onclick="changeTextureByName('Embriodery_plane', 'assets/images/customizeyourkandora/embroidery/tarboosh08.png')">
                     <img src="assets/images/customizeyourkandora/embroidery-style-4.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 8</h4>
                 </li>
                 <li>
-                  <div class="img">
+                  <div class="img" onclick="changeTextureByName('Embriodery_plane', 'assets/images/customizeyourkandora/embroidery/tarboosh09.png')">
                     <img src="assets/images/customizeyourkandora/embroidery-style-4.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 9</h4>
