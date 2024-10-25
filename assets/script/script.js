@@ -2426,7 +2426,7 @@ function useSuggestion(e) {
   suggestions.classList.remove("has-suggestions");
 }
 
-input.addEventListener("keyup", searchHandler);
+input?.addEventListener("keyup", searchHandler);
 suggestions.addEventListener("click", useSuggestion);
 
 
