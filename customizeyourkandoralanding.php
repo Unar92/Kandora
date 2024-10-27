@@ -77,6 +77,10 @@
   import { Menubar } from './js/Menubar.js';
   import { Resizer } from './js/Resizer.js';
 
+
+
+
+
   window.URL = window.URL || window.webkitURL;
   window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
 
@@ -90,6 +94,24 @@
   // Initialize renderer
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
+
+  //clear three js cache
+  THREE.Cache.enabled = false;
+
+  //lights config
+  // const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+  // editor.scene.add(ambientLight);
+  // console.log('ambientLight 0xffffff, 1', ambientLight);
+
+  // const directionalLight = new THREE.DirectionalLight(0xffffff, 0.2);
+  // directionalLight.position.set(10, 10, 10);
+  // editor.scene.add(directionalLight);
+
+
+
+  // Add the renderer to the DOM
+
+  
 
   // zoom to 2
   editor.camera.zoom = 2;
@@ -121,7 +143,7 @@
           newTexture.wrapS = THREE.RepeatWrapping;
           newTexture.wrapT = THREE.RepeatWrapping;
           newTexture.needsUpdate = true;
-
+          const newColor = 0xff0000; // Red color
           // Traverse the model to find the texture with the specified ID
           const kandora = editor.scene.getObjectByName('kandrora_model');
           if (kandora) {
@@ -131,13 +153,30 @@
                       console.log('Found object texture:', child);
                       if (Array.isArray(child.material)) {
                           child.material.forEach(mat => {
+                            //remove old texture
+                            if (mat.map) {
+                                mat.map.dispose(); // Remove old texture
+                                mat.map = null; // Ensure the texture is removed
+                            }
                               console.log('Found object texture:', mat);
                               mat.map = newTexture;
+                              //set new color to the material
+                              console.log('color updated for object with name:', objectName);
+                             
+                        
+                              mat.color.setHex(newColor);
                               mat.needsUpdate = true;
+                              
                           });
                       } else {
                           console.log('Found object texture:', child);
+                          if (child.material.map) {
+                            child.material.map.dispose(); // Remove old texture
+                            child.material.map = null; // Ensure the texture is removed
+                        }
                           child.material.map = newTexture;
+                          child.material.color.setHex(newColor);
+                          console.log('color updated for object with name:', objectName);
                           child.material.needsUpdate = true;
                       }
 
@@ -152,10 +191,7 @@
                       moveCameraToObject(child);
                       editor.signals.sceneGraphChanged.dispatch();
 
-                      
-
-
-                  
+                
                       console.log('Texture updated for object with name:', objectName);
                   }
               });
@@ -204,7 +240,7 @@
           if (!existingModel) {
               // Load .glb file (Kandora) only if it's not already in the scene
               const loader = new GLTFLoader();
-              loader.load('assets/5.glb?noCache=' + (new Date()).getTime(), function (gltf) {
+              loader.load('assets/kandora-model.glb?noCache=' + (new Date()).getTime(), function (gltf) {
                   const kandora = gltf.scene;
                   kandora.name = 'kandrora_model'; // Assign a unique name
                   kandora.position.set(0, -1.3, 0); // Set position as needed
@@ -444,8 +480,11 @@
           </div>
         </div>
         
-
-     
+        <div class="color-picker">
+            <input type="color" id="colorPicker" name="colorPicker" value="#ff0000" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png')">
+          </div>
+                <h4 class="color_picker_label">Choose Color</h4>
+        <br>
     
         <div class="customize-section-box">
           <div class="heading" >
@@ -593,7 +632,7 @@
                 <li>
                   <div class="img">
                     <img onclick="changeObjectColorByName(editor.scene, 'kandora_arms', 0xff0000)" src="assets/images/customizeyourkandora/tarbosh2.png" alt="" />
-                    <button onclick="changeTextureByName('Embriodery_plane', 'assets/images/customizeyourkandora/tarboosh08.png')">Change Texture</button>
+                    
 
                   </div>
                   <h4 class="tarboosh_style">Style 2</h4>

@@ -77,7 +77,7 @@
                                             </div>
                                         </div>
                                         <div class="submit-button-customizer">
-                                            <button class="btn-reg">Customize Now</button>
+                                            <a href="customizeyourkandoralanding.php" class="btn-reg">Customize Now</a>
                                         </div>
                                     </form>
                                 </div>
@@ -101,7 +101,7 @@
                                             </div>
                                         </div>
                                         <div class="submit-button-customizer">
-                                            <button class="btn-reg">Customize Now</button>
+                                        <a href="customizeyourkandoralanding.php" class="btn-reg">Customize Now</a>
                                         </div>
                                     </form>
                                 </div>
@@ -125,7 +125,7 @@
                                             </div>
                                         </div>
                                         <div class="submit-button-customizer">
-                                            <button class="btn-reg">Customize Now</button>
+                                        <a href="customizeyourkandoralanding.php" class="btn-reg">Customize Now</a>
                                         </div>
                                     </form>
                                 </div>
@@ -149,7 +149,7 @@
                                             </div>
                                         </div>
                                         <div class="submit-button-customizer">
-                                            <button class="btn-reg">Customize Now</button>
+                                        <a href="customizeyourkandoralanding.php" class="btn-reg">Customize Now</a>
                                         </div>
                                     </form>
                                 </div>
