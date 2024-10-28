@@ -99,22 +99,20 @@
   THREE.Cache.enabled = false;
 
   //lights config
-  // const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-  // editor.scene.add(ambientLight);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  editor.scene.add(ambientLight);
   // console.log('ambientLight 0xffffff, 1', ambientLight);
 
   // const directionalLight = new THREE.DirectionalLight(0xffffff, 0.2);
   // directionalLight.position.set(10, 10, 10);
   // editor.scene.add(directionalLight);
 
-
-
-  // Add the renderer to the DOM
-
-  
-
   // zoom to 2
+  // Initialize the camera
+  // const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  // camera.position.z = 5;
   editor.camera.zoom = 2;
+  // camera.updateProjectionMatrix();
 
   const toolbar = new Toolbar(editor);
   document.querySelector('.kandora-3d-customizer').appendChild(toolbar.dom);
@@ -135,7 +133,7 @@
   document.querySelector('.kandora-3d-customizer').appendChild(resizer.dom);
 
   // Function to change the texture of an object by its name
-  function changeTextureByName(objectName, texturePath) {
+  function changeTextureByName(objectName, texturePath, newColor) {
       console.log('Changing texture of object with name:', objectName);
       const textureLoader = new THREE.TextureLoader();
       textureLoader.load(texturePath, function (newTexture) {
@@ -143,7 +141,12 @@
           newTexture.wrapS = THREE.RepeatWrapping;
           newTexture.wrapT = THREE.RepeatWrapping;
           newTexture.needsUpdate = true;
-          const newColor = 0xff0000; // Red color
+          
+          //change color code to setHex
+        if (newColor) {
+            newColor = newColor.replace('#', '0x');
+            newColor = parseInt(newColor, 16);
+        }
           // Traverse the model to find the texture with the specified ID
           const kandora = editor.scene.getObjectByName('kandrora_model');
           if (kandora) {
@@ -159,12 +162,23 @@
                                 mat.map = null; // Ensure the texture is removed
                             }
                               console.log('Found object texture:', mat);
-                              mat.map = newTexture;
+                             
                               //set new color to the material
                               console.log('color updated for object with name:', objectName);
                              
                         
-                              mat.color.setHex(newColor);
+                             if (newColor) {
+                              //blend texture with color
+
+                                mat.color.setHex(newColor);
+                                mat.emissive = new THREE.Color(newColor); // Set emissive color to black
+                              mat.emissiveIntensity = 0.7; // Set emissive intensity to 0
+                       
+                                console.log('color updated for object with name:', objectName);
+                            }else
+                            {
+                              mat.map = newTexture;
+                            }
                               mat.needsUpdate = true;
                               
                           });
@@ -174,8 +188,18 @@
                             child.material.map.dispose(); // Remove old texture
                             child.material.map = null; // Ensure the texture is removed
                         }
-                          child.material.map = newTexture;
-                          child.material.color.setHex(newColor);
+                          
+
+                          if (newColor) {
+                              child.material.color.setHex(newColor);
+                              child.material.emissive = new THREE.Color(newColor); // Set emissive color to black
+                              child.material.emissiveIntensity = 0.7; // Set emissive intensity to 0
+                              console.log('color updated for object with name:', objectName);
+                          }else
+                          {
+                            child.material.map = newTexture;
+                          }
+                          
                           console.log('color updated for object with name:', objectName);
                           child.material.needsUpdate = true;
                       }
@@ -188,7 +212,11 @@
                       // }
 
                       // Move the camera to the affected object and update the scene, camera should move with coordinates and feels like animated but not immediately jump to scene
-                      moveCameraToObject(child);
+                     
+                      //if not newcolor
+                      if (!newColor) {
+                          moveCameraToObject(child);
+                      }
                       editor.signals.sceneGraphChanged.dispatch();
 
                 
@@ -481,7 +509,7 @@
         </div>
         
         <div class="color-picker">
-            <input type="color" id="colorPicker" name="colorPicker" value="#ff0000" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png')">
+            <input type="color" id="colorPicker" name="colorPicker" value="#fffffff" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png', this.value)">
           </div>
                 <h4 class="color_picker_label">Choose Color</h4>
         <br>
@@ -526,19 +554,19 @@
                   <h4 class="stitch_style">1 Stitche</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/Stiches2.png')">
+                  <div class="img" onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/stiches2.png')">
                     <img src="assets/images/customizeyourkandora/12-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">4 Stitches</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/Stiches3.png')">
+                  <div class="img" onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/stiches3.png')">
                     <img src="assets/images/customizeyourkandora/4-stitches-with-embroidery.png" alt="" />
                   </div>
                   <h4 class="stitch_style">6 Stitches with Embroidery</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/Stiches4.png')">
+                  <div class="img" onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/stiches4.png')">
                     <img src="assets/images/customizeyourkandora/12-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">8 Stitches</h4>
