@@ -150,82 +150,67 @@
           // Traverse the model to find the texture with the specified ID
           const kandora = editor.scene.getObjectByName('kandrora_model');
           if (kandora) {
-              kandora.traverse(function (child) {
-                  console.log('Child: texture', child);
-                  if (child.isMesh && child.name === objectName) {
-                      console.log('Found object texture:', child);
-                      if (Array.isArray(child.material)) {
-                          child.material.forEach(mat => {
-                            //remove old texture
-                            if (mat.map) {
-                                mat.map.dispose(); // Remove old texture
-                                mat.map = null; // Ensure the texture is removed
-                            }
-                              console.log('Found object texture:', mat);
-                             
-                              //set new color to the material
-                              console.log('color updated for object with name:', objectName);
-                             
-                        
-                             if (newColor) {
-                              //blend texture with color
+    const objectsToUpdate = ['tarboosh_1', 'tarboosh_tongue', objectName];
 
-                                mat.color.setHex(newColor);
-                                mat.emissive = new THREE.Color(newColor); // Set emissive color to black
-                              mat.emissiveIntensity = 0.7; // Set emissive intensity to 0
-                       
-                                console.log('color updated for object with name:', objectName);
-                            }else
-                            {
-                              mat.map = newTexture;
-                            }
-                              mat.needsUpdate = true;
-                              
-                          });
-                      } else {
-                          console.log('Found object texture:', child);
-                          if (child.material.map) {
-                            child.material.map.dispose(); // Remove old texture
-                            child.material.map = null; // Ensure the texture is removed
-                        }
-                          
+    kandora.traverse(function (child) {
+        console.log('Child: texture', child);
+        if (child.isMesh && objectsToUpdate.includes(child.name)) {
+            console.log('Found object texture:', child);
+            if (Array.isArray(child.material)) {
+                child.material.forEach(mat => {
+                    // Remove old texture
+                    if (mat.map) {
+                        mat.map.dispose(); // Remove old texture
+                        mat.map = null; // Ensure the texture is removed
+                    }
+                    console.log('Found object texture:', mat);
 
-                          if (newColor) {
-                              child.material.color.setHex(newColor);
-                              child.material.emissive = new THREE.Color(newColor); // Set emissive color to black
-                              child.material.emissiveIntensity = 0.7; // Set emissive intensity to 0
-                              console.log('color updated for object with name:', objectName);
-                          }else
-                          {
-                            child.material.map = newTexture;
-                          }
-                          
-                          console.log('color updated for object with name:', objectName);
-                          child.material.needsUpdate = true;
-                      }
+                    // Set new color to the material
+                    console.log('color updated for object with name:', child.name);
 
-                      // Log UV coordinates
-                      // if (child.geometry && child.geometry.attributes && child.geometry.attributes.uv) {
-                      //     console.log('UV coordinates:', child.geometry.attributes.uv.array);
-                      // } else {
-                      //     console.warn('No UV coordinates found for this mesh.');
-                      // }
+                    if (newColor) {
+                        // Blend texture with color
+                        mat.color.setHex(newColor);
+                        mat.emissive = new THREE.Color(newColor); // Set emissive color to black
+                        mat.emissiveIntensity = 1; // Set emissive intensity to 0
+                        console.log('color updated for object with name:', child.name);
+                    } else {
+                        mat.map = newTexture;
+                    }
+                    mat.needsUpdate = true;
+                });
+            } else {
+                console.log('Found object texture:', child);
+                if (child.material.map) {
+                    child.material.map.dispose(); // Remove old texture
+                    child.material.map = null; // Ensure the texture is removed
+                }
 
-                      // Move the camera to the affected object and update the scene, camera should move with coordinates and feels like animated but not immediately jump to scene
-                     
-                      //if not newcolor
-                      if (!newColor) {
-                          moveCameraToObject(child);
-                      }
-                      editor.signals.sceneGraphChanged.dispatch();
+                if (newColor) {
+                    child.material.color.setHex(newColor);
+                    child.material.emissive = new THREE.Color(newColor); // Set emissive color to black
+                    child.material.emissiveIntensity = 1; // Set emissive intensity to 0
+                    console.log('color updated for object with name:', child.name);
+                } else {
+                    child.material.map = newTexture;
+                }
 
-                
-                      console.log('Texture updated for object with name:', objectName);
-                  }
-              });
-          } else {
-              console.error('Model "kandrora_model" not found in the scene.');
-          }
+                console.log('color updated for object with name:', child.name);
+                child.material.needsUpdate = true;
+            }
+
+            // Move the camera to the affected object and update the scene
+            if (!newColor && child.name === objectName) {
+                moveCameraToObject(child);
+            }
+            editor.signals.sceneGraphChanged.dispatch();
+
+            console.log('Texture updated for object with name:', child.name);
+        }
+    });
+} else {
+    console.error('Model "kandrora_model" not found in the scene.');
+}
       }, undefined, function (error) {
           console.error('An error happened while loading the new texture:', error);
       });
@@ -507,16 +492,32 @@
             </div>
           </div>
         </div>
-        
-        <div class="color-picker">
-            <input type="color" id="colorPicker" name="colorPicker" value="#fffffff" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png', this.value)">
-          </div>
-                <h4 class="color_picker_label">Choose Color</h4>
-        <br>
-    
         <div class="customize-section-box">
+        <div class="heading">
+        <h3>Choose Color</h3>
+          </div>
+          <div class="customize-option">
+          
+          <div class="mt-0">
+              <ul class="">
+                <li>
+                
+                  <input type="color" id="colorPicker" name="colorPicker" value="#fffffff" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png', this.value)">
+                
+          <!-- <h4 class="color_picker_label">Pick a Color</h4> -->
+                </li>
+               
+                
+              </ul>
+            </div>
+          </div>
+               
+          </div>
+       
+    
+        <div class="customize-section-box" >
           <div class="heading" >
-            <h3>Choose Side Lines</h3>
+            <h3 >Choose Side Lines</h3>
             <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="" />
           </div>
           <div class="customize-option">
