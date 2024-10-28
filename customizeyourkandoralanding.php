@@ -395,7 +395,7 @@
         </div>
       </div>
       <div class="kandora-customize-section">
-        <div class="customize-section-box customization-summary d-none desktop sticky-portion my-0">
+        <!-- <div class="customize-section-box customization-summary d-none desktop sticky-portion my-0">
           <h3>Customization Summary</h3>
           <div class="table-responsive table-sliding-on-click">
             <div class="table-heding">
@@ -491,25 +491,39 @@
             </table>
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="customize-section-box">
         <div class="heading">
         <h3>Choose Color</h3>
           </div>
           <div class="customize-option">
           
-          <div class="mt-0">
-              <ul class="">
-                <li>
-                
-                  <input type="color" id="colorPicker" name="colorPicker" value="#fffffff" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png', this.value)">
-                
-          <!-- <h4 class="color_picker_label">Pick a Color</h4> -->
-                </li>
+        
+             
                
                 
-              </ul>
-            </div>
+                  <div class="custom-radio-group">
+                    <label class="custom-radio">
+                      <input type="radio" name="colorPicker" value="#ff0000" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png', this.value)">
+                      <span>Red</span>
+                    </label>
+                    <label class="custom-radio">
+                      <input type="radio" name="colorPicker" value="#8B4513" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png', this.value)">
+                      <span>Brown</span>
+                    </label>
+                    <label class="custom-radio">
+                      <input type="radio" name="colorPicker" value="#0000ff" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png', this.value)">
+                      <span> Blue</span>
+                    </label>
+                    <label class="custom-radio">
+                      <input type="radio" name="colorPicker" value="#ffffff" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png', this.value)">
+                      <span>White</span>
+                    </label>
+                  </div> 
+          
+               
+                
+             
           </div>
                
           </div>
