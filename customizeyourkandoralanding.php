@@ -113,7 +113,13 @@
   // camera.position.z = 5;
   editor.camera.zoom = 2;
   // camera.updateProjectionMatrix();
-
+// Remove AxesHelper and GridHelper by type
+editor.scene.children.forEach(child => {
+    if (child instanceof THREE.AxesHelper || child instanceof THREE.GridHelper) {
+        editor.scene.remove(child);
+        console.log(`${child.constructor.name} removed from the scene.`);
+    }
+});
   const toolbar = new Toolbar(editor);
   document.querySelector('.kandora-3d-customizer').appendChild(toolbar.dom);
 
@@ -387,7 +393,7 @@
 
 </iframe> -->
 
-        <div class="kandora-3d-customizer"  style="width:100%;height:500px;">
+        <div class="kandora-3d-customizer"  style="width:100%;height:calc(75vh);">
           
         </div>
         <div class="kandora-image-select">
