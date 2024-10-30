@@ -16,6 +16,21 @@
     {
       position: relative;
     }
+
+    @media screen and (max-width:767px) {
+      .kandora-3d-customizer
+    {
+      margin-bottom: 20px;
+    }
+    }
+
+
+
+    .custom-radio span i
+    {
+      width:30px;height:100%;margin-right:15px;
+      border: 1px solid #777;
+    }
 	</style>
 
 <link rel="stylesheet" href="css/main.css" />
@@ -78,9 +93,6 @@
   import { Resizer } from './js/Resizer.js';
 
 
-
-
-
   window.URL = window.URL || window.webkitURL;
   window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
 
@@ -113,13 +125,10 @@
   // camera.position.z = 5;
   editor.camera.zoom = 2;
   // camera.updateProjectionMatrix();
-// Remove AxesHelper and GridHelper by type
-editor.scene.children.forEach(child => {
-    if (child instanceof THREE.AxesHelper || child instanceof THREE.GridHelper) {
-        editor.scene.remove(child);
-        console.log(`${child.constructor.name} removed from the scene.`);
-    }
-});
+
+
+
+ 
   const toolbar = new Toolbar(editor);
   document.querySelector('.kandora-3d-customizer').appendChild(toolbar.dom);
 
@@ -137,6 +146,8 @@ editor.scene.children.forEach(child => {
 
   const resizer = new Resizer(editor);
   document.querySelector('.kandora-3d-customizer').appendChild(resizer.dom);
+ 
+
 
   // Function to change the texture of an object by its name
   function changeTextureByName(objectName, texturePath, newColor) {
@@ -156,7 +167,8 @@ editor.scene.children.forEach(child => {
           // Traverse the model to find the texture with the specified ID
           const kandora = editor.scene.getObjectByName('kandrora_model');
           if (kandora) {
-    const objectsToUpdate = ['tarboosh_1', 'tarboosh_tongue', objectName];
+
+            const objectsToUpdate = objectName === 'Embriodery_plane' ? [objectName] : ['tarboosh_1', 'tarboosh_tongue', 'Embriodery_plane', 'kandora_arms'];
 
     kandora.traverse(function (child) {
         console.log('Child: texture', child);
@@ -181,8 +193,15 @@ editor.scene.children.forEach(child => {
                         mat.emissiveIntensity = 1; // Set emissive intensity to 0
                         console.log('color updated for object with name:', child.name);
                     } else {
+                 
+                        
                         mat.map = newTexture;
+                        //blend texture with color
+
                     }
+
+                    
+
                     mat.needsUpdate = true;
                 });
             } else {
@@ -211,7 +230,7 @@ editor.scene.children.forEach(child => {
             }
             editor.signals.sceneGraphChanged.dispatch();
 
-            console.log('Texture updated for object with name:', child.name);
+            console.log('color code name', newColor);
         }
     });
 } else {
@@ -350,6 +369,8 @@ editor.scene.children.forEach(child => {
           console.error('Service Worker registration failed:', error);
       }
   }
+
+
 </script>
 
 
@@ -511,19 +532,20 @@ editor.scene.children.forEach(child => {
                   <div class="custom-radio-group">
                     <label class="custom-radio">
                       <input type="radio" name="colorPicker" value="#ff0000" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png', this.value)">
-                      <span>Red</span>
+                     
+                      <span><i  style="background-color: #ff0000; "></i> Red</span>
                     </label>
                     <label class="custom-radio">
                       <input type="radio" name="colorPicker" value="#8B4513" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png', this.value)">
-                      <span>Brown</span>
+                      <span><i style="background-color: #8B4513; "></i> Brown </span>
                     </label>
                     <label class="custom-radio">
                       <input type="radio" name="colorPicker" value="#0000ff" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png', this.value)">
-                      <span> Blue</span>
+                      <span><i style="background-color: #0000ff;"></i> Blue </span>
                     </label>
                     <label class="custom-radio">
                       <input type="radio" name="colorPicker" value="#ffffff" onchange="changeTextureByName('kandora_arms', 'assets/images/customizeyourkandora/stitches/Stiches1.png', this.value)">
-                      <span>White</span>
+                      <span><i style="background-color: #fff; "></i> White </span>
                     </label>
                   </div> 
           

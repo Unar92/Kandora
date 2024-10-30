@@ -52,9 +52,9 @@ class ViewHelper extends Object3D {
 		yAxis.rotation.z = Math.PI / 2;
 		zAxis.rotation.y = - Math.PI / 2;
 
-		this.add( xAxis );
-		this.add( zAxis );
-		this.add( yAxis );
+		// this.add( xAxis );
+		// this.add( zAxis );
+		// this.add( yAxis );
 
 		const spriteMaterial1 = getSpriteMaterial( color1 );
 		const spriteMaterial2 = getSpriteMaterial( color2 );
@@ -86,12 +86,12 @@ class ViewHelper extends Object3D {
 		negYAxisHelper.userData.type = 'negY';
 		negZAxisHelper.userData.type = 'negZ';
 
-		this.add( posXAxisHelper );
-		this.add( posYAxisHelper );
-		this.add( posZAxisHelper );
-		this.add( negXAxisHelper );
-		this.add( negYAxisHelper );
-		this.add( negZAxisHelper );
+		// this.add( posXAxisHelper );
+		// this.add( posYAxisHelper );
+		// this.add( posZAxisHelper );
+		// this.add( negXAxisHelper );
+		// this.add( negYAxisHelper );
+		// this.add( negZAxisHelper );
 
 		interactiveObjects.push( posXAxisHelper );
 		interactiveObjects.push( posYAxisHelper );
