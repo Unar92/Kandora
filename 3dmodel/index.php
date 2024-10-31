@@ -27,6 +27,9 @@
 
 			<label for="colorPicker">Model Color</label>
 			<input type="color" id="colorPicker" value="#ffffff">
+
+			<label for="hideBackgroundCheckbox">Hide Background</label>
+			<input type="checkbox" id="hideBackgroundCheckbox">
 		</div>
 		<div class="panel-3d">
 
@@ -88,10 +91,8 @@
 						loader.load( 'cuff2.glb', function ( glb ) {
 
 							glb.scene.scale.set( 2, 2, 2 ); // Increase the scale to zoom in
-							glb.scene.position.set( 0, -0.5, 0 );
-							camera.position.set( 0, 2.5, .5 ); // Move the camera closer to zoom in
-							controls.target.set( 0, 0, 0 );
-							controls.update();
+							glb.scene.position.set( 0, 0, 0 );
+							
 
 							scene.add( glb.scene );
 
@@ -131,6 +132,12 @@
 					document.getElementById('colorPicker').addEventListener('input', function(event) {
 						const colorValue = event.target.value;
 						updateColorProperty(colorValue);
+					});
+
+					//hide background event
+					document.getElementById('hideBackgroundCheckbox').addEventListener('change', function(event) {
+						scene.background = event.target.checked ? null : scene.environment;
+						render();
 					});
 
 					function updateMetallicProperty(value) {
