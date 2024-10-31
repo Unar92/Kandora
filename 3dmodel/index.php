@@ -24,6 +24,9 @@
 
 			<label for="hdrBlurSlider">Background Opacity</label>
 			<input type="range" id="BackgroundOpacitySlider"  min="0" max="1" step="0.01" value="1">
+
+			<label for="colorPicker">Model Color</label>
+			<input type="color" id="colorPicker" value="#ffffff">
 		</div>
 		<div class="panel-3d">
 
@@ -70,7 +73,7 @@
 
 				new RGBELoader()
 					.setPath( 'models/' )
-					.load( 'glass_passage_1k.hdr', function ( texture ) {
+					.load( 'studio_small_08_1k.hdr', function ( texture ) {
 
 						texture.mapping = THREE.EquirectangularReflectionMapping;
 
@@ -82,19 +85,22 @@
 						// model
 
 						const loader = new GLTFLoader().setPath( 'models/' );
-						loader.load( 'untitled.gltf', function ( gltf ) {
+						loader.load( 'cuff2.glb', function ( glb ) {
 
-							gltf.scene.scale.set( 1.0, 1.0, 1.0 );
-							gltf.scene.position.set( 0, 0, 0 );
+							glb.scene.scale.set( 2, 2, 2 ); // Increase the scale to zoom in
+							glb.scene.position.set( 0, -0.5, 0 );
+							camera.position.set( 0, 2.5, .5 ); // Move the camera closer to zoom in
+							controls.target.set( 0, 0, 0 );
+							controls.update();
 
-							scene.add( gltf.scene );
+							scene.add( glb.scene );
 
 							// GUI
 							gui = new GUI();
 
 							// Details of the KHR_materials_variants extension used here can be found below
 							// https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_variants
-							const parser = gltf.parser;
+							const parser = glb.parser;
 							
 
            				 render();
@@ -119,6 +125,12 @@
 					document.getElementById('BackgroundOpacitySlider').addEventListener('input', function(event) {
 						const backgroundValue = event.target.value;
 						updateBackgroundOpacity(backgroundValue);
+					});
+
+					//color picker event
+					document.getElementById('colorPicker').addEventListener('input', function(event) {
+						const colorValue = event.target.value;
+						updateColorProperty(colorValue);
 					});
 
 					function updateMetallicProperty(value) {
@@ -158,6 +170,19 @@
 						//update scene
 						render();
 					}
+				}
+
+				// Function to update color property
+				function updateColorProperty(value) {
+					console.log("Color change");
+					//change object color
+					scene.traverse((child) => {
+						if (child.isMesh) {
+							child.material.color.set(value);
+							//update scene
+							render();
+						}
+					});
 				}
 					
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
