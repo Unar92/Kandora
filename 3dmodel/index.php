@@ -31,8 +31,8 @@
 			<label for="hideBackgroundCheckbox">Hide Background</label>
 			<input type="checkbox" id="hideBackgroundCheckbox">
 
-			<label for="textureUpload">Upload Embroidery Texture</label>
-			<input type="file" id="textureUpload" accept="image/*">
+			<label for="textureUpload">Change Embroidery Texture</label>
+			<input type="checkbox" id="textureUpload" value="models/tarboosh06.png">
 		
 		</div>
 		<div class="panel-3d">
@@ -74,7 +74,7 @@
 				document.querySelector('.panel-3d').appendChild( container );
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.25, 20 );
-				camera.position.set(-3, 7, 8 ); // Center the camera horizontally and set it at a height of 1.5 units
+				camera.position.set(1, 5, 8); // Center the camera horizontally and set it at a height of 1.5 units
 				// camera.lookAt(0, 1.5, 0); // Ensure the camera is looking at the vertical center of the model
 				
 
@@ -97,7 +97,7 @@
 						loader.load( 'Optimized and highpoly mesh.glb', function ( glb ) {
 
 							glb.scene.scale.set( 2, 2, 2 ); // Increase the scale to zoom in
-							glb.scene.position.set( 0, 0, 0);
+							glb.scene.position.set( 0, -1, 0);
 							
 
 							scene.add( glb.scene );
@@ -148,29 +148,34 @@
 
 
 					document.getElementById('textureUpload').addEventListener('change', function(event) {
-					const file = event.target.files[0];
-					if (file) {
-						const reader = new FileReader();
-						reader.onload = function(e) {
-							const texture = new THREE.TextureLoader().load(e.target.result);
+					//get checkbox value
+					if (event.target.checked) {
+						const texturePath = event.target.value;
+						const loader = new THREE.TextureLoader();
+						loader.load(texturePath, function(texture) {
 							updateEmbroideryTexture(texture);
-						};
-						reader.readAsDataURL(file);
+						});
 					}
 				});
+				
 
 				function updateEmbroideryTexture(texture) {
+					texture.wrapS = THREE.RepeatWrapping;
+					texture.wrapT = THREE.RepeatWrapping;
+					texture.needsUpdate = true; // Ensure the texture is updated
+
 					scene.traverse((child) => {
 						if (child.isMesh && child.name === 'Embriodery_plane') { // Ensure you have a way to identify the embroidery mesh
-							//repeat texture
-							texture.wrapS = THREE.RepeatWrapping;
-							texture.wrapT = THREE.RepeatWrapping;
+							
 							child.material.map = texture;
 							
-							// child.material.needsUpdate = true;
-							render();
+							child.material.needsUpdate = true;
+							//update the texture on mesh
+							// render();
 						}
 					});
+					renderer.render(scene, camera);
+					
 				}
 
 					function updateMetallicProperty(value) {
@@ -221,10 +226,15 @@
 							child.material.color.set(value);
 							//emisive color set
 							child.material.emissive.set(value);
+							//update texture change
+							child.material.needsUpdate = true;
 							//update scene
 							render();
 						}
 					});
+					
+					// Ensure the texture update is visible when the model is moved
+					
 				}
 					
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -234,11 +244,16 @@
 				renderer.toneMappingExposure = 1;
 				container.appendChild( renderer.domElement );
 
-				const controls = new OrbitControls( camera, renderer.domElement );
-				controls.addEventListener( 'change', render ); // use if there is no animation loop
+				const controls = new OrbitControls(camera, renderer.domElement);
+				controls.addEventListener('change', render); // use if there is no animation loop
 				controls.minDistance = 2;
 				controls.maxDistance = 10;
-				controls.target.set( 0, 0.5, - 0.2 );
+				controls.target.set(0, 0.5, -0.2);
+
+				// // Restrict Y-axis rotation
+				// controls.maxPolarAngle = Math.PI / 2; // 90 degrees
+				// controls.minPolarAngle = Math.PI / 2; // 90 degrees
+
 				controls.update();
 
 				window.addEventListener( 'resize', onWindowResize );
