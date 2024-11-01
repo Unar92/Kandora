@@ -8,12 +8,7 @@
 	</head>
 
 	<body>
-		<div id="info">
-			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - GLTFLoader + <a href="https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_variants" target="_blank" rel="noopener">KHR_materials_variants</a><br />
-			<a href="https://github.com/pushmatrix/glTF-Sample-Models/tree/master/2.0/MaterialsVariantsShoe" target="_blank" rel="noopener">Materials Variants Shoe</a> by
-			<a href="https://github.com/Shopify" target="_blank" rel="noopener">Shopify, Inc</a><br />
-			<a href="https://hdrihaven.com/hdri/?h=quarry_01" target="_blank" rel="noopener">Quarry</a> from <a href="https://hdrihaven.com/" target="_blank" rel="noopener">HDRI Haven</a>
-		</div>
+		
 		<div class="customcontrols">
 			<h3>Controls</h3>
 			<label for="metallicSlider">Metallic Intensity</label>
@@ -84,17 +79,28 @@
 					.setPath( 'models/' )
 					.load( 'studio_small_08_1k.hdr', function ( texture ) {
 
-						texture.mapping = THREE.EquirectangularReflectionMapping;
+						// texture.mapping = THREE.EquirectangularReflectionMapping;
 
-						scene.background = texture;
-						scene.environment = texture;
+						// scene.background = texture;
+						// scene.environment = texture;
+
+						scene.background = new THREE.Color(0x000000); // Set background to black
+						scene.environment = null; // Remove the environment texture
+						//tone mapping linear
+						renderer.toneMapping = THREE.LinearToneMapping;
+						renderer.toneMappingExposure = 1;
+						//ambient intensity 0
+						// scene.add(new THREE.AmbientLight(0xffffff, 0));
+						//direct intensity 0
+						// const light = new THREE.DirectionalLight(0xffffff, 0);
+
 
 						render();
 
 						// model
 
 						const loader = new GLTFLoader().setPath( 'models/' );
-						loader.load( 'Optimized and highpoly mesh.glb', function ( glb ) {
+						loader.load( 'default 2.glb', function ( glb ) {
 
 							glb.scene.scale.set( 2, 2, 2 ); // Increase the scale to zoom in
 							glb.scene.position.set( 0, -1, 0);
@@ -165,7 +171,7 @@
 					texture.needsUpdate = true; // Ensure the texture is updated
 
 					scene.traverse((child) => {
-						if (child.isMesh && child.name === 'Embriodery_plane') { // Ensure you have a way to identify the embroidery mesh
+						if (child.isMesh && child.name === 'Embriodery plane.005') { // Ensure you have a way to identify the embroidery mesh
 							
 							child.material.map = texture;
 							
