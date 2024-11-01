@@ -30,6 +30,10 @@
 
 			<label for="hideBackgroundCheckbox">Hide Background</label>
 			<input type="checkbox" id="hideBackgroundCheckbox">
+
+			<label for="textureUpload">Upload Embroidery Texture</label>
+			<input type="file" id="textureUpload" accept="image/*">
+		
 		</div>
 		<div class="panel-3d">
 
@@ -70,7 +74,9 @@
 				document.querySelector('.panel-3d').appendChild( container );
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.25, 20 );
-				camera.position.set( 2.5, 1.5, 3.0 );
+				camera.position.set(-3, 7, 8 ); // Center the camera horizontally and set it at a height of 1.5 units
+				// camera.lookAt(0, 1.5, 0); // Ensure the camera is looking at the vertical center of the model
+				
 
 				scene = new THREE.Scene();
 
@@ -88,10 +94,10 @@
 						// model
 
 						const loader = new GLTFLoader().setPath( 'models/' );
-						loader.load( 'cuff2.glb', function ( glb ) {
+						loader.load( 'Optimized and highpoly mesh.glb', function ( glb ) {
 
 							glb.scene.scale.set( 2, 2, 2 ); // Increase the scale to zoom in
-							glb.scene.position.set( 0, 0, 0 );
+							glb.scene.position.set( 0, 0, 0);
 							
 
 							scene.add( glb.scene );
@@ -140,6 +146,33 @@
 						render();
 					});
 
+
+					document.getElementById('textureUpload').addEventListener('change', function(event) {
+					const file = event.target.files[0];
+					if (file) {
+						const reader = new FileReader();
+						reader.onload = function(e) {
+							const texture = new THREE.TextureLoader().load(e.target.result);
+							updateEmbroideryTexture(texture);
+						};
+						reader.readAsDataURL(file);
+					}
+				});
+
+				function updateEmbroideryTexture(texture) {
+					scene.traverse((child) => {
+						if (child.isMesh && child.name === 'Embriodery_plane') { // Ensure you have a way to identify the embroidery mesh
+							//repeat texture
+							texture.wrapS = THREE.RepeatWrapping;
+							texture.wrapT = THREE.RepeatWrapping;
+							child.material.map = texture;
+							
+							// child.material.needsUpdate = true;
+							render();
+						}
+					});
+				}
+
 					function updateMetallicProperty(value) {
 						console.log("intensity change");
 						scene.traverse((child) => {
@@ -186,6 +219,8 @@
 					scene.traverse((child) => {
 						if (child.isMesh) {
 							child.material.color.set(value);
+							//emisive color set
+							child.material.emissive.set(value);
 							//update scene
 							render();
 						}
