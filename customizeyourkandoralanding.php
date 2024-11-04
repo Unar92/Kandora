@@ -78,27 +78,27 @@ function init() {
         .load('studio_small_08_1k.hdr', function (texture) {
 
 
-						texture.mapping = THREE.EquirectangularReflectionMapping;
+						// texture.mapping = THREE.EquirectangularReflectionMapping;
 
-						scene.background = texture;
-						scene.environment = texture;
+						// scene.background = texture;
+						// scene.environment = texture;
 
-            // scene.background = new THREE.Color(0x000000);
-            // scene.environment = null;
-            // renderer.toneMapping = THREE.LinearToneMapping;
-            // renderer.toneMappingExposure = 0;
+             scene.background = new THREE.Color(0x000000);
+             scene.environment = null;
+             renderer.toneMapping = THREE.LinearToneMapping;
+             renderer.toneMappingExposure = 1;
             
   
 
             //ambient intensity 0
-						// scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+						// scene.add(new THREE.AmbientLight(0xffffff, 0));
 						//direct intensity 0
 						// const light = new THREE.DirectionalLight(0xffffff, 0);
 
             render();
 
             const loader = new GLTFLoader().setPath('models/');
-            loader.load('updatedmodel.glb', function (glb) {
+            loader.load('Correctedtexture location.glb', function (glb) {
                 glb.scene.scale.set(2, 2, 2);
                 glb.scene.position.set(0, -1.3, 0);
                 scene.add(glb.scene);
@@ -163,9 +163,18 @@ function init() {
 
             scene.traverse((child) => {
                 // Embriodery_plane005 use for new model and for old model use Embriodery_plane
-                if (child.isMesh && child.name === 'Embriodery_plane') { // Ensure you have a way to identify the embroidery mesh
+                if (child.isMesh && child.name === 'Embriodery_plane005') { // Ensure you have a way to identify the embroidery mesh
                     child.material.map = texture;
                     child.material.needsUpdate = true;
+                    //blend texture color with mesh color
+                    // child.material.blending = THREE.MultiplyBlending;
+                    // child.material.transparent = true;
+
+                    // // Set the color to blend with the texture
+                    child.material.color.set(0x000000);
+
+                    
+                    
                     // Update the texture on mesh
                     render();
                 }
