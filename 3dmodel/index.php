@@ -28,6 +28,10 @@
 
 			<label for="textureUpload">Change Embroidery Texture</label>
 			<input type="checkbox" id="textureUpload" value="models/tarboosh06.png">
+
+
+			<label for="scaleSlider">Scale Tileable Texture</label>
+			<input type="range" id="scaleSlider" min="1" max="50" step="1" value="1">
 		
 		</div>
 		<div class="panel-3d">
@@ -79,16 +83,16 @@
 					.setPath( 'models/' )
 					.load( 'studio_small_08_1k.hdr', function ( texture ) {
 
-						// texture.mapping = THREE.EquirectangularReflectionMapping;
+						texture.mapping = THREE.EquirectangularReflectionMapping;
 
-						// scene.background = texture;
-						// scene.environment = texture;
+						scene.background = texture;
+						scene.environment = texture;
 
-						scene.background = new THREE.Color(0x000000); // Set background to black
-						scene.environment = null; // Remove the environment texture
-						//tone mapping linear
-						renderer.toneMapping = THREE.LinearToneMapping;
-						renderer.toneMappingExposure = 1;
+						// scene.background = new THREE.Color(0x000000); // Set background to black
+						// scene.environment = null; // Remove the environment texture
+						// //tone mapping linear
+						// renderer.toneMapping = THREE.LinearToneMapping;
+						// renderer.toneMappingExposure = 1;
 						//ambient intensity 0
 						// scene.add(new THREE.AmbientLight(0xffffff, 0));
 						//direct intensity 0
@@ -100,7 +104,7 @@
 						// model
 
 						const loader = new GLTFLoader().setPath( 'models/' );
-						loader.load( 'default 2.glb', function ( glb ) {
+						loader.load( 'test (1).glb', function ( glb ) {
 
 							glb.scene.scale.set( 2, 2, 2 ); // Increase the scale to zoom in
 							glb.scene.position.set( 0, -1, 0);
@@ -108,12 +112,48 @@
 
 							scene.add( glb.scene );
 
+							 // Step 1: Load the texture
+							const textureLoader = new THREE.TextureLoader();
+							const texture = textureLoader.load('models/uv1.jpeg');
+
+							// Step 2: Set the repeat property
+							texture.repeat.set(8, 8); // Adjust the numbers to tile the texture
+
+																									
+
+							// Step 3: Set the wrapS and wrapT properties
+							texture.wrapS = THREE.RepeatWrapping;
+							texture.wrapT = THREE.RepeatWrapping;
+
+							// Apply the texture to the existing model's materials
+							glb.scene.traverse((child) => {
+							if (child.isMesh) {
+								child.material = new THREE.MeshStandardMaterial({
+									normalMap: normalMap,
+									color: 0xffffff, // White color to avoid color blending issues
+									// You can adjust other properties like roughness, metalness, etc.
+								});
+								child.material.needsUpdate = true;
+							}
+						});
+
+						});
+
+						
+
 							// GUI
 							gui = new GUI();
 
 							// Details of the KHR_materials_variants extension used here can be found below
 							// https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_variants
 							const parser = glb.parser;
+
+							//on load of model console all uv map name
+							glb.scene.traverse((child) => {
+								if (child.isMesh) {
+									console.log("uv name",child.geometry.attributes.uv.name);
+								}
+							});
 							
 
            				 render();
@@ -152,6 +192,27 @@
 						render();
 					});
 
+					//scaleSlider event
+					document.getElementById('scaleSlider').addEventListener('input', function(event) {
+						const scaleValue = event.target.value;
+						updateScaleProperty(scaleValue);
+					});
+
+
+					//updateScaleProperty(scaleValue);
+					function updateScaleProperty(value) {
+						console.log("scale change");
+						//change object scale
+						scene.traverse((child) => {
+							if (child.isMesh) {
+								child.material.map.repeat.set(value, value);
+								child.material.map.needsUpdate = true;
+								//update scene
+								render();
+							}
+						});
+					}
+
 
 					document.getElementById('textureUpload').addEventListener('change', function(event) {
 					//get checkbox value
@@ -171,7 +232,7 @@
 					texture.needsUpdate = true; // Ensure the texture is updated
 
 					scene.traverse((child) => {
-						if (child.isMesh && child.name === 'Embriodery plane.005') { // Ensure you have a way to identify the embroidery mesh
+						if (child.isMesh && child.name === 'Embriodery_plane') { // Ensure you have a way to identify the embroidery mesh
 							
 							child.material.map = texture;
 							
@@ -231,7 +292,7 @@
 						if (child.isMesh) {
 							child.material.color.set(value);
 							//emisive color set
-							child.material.emissive.set(value);
+							// child.material.emissive.set(value);
 							//update texture change
 							child.material.needsUpdate = true;
 							//update scene

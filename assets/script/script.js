@@ -2325,6 +2325,7 @@ $(document).ready(function () {
     $(".customize-section-box .heading").removeClass("active");
     $(this).addClass("active");
     $(this).next().slideToggle(500);
+    // Remove the line that closes other accordions
     $(".customize-option").not($(this).next()).slideUp(500);
   });
 });

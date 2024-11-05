@@ -503,9 +503,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
 
 <!-- Custom Script -->
-<script src="assets/script/customize-kandora.js"></script>
+<!-- <script src="assets/script/customize-kandora.js"></script> -->
 <!-- <script src="assets/script/script.js"></script> -->
-<script src="assets/script/script.min.js"></script>
+<script src="assets/script/script.js"></script>
 <!-- Custom Script -->
 </body>
 

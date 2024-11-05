@@ -69,7 +69,9 @@ function init() {
     const container = document.querySelector('.panel-3d');
 
     camera = new THREE.PerspectiveCamera(25, container.clientWidth / container.clientHeight, 0.25, 20);
-    camera.position.set(1, 7, 8);
+    camera.position.set(1, 2, 8);
+    //camera zoom
+    camera.zoom = 5;
 
     scene = new THREE.Scene();
 
@@ -98,12 +100,20 @@ function init() {
             render();
 
             const loader = new GLTFLoader().setPath('models/');
-            loader.load('test (1).glb', function (glb) {
-                glb.scene.scale.set(1, 1, 1);
-                glb.scene.position.set(0, 0, 0);
+            loader.load('updatedmodel.glb', function (glb) {
+                glb.scene.scale.set(2, 2, 2);
+                glb.scene.position.set(0, -2, 0);
                 scene.add(glb.scene);
 
-               
+               //remove embroidery_plane from scene
+                scene.traverse((child) => {
+                    if (child.isMesh && child.name === 'Embriodery_plane') {
+                        child.visible = false;
+                    }
+                    if (child.isMesh && child.name === 'Embriodery_plane') {
+                        child.visible = false;
+                    }
+                });
 
                 gui = new GUI();
                 const parser = glb.parser;
@@ -132,7 +142,7 @@ function init() {
 						if (child.isMesh) {
 							child.material.color.set(value);
 							//emisive color set
-							// child.material.emissive.set(value);
+							child.material.emissive.set(value);
 							//update texture change
 							child.material.needsUpdate = true;
 							//update scene
@@ -163,18 +173,18 @@ function init() {
 
             scene.traverse((child) => {
                 // Embriodery_plane005 use for new model and for old model use Embriodery_plane
-                if (child.isMesh && child.name === 'Embriodery_plane005') { // Ensure you have a way to identify the embroidery mesh
+                if (child.isMesh && child.name === 'Embriodery_plane') { // Ensure you have a way to identify the embroidery mesh
                  
 
                   //use texture as overlay on mesh so it can blend with mesh color
-                  
+                  child.visible = true;
                   
                     child.material.map = texture;
-                    child.material.blending = THREE.MultiplyBlending;
-                  child.material.transparent = true;
-                  child.material.alphaTest = 0.9; // Ensure alpha channel is respected
+                  //   child.material.blending = THREE.MultiplyBlending;
+                  // child.material.transparent = true;
+                  // child.material.alphaTest = 0.9; // Ensure alpha channel is respected
 
-                  child.material.color.set(0x05356d);
+                  // child.material.color.set(0x05356d);
                     child.material.needsUpdate = true;
                     //blend texture color with mesh color
                     // child.material.blending = THREE.MultiplyBlending;
