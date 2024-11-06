@@ -107,7 +107,7 @@
 						loader.load( 'test (1).glb', function ( glb ) {
 
 							glb.scene.scale.set( 2, 2, 2 ); // Increase the scale to zoom in
-							glb.scene.position.set( 0, -1, 0);
+							glb.scene.position.set( 0, -1.5, 0);
 							
 
 							scene.add( glb.scene );

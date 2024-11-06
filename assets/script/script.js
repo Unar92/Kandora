@@ -2428,7 +2428,7 @@ function useSuggestion(e) {
 }
 
 input?.addEventListener("keyup", searchHandler);
-suggestions.addEventListener("click", useSuggestion);
+suggestions?.addEventListener("click", useSuggestion);
 
 
 

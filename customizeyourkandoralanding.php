@@ -1,214 +1,261 @@
-
 <style>
-		.Select,
-		#toolbar,
-		#viewHelper,
-		#sidebar,
-		#menubar, #info,    .lil-gui.allow-touch-styles 
-     {
-			display: none;
-		}
-		.panel-3d div {
-			width: 100%;
-			top: 0 !important;
-		}
-    .panel-3d
-    {
-      position: relative;
-    }
+  .Select,
+  #toolbar,
+  #viewHelper,
+  #sidebar,
+  #menubar,
+  #info,
+  .lil-gui.allow-touch-styles {
+    display: none;
+  }
 
-    @media screen and (max-width:767px) {
-      .panel-3d
-    {
+  .panel-3d div {
+    width: 100%;
+    top: 0 !important;
+  }
+
+  .panel-3d {
+    position: relative;
+  }
+
+  @media screen and (max-width:767px) {
+    .panel-3d {
       margin-bottom: 20px;
     }
-    }
+  }
 
 
 
-    .custom-radio span i
-    {
-      width:30px;height:100%;margin-right:15px;
-      border: 1px solid #777;
-    }
-	</style>
+  .custom-radio span i {
+    width: 30px;
+    height: 100%;
+    margin-right: 15px;
+    border: 1px solid #777;
+  }
+</style>
 
 <link rel="stylesheet" href="css/main.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
 
 <script src="./examples/jsm/libs/draco/draco_encoder.js"></script>
 
 <script type="importmap">
-			{
-				"imports": {
-					"three": "./build/three.module.js",
-					"three/addons/": "./jsm/"
-				}
-			}
-		</script>
+      {
+        "imports": {
+          "three": "./build/three.module.js",
+          "three/addons/": "./jsm/"
+        }
+      }
+    </script>
 
-    <script type="module">
+<script type="module">
 
-import * as THREE from 'three';
-import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { TexturePass } from 'three/addons/postprocessing/TexturePass.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+  import * as THREE from 'three';
+  import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+  import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+  import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+  import { TexturePass } from 'three/addons/postprocessing/TexturePass.js';
+  import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+  import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
-let camera, scene, renderer;
-let gui;
+  let camera, scene, renderer;
+  let gui;
 
-const state = { variant: 'midnight' };
+  const state = { variant: 'midnight' };
 
-init();
-render();
+  init();
+  render();
 
-function init() {
+  function init() {
     const container = document.querySelector('.panel-3d');
 
-    camera = new THREE.PerspectiveCamera(25, container.clientWidth / container.clientHeight, 0.25, 20);
-    camera.position.set(1, 2, 8);
+    camera = new THREE.PerspectiveCamera(25, container.clientWidth / container.clientHeight, 0.25, 100);
+    camera.position.set(1.0000000000000002, 1.9999999999999991,  8.000000000000002);
     //camera zoom
     camera.zoom = 5;
+
+    //console camera position
+    console.log(camera.position);
 
     scene = new THREE.Scene();
 
     new RGBELoader()
-        .setPath('models/')
-        .load('studio_small_08_1k.hdr', function (texture) {
+      .setPath('models/')
+      .load('studio_small_08_1k.hdr', function (texture) {
 
 
-						texture.mapping = THREE.EquirectangularReflectionMapping;
+        // texture.mapping = THREE.EquirectangularReflectionMapping;
 
-						scene.background = texture;
-						scene.environment = texture;
+        // scene.background = texture;
+        // scene.environment = texture;
 
-            //  scene.background = new THREE.Color(0x000000);
-            // //  scene.environment = null;
-            //  renderer.toneMapping = THREE.LinearToneMapping;
-            //  renderer.toneMappingExposure = 1;
-            
-  
+        scene.background = new THREE.Color(0xf1f1f1);
+        scene.environment = null;
+        renderer.toneMapping = THREE.LinearToneMapping;
+        renderer.toneMappingExposure = 1;
 
-            //ambient intensity 0
-						// scene.add(new THREE.AmbientLight(0xffffff, 0));
-						//direct intensity 0
-						// const light = new THREE.DirectionalLight(0xffffff, 0);
 
-            render();
 
-            const loader = new GLTFLoader().setPath('models/');
-            loader.load('updatedmodel.glb', function (glb) {
-                glb.scene.scale.set(2, 2, 2);
-                glb.scene.position.set(0, -2, 0);
-                scene.add(glb.scene);
+        //ambient intensity 0
+        // scene.add(new THREE.AmbientLight(0xffffff, 0));
+        //direct intensity 0
+        // const light = new THREE.DirectionalLight(0xffffff, 0);
 
-               //remove embroidery_plane from scene
-                scene.traverse((child) => {
-                    if (child.isMesh && child.name === 'Embriodery_plane') {
-                        child.visible = false;
-                    }
-                    if (child.isMesh && child.name === 'Embriodery_plane') {
-                        child.visible = false;
-                    }
-                });
+        render();
 
-                gui = new GUI();
-                const parser = glb.parser;
+        const loader = new GLTFLoader().setPath('models/');
+        loader.load('updatedmodel.glb', function (glb) {
+          glb.scene.scale.set(1.7, 1.7, 1.7);
+          glb.scene.position.set(0, -1.1, 0);
+          scene.add(glb.scene);
 
-                render();
-            });
+          //remove embroidery_plane from scene
+          scene.traverse((child) => {
+            if (child.isMesh && child.name === 'Embriodery_plane') {
+              child.visible = false;
+            }
+            if (child.isMesh && child.name === 'tarboosh_tongue') {
+              child.visible = false;
+            }
+            if (child.isMesh && child.name === 'tarboosh_1') {
+              child.visible = false;
+            }
+          });
+
+          gui = new GUI();
+          const parser = glb.parser;
+
+          render();
         });
+      });
 
 
     //color picker event
     const colorPickers = document.getElementsByClassName('colorPicker');
     Array.from(colorPickers).forEach(picker => {
-        picker.addEventListener('input', function(event) {
-            const colorValue = event.target.value;
-            updateColorProperty(colorValue);
-        });
+      picker.addEventListener('input', function (event) {
+        const colorValue = event.target.value;
+        updateColorProperty(colorValue);
+      });
     });
 
 
-    
+
     // Function to update color property
     function updateColorProperty(value) {
-					// consoogle.l("Color change");
-					//change object color
-					scene.traverse((child) => {
-						if (child.isMesh) {
-							child.material.color.set(value);
-							//emisive color set
-							child.material.emissive.set(value);
-							//update texture change
-							child.material.needsUpdate = true;
-							//update scene
-							render();
-						}
-					});
-					
-					// Ensure the texture update is visible when the model is moved
-					
-				}
-					
+      // consoogle.l("Color change");
+      //change object color
+      scene.traverse((child) => {
+        if (child.isMesh) {
+          child.material.color.set(value);
+          //emisive color set
+          child.material.emissive.set(value);
+          //update texture change
+          child.material.needsUpdate = true;
+          //update scene
+          render();
+        }
+      });
 
-        
+      // Ensure the texture update is visible when the model is moved
 
-        function updateEmbroideryTexture(textureUrl) {
-    // Preload the image
-    var img = new Image();
-    img.src = textureUrl;
+    }
 
-    img.onload = function() {
-        // Image is preloaded, proceed with updating the texture
-        console.log('Embroidery texture change');
-        const loader = new THREE.TextureLoader();
-        loader.load(textureUrl, function(texture) {
-            texture.wrapS = THREE.RepeatWrapping;
-            texture.wrapT = THREE.RepeatWrapping;
-            texture.needsUpdate = true; // Ensure the texture is updated
 
-            scene.traverse((child) => {
-                // Embriodery_plane005 use for new model and for old model use Embriodery_plane
-                if (child.isMesh && child.name === 'Embriodery_plane') { // Ensure you have a way to identify the embroidery mesh
-                 
 
-                  //use texture as overlay on mesh so it can blend with mesh color
-                  child.visible = true;
-                  
-                    child.material.map = texture;
-                  //   child.material.blending = THREE.MultiplyBlending;
-                  // child.material.transparent = true;
-                  // child.material.alphaTest = 0.9; // Ensure alpha channel is respected
 
-                  // child.material.color.set(0x05356d);
-                    child.material.needsUpdate = true;
-                    //blend texture color with mesh color
-                    // child.material.blending = THREE.MultiplyBlending;
-                    // child.material.transparent = true;
 
-                    // // Set the color to blend with the texture
-                 
+   
+    function updateEmbroideryTexture(textureUrl) {
+  // Preload the image
+  var img = new Image();
+  img.src = textureUrl;
 
-                    
-                    
-                    // Update the texture on mesh
-                    render();
-                }
+  img.onload = function () {
+    // Image is preloaded, proceed with updating the texture
+    console.log('Embroidery texture change');
+    const loader = new THREE.TextureLoader();
+    loader.load(textureUrl, function (texture) {
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.needsUpdate = true; // Ensure the texture is updated
+
+      scene.traverse((child) => {
+        // Embriodery_plane005 use for new model and for old model use Embriodery_plane
+        if (child.isMesh && child.name === 'Embriodery_plane') { // Ensure you have a way to identify the embroidery mesh
+          child.visible = true;
+          child.material.map = texture;
+          child.material.needsUpdate = true;
+
+          // Move the camera to view the embroidery
+          const embroideryPosition = child.position.clone();
+          const cameraTarget = new THREE.Vector3(embroideryPosition.x, embroideryPosition.y, embroideryPosition.z);
+
+          // Capture the current camera position, zoom level, and controls target
+          const currentCameraPosition = camera.position.clone();
+          const currentZoom = camera.zoom;
+          const currentTarget = controls.target.clone();
+
+          //console current camera position
+          console.log(currentCameraPosition);
+
+          // Desired camera position, zoom level, and controls target
+          const desiredZoom = 3; // Adjust this value to zoom in
+          const desiredPosition = {
+            x: embroideryPosition.x + 2, // Adjust these values as needed
+            y: embroideryPosition.y + 2,
+            z: embroideryPosition.z + 5
+          };
+          const desiredTarget = embroideryPosition.clone();
+
+          // Check if the camera is already at the desired zoom level and position
+          if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) {
+            const timeline = gsap.timeline();
+
+            timeline.to(camera, {
+              duration: 2,
+              zoom: desiredZoom,
+              onUpdate: function () {
+                camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
+              }
             });
-            renderer.render(scene, camera);
-        });
-    };
 
-    img.onerror = function() {
-        console.error('Failed to preload image: ' + textureUrl);
-    };
+            timeline.to(camera.position, {
+              duration: 2,
+              x: desiredPosition.x,
+              y: desiredPosition.y,
+              z: desiredPosition.z,
+              onUpdate: function () {
+                camera.lookAt(cameraTarget);
+                controls.update(); // Ensure controls are updated
+                renderer.render(scene, camera);
+              }
+            }, 0); // Start at the same time as the zoom animation
+
+            timeline.to(controls.target, {
+              duration: 2,
+              x: desiredTarget.x,
+              y: desiredTarget.y,
+              z: desiredTarget.z,
+              onUpdate: function () {
+                controls.update();
+                renderer.render(scene, camera);
+              }
+            }, 0); // Start at the same time as the zoom animation
+          }
+
+          render();
+        }
+      });
+      renderer.render(scene, camera);
+    });
+  };
 }
-
-   //make updateEmbroideryTexture function available globally
+// Make updateEmbroideryTexture function available globally
+window.updateEmbroideryTexture = updateEmbroideryTexture;
+    
+    //make updateEmbroideryTexture function available globally
     window.updateEmbroideryTexture = updateEmbroideryTexture;
 
 
@@ -223,44 +270,44 @@ function init() {
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.addEventListener('change', render);
-    controls.minDistance = 2;
-    controls.maxDistance = 10;
+    // controls.minDistance = 2;
+    // controls.maxDistance = 10;
     controls.target.set(0, 0.5, -0.2);
     controls.update();
 
     window.addEventListener('resize', onWindowResize);
 
     function selectVariant(scene, parser, extension, variantName) {
-        const variantIndex = extension.variants.findIndex((v) => v.name.includes(variantName));
-        scene.traverse(async (object) => {
-            if (!object.isMesh || !object.userData.gltfExtensions) return;
-            const meshVariantDef = object.userData.gltfExtensions['KHR_materials_variants'];
-            if (!meshVariantDef) return;
-            if (!object.userData.originalMaterial) {
-                object.userData.originalMaterial = object.material;
-            }
-            const mapping = meshVariantDef.mappings.find((mapping) => mapping.variants.includes(variantIndex));
-            if (mapping) {
-                object.material = await parser.getDependency('material', mapping.material);
-                parser.assignFinalMaterial(object);
-            } else {
-                object.material = object.userData.originalMaterial;
-            }
-        });
+      const variantIndex = extension.variants.findIndex((v) => v.name.includes(variantName));
+      scene.traverse(async (object) => {
+        if (!object.isMesh || !object.userData.gltfExtensions) return;
+        const meshVariantDef = object.userData.gltfExtensions['KHR_materials_variants'];
+        if (!meshVariantDef) return;
+        if (!object.userData.originalMaterial) {
+          object.userData.originalMaterial = object.material;
+        }
+        const mapping = meshVariantDef.mappings.find((mapping) => mapping.variants.includes(variantIndex));
+        if (mapping) {
+          object.material = await parser.getDependency('material', mapping.material);
+          parser.assignFinalMaterial(object);
+        } else {
+          object.material = object.userData.originalMaterial;
+        }
+      });
     }
-}
+  }
 
-function onWindowResize() {
+  function onWindowResize() {
     const container = document.querySelector('.panel-3d');
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(container.clientWidth, container.clientHeight);
     render();
-}
+  }
 
-function render() {
+  function render() {
     renderer.render(scene, camera);
-}
+  }
 
 </script>
 
@@ -304,8 +351,8 @@ function render() {
 
 </iframe> -->
 
-        <div class="panel-3d"  style="width:100%;height:calc(75vh);">
-          
+        <div class="panel-3d" style="width:100%;height:calc(75vh);">
+
         </div>
         <div class="kandora-image-select">
           <img src="assets/images/customizeyourkandora/select-img.png" alt="">
@@ -410,43 +457,43 @@ function render() {
           </div>
         </div> -->
         <div class="customize-section-box">
-        <div class="heading">
-        <h3>Choose Color</h3>
+          <div class="heading">
+            <h3>Choose Color</h3>
           </div>
           <div class="customize-option">
-          
-        
-             
-               
-                
-                  <div class="custom-radio-group">
-                    <label class="custom-radio">
-                      <input type="radio" name="colorPicker" value="#9e8b54" class="colorPicker" >
-                     
-                      <span><i  style="background-color: #9e8b54; "></i> Moss Green</span>
-                    </label>
-                    <label class="custom-radio">
-                      <input type="radio" name="colorPicker" value="#b6a38f" class="colorPicker"  >
-                      <span><i style="background-color: #b6a38f; "></i> Brown </span>
-                    </label>
-                    <label class="custom-radio">
-                      <input type="radio" name="colorPicker" value="#05356d" class="colorPicker"  >
-                      <span><i style="background-color: #05356d;"></i> Blue </span>
-                    </label>
-                    <label class="custom-radio">
-                      <input type="radio" name="colorPicker" value="#d1d1d1" class="colorPicker" checked>
-                      <span><i style="background-color: #d1d1d1; "></i> Grey White </span>
-                    </label>
-                  </div> 
-          
-               
-                
-             
+
+
+
+
+
+            <div class="custom-radio-group">
+              <label class="custom-radio">
+                <input type="radio" name="colorPicker" value="#9e8b54" class="colorPicker">
+
+                <span><i style="background-color: #9e8b54; "></i> Moss Green</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="colorPicker" value="#b6a38f" class="colorPicker">
+                <span><i style="background-color: #b6a38f; "></i> Brown </span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="colorPicker" value="#05356d" class="colorPicker">
+                <span><i style="background-color: #05356d;"></i> Blue </span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="colorPicker" value="#d1d1d1" class="colorPicker" checked>
+                <span><i style="background-color: #d1d1d1; "></i> Grey White </span>
+              </label>
+            </div>
+
+
+
+
           </div>
-               
-          </div>
-       
-    
+
+        </div>
+
+
         <!-- <div class="customize-section-box" >
           <div class="heading" >
             <h3 >Choose Side Lines</h3>
@@ -509,7 +556,7 @@ function render() {
           </div>
         </div> -->
         <div class="customize-section-box">
-          <div class="heading" >
+          <div class="heading">
             <h3>Choose Embroidery Style</h3>
             <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="" />
           </div>
@@ -517,57 +564,66 @@ function render() {
             <div class="images-option mt-0">
               <ul class="image-border">
                 <li>
-              
-                  <div class="img" onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh01.png')">
-                    <img  src="models/embroidery/s1.png" alt="" />
+
+                  <div class="img"
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh01.png')">
+                    <img src="models/embroidery/_KA_4417.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 1</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="updateEmbroideryTexture( 'assets/images/customizeyourkandora/embroidery/tarboosh02.png')">
-                    <img src="models/embroidery/s2.png" alt="" />
+                  <div class="img"
+                    onclick="updateEmbroideryTexture( 'assets/images/customizeyourkandora/embroidery/tarboosh02.png')">
+                    <img src="models/embroidery/_KA_4427.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 2</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh03.png')">
-                    <img src="models/embroidery/s3.png" alt="" />
+                  <div class="img"
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh03.png')">
+                    <img src="models/embroidery/_KA_4440.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 3</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh04.png')">
-                    <img src="models/embroidery/s4.png" alt="" />
+                  <div class="img"
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh04.png')">
+                    <img src="models/embroidery/_KA_4446.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 4</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="updateEmbroideryTexture( 'assets/images/customizeyourkandora/embroidery/tarboosh05.png')">
-                    <img src="models/embroidery/s5.png" alt="" />
+                  <div class="img"
+                    onclick="updateEmbroideryTexture( 'assets/images/customizeyourkandora/embroidery/tarboosh05.png')">
+                    <img src="models/embroidery/_KA_4451.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 5</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh06.png')">
-                    <img src="models/embroidery/s6.png" alt="" />
+                  <div class="img"
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh06.png')">
+                    <img src="models/embroidery/_KA_4456.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 6</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh07.png')">
-                    <img src="models/embroidery/s7.png" alt="" />
+                  <div class="img"
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh07.png')">
+                    <img src="models/embroidery/_KA_4457.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 7</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh08.png')">
-                    <img src="models/embroidery/s8.png" alt="" />
+                  <div class="img"
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh08.png')">
+                    <img src="models/embroidery/_KA_4460.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 8</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh09.png')">
-                    <img src="models/embroidery/s9.png" alt="" />
+                  <div class="img"
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh09.png')">
+                    <img src="models/embroidery/_KA_4461.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 9</h4>
                 </li>
@@ -575,7 +631,7 @@ function render() {
             </div>
           </div>
         </div>
-      
+
         <!-- <div class="customize-section-box">
           <div class="heading">
             <h3>Choose Tarboosh Style</h3>
@@ -634,7 +690,7 @@ function render() {
           </div>
         </div> -->
 
-    
+
         <div class="specific-notes">
           <div class="form-group formZn textarea">
             <div class="placeholder">
