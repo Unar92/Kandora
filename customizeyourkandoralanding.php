@@ -71,9 +71,10 @@
     const container = document.querySelector('.panel-3d');
 
     camera = new THREE.PerspectiveCamera(25, container.clientWidth / container.clientHeight, 0.25, 100);
-    camera.position.set(1.0000000000000002, 1.9999999999999991,  8.000000000000002);
+    camera.position.set(1, 2,  8);
     //camera zoom
-    camera.zoom = 5;
+    camera.zoom = 1;
+    camera.updateProjectionMatrix();
 
     //console camera position
     console.log(camera.position);
@@ -197,11 +198,13 @@
           const currentZoom = camera.zoom;
           const currentTarget = controls.target.clone();
 
-          //console current camera position
-          console.log(currentCameraPosition);
+          // Log current camera and controls state
+          console.log('Current Camera Position:', currentCameraPosition);
+          console.log('Current Zoom:', currentZoom);
+          console.log('Current Controls Target:', currentTarget);
 
           // Desired camera position, zoom level, and controls target
-          const desiredZoom = 3; // Adjust this value to zoom in
+          const desiredZoom = 4; // Adjust this value to zoom in
           const desiredPosition = {
             x: embroideryPosition.x + 2, // Adjust these values as needed
             y: embroideryPosition.y + 2,
@@ -209,38 +212,45 @@
           };
           const desiredTarget = embroideryPosition.clone();
 
+          // Log desired camera and controls state
+          console.log('Desired Camera Position:', desiredPosition);
+          console.log('Desired Zoom:', desiredZoom);
+          console.log('Desired Controls Target:', desiredTarget);
+
           // Check if the camera is already at the desired zoom level and position
           if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) {
             const timeline = gsap.timeline();
 
             timeline.to(camera, {
-              duration: 2,
+              duration:4,
               zoom: desiredZoom,
               onUpdate: function () {
                 camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
               }
-            });
+            },0);
 
             timeline.to(camera.position, {
-              duration: 2,
+              duration: 4,
               x: desiredPosition.x,
               y: desiredPosition.y,
               z: desiredPosition.z,
+              
               onUpdate: function () {
                 camera.lookAt(cameraTarget);
+                camera.zoom = desiredZoom;
                 controls.update(); // Ensure controls are updated
-                renderer.render(scene, camera);
+                render();
               }
             }, 0); // Start at the same time as the zoom animation
 
             timeline.to(controls.target, {
-              duration: 2,
+              duration: 4,
               x: desiredTarget.x,
               y: desiredTarget.y,
               z: desiredTarget.z,
               onUpdate: function () {
                 controls.update();
-                renderer.render(scene, camera);
+                render();
               }
             }, 0); // Start at the same time as the zoom animation
           }
@@ -248,15 +258,17 @@
           render();
         }
       });
-      renderer.render(scene, camera);
+      render();
     });
   };
 }
+
 // Make updateEmbroideryTexture function available globally
 window.updateEmbroideryTexture = updateEmbroideryTexture;
+    // Make updateEmbroideryTexture function available globally
+
     
-    //make updateEmbroideryTexture function available globally
-    window.updateEmbroideryTexture = updateEmbroideryTexture;
+
 
 
 
@@ -335,7 +347,7 @@ window.updateEmbroideryTexture = updateEmbroideryTexture;
 <section class="my-60-175">
   <div class="container-1550">
     <div class="customize-your-kandora-main">
-      <div class="kandora-image-section">
+      <div class="kandora-image-section" id="customize-scene">
         <h3 class="image-heading">Choose Your Kandora Style</h3>
         <!-- <div class="kandora-style-slider sticky-portion">
           <div class="kandora-style-items">

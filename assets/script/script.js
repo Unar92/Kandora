@@ -2431,5 +2431,17 @@ input?.addEventListener("keyup", searchHandler);
 suggestions?.addEventListener("click", useSuggestion);
 
 
+//write function for screen less thank 1200px if click on .customize-option li or .customize-option .custom-radio than scroll to .panel-3d
+$(document).ready(function () {
+  $(".customize-option li, .customize-option .custom-radio").click(function () {
+    if ($(window).width() < 991) {
+      $('html, body').animate({
+        scrollTop: $("#customize-scene").offset().top
+      }, 1000);
+    }
+  });
+});
+
+
 
 	 
