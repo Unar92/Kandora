@@ -106,16 +106,19 @@
         render();
 
         const loader = new GLTFLoader().setPath('models/');
-        loader.load('updatedmodel.glb', function (glb) {
+        loader.load('7 11 24 (1).glb', function (glb) {
           glb.scene.scale.set(1.7, 1.7, 1.7);
           glb.scene.position.set(0, -1.1, 0);
           scene.add(glb.scene);
 
           //remove embroidery_plane from scene
           scene.traverse((child) => {
-            if (child.isMesh && child.name === 'Embriodery_plane') {
-              child.visible = false;
-            }
+            // if (child.isMesh && child.name === 'Embriodery_plane005') {
+            //   child.visible = false;
+            // }
+            // if (child.isMesh && child.name === 'Embriodery_plane002') {
+            //   child.visible = false;
+            // }
             if (child.isMesh && child.name === 'tarboosh_tongue') {
               child.visible = false;
             }
@@ -184,9 +187,28 @@
 
       scene.traverse((child) => {
         // Embriodery_plane005 use for new model and for old model use Embriodery_plane
-        if (child.isMesh && child.name === 'Embriodery_plane') { // Ensure you have a way to identify the embroidery mesh
+        if (child.isMesh && child.name === 'Embriodery_plane005') { // Ensure you have a way to identify the embroidery mesh
+            
+            
+            // Make the embroidery mesh visible
             child.visible = true;
             child.material.map = texture;
+            
+            // emisive
+            
+            child.material.emissive = new THREE.Color(0x000000);
+            child.material.needsUpdate = true;
+            child.material.emissive.set(0x000000);
+            child.material.emissiveIntensity = 0.2;
+            //alpha base color
+            // child.material.color.set(0xE7E7E7);
+            //alpha map
+            // child.material.alphaMap = texture;
+            //roughness 1.4
+            child.material.roughness = 1.4;
+            
+          
+            
             child.material.needsUpdate = true;
             child.material.transparent = true;
             child.material.opacity = 0;
@@ -213,7 +235,7 @@
           console.log('Current Controls Target:', currentTarget);
 
           // Desired camera position, zoom level, and controls target
-          const desiredZoom = 6; // Adjust this value to zoom in
+          const desiredZoom = 5; // Adjust this value to zoom in
           const desiredPosition = {
             x: embroideryPosition.x + -3, // Adjust these values as needed
             y: embroideryPosition.y + 0,
@@ -231,7 +253,7 @@ if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vecto
   const timeline = gsap.timeline();
 
   var minZoom = 0.5;
-var maxZoom = 6;
+var maxZoom = 3;
 // controls.minDistance = minZoom; // Minimum zoom distance
 // controls.maxDistance = maxZoom; // Maximum zoom distance
 
@@ -607,7 +629,7 @@ window.updateEmbroideryTexture = updateEmbroideryTexture;
                 </li>
                 <li>
                   <div class="img"
-                    onclick="updateEmbroideryTexture( 'assets/images/customizeyourkandora/embroidery/tarboosh02.png')">
+                    onclick="updateEmbroideryTexture( 'models/embroidery/E2.png')">
                     <img src="models/embroidery/_KA_4427.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 2</h4>
@@ -649,7 +671,7 @@ window.updateEmbroideryTexture = updateEmbroideryTexture;
                 </li>
                 <li>
                   <div class="img"
-                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh08.png')">
+                    onclick="updateEmbroideryTexture('models/embroidery/tarboosh08.png')">
                     <img src="models/embroidery/_KA_4460.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 8</h4>
