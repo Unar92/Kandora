@@ -185,9 +185,18 @@
       scene.traverse((child) => {
         // Embriodery_plane005 use for new model and for old model use Embriodery_plane
         if (child.isMesh && child.name === 'Embriodery_plane') { // Ensure you have a way to identify the embroidery mesh
-          child.visible = true;
-          child.material.map = texture;
-          child.material.needsUpdate = true;
+            child.visible = true;
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+            child.material.transparent = true;
+            child.material.opacity = 0;
+            gsap.to(child.material, {
+              duration: 1,
+              opacity: 1,
+              onUpdate: function () {
+              child.material.needsUpdate = true;
+              }
+            });
 
           // Move the camera to view the embroidery
           const embroideryPosition = child.position.clone();
@@ -204,10 +213,10 @@
           console.log('Current Controls Target:', currentTarget);
 
           // Desired camera position, zoom level, and controls target
-          const desiredZoom = 4; // Adjust this value to zoom in
+          const desiredZoom = 6; // Adjust this value to zoom in
           const desiredPosition = {
-            x: embroideryPosition.x + 2, // Adjust these values as needed
-            y: embroideryPosition.y + 2,
+            x: embroideryPosition.x + -3, // Adjust these values as needed
+            y: embroideryPosition.y + 0,
             z: embroideryPosition.z + 5
           };
           const desiredTarget = embroideryPosition.clone();
@@ -218,43 +227,57 @@
           console.log('Desired Controls Target:', desiredTarget);
 
           // Check if the camera is already at the desired zoom level and position
-          if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) {
-            const timeline = gsap.timeline();
+if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) {
+  const timeline = gsap.timeline();
 
-            timeline.to(camera, {
-              duration:4,
-              zoom: desiredZoom,
-              onUpdate: function () {
-                camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
-              }
-            },0);
+  var minZoom = 0.5;
+var maxZoom = 6;
+// controls.minDistance = minZoom; // Minimum zoom distance
+// controls.maxDistance = maxZoom; // Maximum zoom distance
 
-            timeline.to(camera.position, {
-              duration: 4,
-              x: desiredPosition.x,
-              y: desiredPosition.y,
-              z: desiredPosition.z,
-              
-              onUpdate: function () {
-                camera.lookAt(cameraTarget);
-                camera.zoom = desiredZoom;
-                controls.update(); // Ensure controls are updated
-                render();
-              }
-            }, 0); // Start at the same time as the zoom animation
+timeline.to(camera, {
+    duration: 1,
+    zoom: Math.max(minZoom, Math.min(maxZoom, desiredZoom)), // Ensure desiredZoom is within range
+    ease: "power2.inOut", // Use easing function for smooth animation
+    onUpdate: function () {
+      camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom)); // Clamp the zoom level
+      camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
+    },
+});
 
-            timeline.to(controls.target, {
-              duration: 4,
-              x: desiredTarget.x,
-              y: desiredTarget.y,
-              z: desiredTarget.z,
-              onUpdate: function () {
-                controls.update();
-                render();
-              }
-            }, 0); // Start at the same time as the zoom animation
-          }
+  timeline.to(camera.position, {
+    duration: 1,
+    x: desiredPosition.x,
+    y: desiredPosition.y,
+    z: desiredPosition.z,
+    onUpdate: function () {
+      //camera zoom
+      camera.lookAt(cameraTarget);
+      controls.update(); // Ensure controls are updated
+      render();
+    }
+  }, 0); // Start at the same time as the zoom animation
 
+  timeline.to(controls.target, {
+    duration: 1,
+    x: desiredTarget.x,
+    y: desiredTarget.y,
+    z: desiredTarget.z,
+    onStart: function () {
+      controls.minDistance = 1; // Ensure min zoom distance is set before animation
+      controls.maxDistance = 20; // Ensure max zoom distance is set before animation
+    },
+    onUpdate: function () {
+      controls.update();
+      render();
+    },
+    onComplete: function () {
+      controls.update();
+      controls.minDistance = 1; // Ensure min zoom distance is set after animation
+      controls.maxDistance = 20; // Ensure max zoom distance is set after animation
+    }
+  }, 0); // Start at the same time as the zoom animation
+}
           render();
         }
       });
@@ -272,7 +295,6 @@ window.updateEmbroideryTexture = updateEmbroideryTexture;
 
 
 
-
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(container.clientWidth, container.clientHeight);
@@ -282,8 +304,8 @@ window.updateEmbroideryTexture = updateEmbroideryTexture;
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.addEventListener('change', render);
-    // controls.minDistance = 2;
-    // controls.maxDistance = 10;
+    controls.minDistance = 1; // Minimum zoom distance
+    controls.maxDistance = 20; // Maximum zoom distance
     controls.target.set(0, 0.5, -0.2);
     controls.update();
 
