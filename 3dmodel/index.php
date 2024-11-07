@@ -80,87 +80,113 @@
 				scene = new THREE.Scene();
 
 				new RGBELoader()
-					.setPath( 'models/' )
-					.load( 'studio_small_08_1k.hdr', function ( texture ) {
+    .setPath('models/')
+    .load('studio_small_08_1k.hdr', function (texture) {
 
-						texture.mapping = THREE.EquirectangularReflectionMapping;
+        texture.mapping = THREE.EquirectangularReflectionMapping;
 
-						scene.background = texture;
-						scene.environment = texture;
+        scene.background = texture;
+        scene.environment = texture;
 
-						// scene.background = new THREE.Color(0x000000); // Set background to black
-						// scene.environment = null; // Remove the environment texture
-						// //tone mapping linear
-						// renderer.toneMapping = THREE.LinearToneMapping;
-						// renderer.toneMappingExposure = 1;
-						//ambient intensity 0
-						// scene.add(new THREE.AmbientLight(0xffffff, 0));
-						//direct intensity 0
-						// const light = new THREE.DirectionalLight(0xffffff, 0);
+		// scene.background = new THREE.Color(0xffffff); // Set background to white
+		// scene.environment = null; // Remove the environment texture
+		// //tone mapping linear
+		// renderer.toneMapping = THREE.LinearToneMapping;
+		// renderer.toneMappingExposure = 1;
+		// //ambient intensity 0
+		// const ambientLight = new THREE.AmbientLight(0xffffff, 1); // Add ambient light
+		// scene.add(ambientLight);
+        // scene.add(new THREE.AmbientLight(0xffffff, 0));
+        //direct intensity 0
+        // const light = new THREE.DirectionalLight(0xffffff, 0);
 
+        // model
+        const loader = new GLTFLoader().setPath('models/');
+        loader.load('test (1).glb', function (glb) {
 
+            glb.scene.scale.set(2, 2, 2); // Increase the scale to zoom in
+            glb.scene.position.set(0, -1.5, 0);
+
+            scene.add(glb.scene);
+
+            // Step 1: Load the texture
+			const textureLoader = new THREE.TextureLoader();
+			const texture = textureLoader.load('models/uv1.jpeg', function (texture) {
+				// Step 2: Set the repeat property
+				texture.repeat.set(8, 8); // Adjust the numbers to tile the texture
+
+				// Step 3: Set the wrapS and wrapT properties
+				texture.wrapS = THREE.RepeatWrapping;
+				texture.wrapT = THREE.RepeatWrapping;
+
+				// Apply the texture to the existing model
+				scene.traverse((child) => {
+					if (child.isMesh) {
+						child.material.map = texture;
+						child.material.color.set(0xffffff); // Ensure the color is white to not affect the texture
+						child.material.needsUpdate = true;
 						render();
+					}
+				});
+			});
 
-						// model
+			// Convert the texture to black and white
+			textureLoader.load('models/uv1.jpeg', function (texture) {
+				const canvas = document.createElement('canvas');
+				const context = canvas.getContext('2d');
+				canvas.width = texture.image.width;
+				canvas.height = texture.image.height;
+				context.drawImage(texture.image, 0, 0);
+				const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+				const data = imageData.data;
 
-						const loader = new GLTFLoader().setPath( 'models/' );
-						loader.load( 'test (1).glb', function ( glb ) {
+				for (let i = 0; i < data.length; i += 4) {
+					const brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+					data[i] = brightness;
+					data[i + 1] = brightness;
+					data[i + 2] = brightness;
+				}
 
-							glb.scene.scale.set( 2, 2, 2 ); // Increase the scale to zoom in
-							glb.scene.position.set( 0, -1.5, 0);
-							
+				context.putImageData(imageData, 0, 0);
+				const newTexture = new THREE.CanvasTexture(canvas);
+				newTexture.repeat.set(8, 8);
+				newTexture.wrapS = THREE.RepeatWrapping;
+				newTexture.wrapT = THREE.RepeatWrapping;
 
-							scene.add( glb.scene );
+				// Apply the black and white texture to the model
+				scene.traverse((child) => {
+					if (child.isMesh) {
+						child.material.map = newTexture;
+						child.material.color.set(0xffffff); // Ensure the color is white to not affect the texture
+						child.material.needsUpdate = true;
+						render();
+					}
+				});
+			});
 
-							 // Step 1: Load the texture
-							const textureLoader = new THREE.TextureLoader();
-							const texture = textureLoader.load('models/uv1.jpeg');
+            
 
-							// Step 2: Set the repeat property
-							texture.repeat.set(8, 8); // Adjust the numbers to tile the texture
+            // GUI
+            gui = new GUI();
 
-																									
+            // Details of the KHR_materials_variants extension used here can be found below
+            // https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_variants
+            const parser = glb.parser;
 
-							// Step 3: Set the wrapS and wrapT properties
-							texture.wrapS = THREE.RepeatWrapping;
-							texture.wrapT = THREE.RepeatWrapping;
+            // On load of model console all uv map name
+            glb.scene.traverse((child) => {
+                if (child.isMesh) {
+                    console.log("uv name", child.geometry.attributes.uv.name);
+                }
+            });
 
-							// Apply the texture to the existing model's materials
-							glb.scene.traverse((child) => {
-							if (child.isMesh) {
-								child.material = new THREE.MeshStandardMaterial({
-									normalMap: normalMap,
-									color: 0xffffff, // White color to avoid color blending issues
-									// You can adjust other properties like roughness, metalness, etc.
-								});
-								child.material.needsUpdate = true;
-							}
-						});
+        });
 
-						});
+        render();
 
-						
+    });
 
-							// GUI
-							gui = new GUI();
-
-							// Details of the KHR_materials_variants extension used here can be found below
-							// https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_variants
-							const parser = glb.parser;
-
-							//on load of model console all uv map name
-							glb.scene.traverse((child) => {
-								if (child.isMesh) {
-									console.log("uv name",child.geometry.attributes.uv.name);
-								}
-							});
-							
-
-           				 render();
-
-						} );
-
-					} );
+					
 
 
 				document.getElementById('metallicSlider').addEventListener('input', function(event) {
