@@ -731,20 +731,20 @@
                 </li>
                 <li>
                   <div class="img"
-                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh06.png')">
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/new/style6.png')">
                     <img src="models/embroidery/_KA_4456.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 6</h4>
                 </li>
                 <li>
                   <div class="img"
-                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh07.png')">
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/new/style7.png')">
                     <img src="models/embroidery/_KA_4457.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 7</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="updateEmbroideryTexture('models/embroidery/tarboosh08.png')">
+                  <div class="img" onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/new/style8.png')">
                     <img src="models/embroidery/_KA_4460.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 8</h4>

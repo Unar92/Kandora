@@ -1,4 +1,7 @@
 <style>
+  html {
+  scroll-behavior: smooth;
+}
   .Select,
   #toolbar,
   #viewHelper,
@@ -32,6 +35,8 @@
     margin-right: 15px;
     border: 1px solid #777;
   }
+
+  
 </style>
 
 <link rel="stylesheet" href="css/main.css" />
@@ -71,7 +76,7 @@
     const container = document.querySelector('.panel-3d');
 
     camera = new THREE.PerspectiveCamera(25, container.clientWidth / container.clientHeight, 0.25, 100);
-    camera.position.set(1, 2,  8);
+    camera.position.set(1, 2, 8);
     //camera zoom
     camera.zoom = 1;
     camera.updateProjectionMatrix();
@@ -93,39 +98,48 @@
 
         scene.background = new THREE.Color(0xf1f1f1);
         scene.environment = null;
-        renderer.toneMapping = THREE.LinearToneMapping;
-        renderer.toneMappingExposure = 1;
+
+        // renderer.toneMapping = THREE.LinearToneMapping;
+        // renderer.toneMappingExposure = 1;
+
+
+
+
+
+
 
 
 
         //ambient intensity 0
-        // scene.add(new THREE.AmbientLight(0xffffff, 0));
+        // scene.add(new THREE.AmbientLight(0x000000, 0));
         //direct intensity 0
-        // const light = new THREE.DirectionalLight(0xffffff, 0);
+        // const light = new THREE.DirectionalLight(0x000000, 0);
 
         render();
 
         const loader = new GLTFLoader().setPath('models/');
-        loader.load('7 11 24 (1).glb', function (glb) {
+        loader.load('7 11 24 (2).glb', function (glb) {
           glb.scene.scale.set(1.7, 1.7, 1.7);
           glb.scene.position.set(0, -1.1, 0);
           scene.add(glb.scene);
 
           //remove embroidery_plane from scene
-          scene.traverse((child) => {
-            // if (child.isMesh && child.name === 'Embriodery_plane005') {
-            //   child.visible = false;
-            // }
-            // if (child.isMesh && child.name === 'Embriodery_plane002') {
-            //   child.visible = false;
-            // }
-            if (child.isMesh && child.name === 'tarboosh_tongue') {
-              child.visible = false;
-            }
-            if (child.isMesh && child.name === 'tarboosh_1') {
-              child.visible = false;
-            }
-          });
+          // scene.traverse((child) => {
+          //   if (child.isMesh && child.name === 'Embriodery_plane005') {
+
+          //     child.visible = false;
+          //   }
+          //   if (child.isMesh && child.name === 'Embriodery_plane002') {
+          //     child.visible = false;
+
+          //   }
+          //   if (child.isMesh && child.name === 'tarboosh_tongue') {
+          //     child.visible = false;
+          //   }
+          //   if (child.isMesh && child.name === 'tarboosh_1') {
+          //     child.visible = false;
+          //   }
+          // });
 
           gui = new GUI();
           const parser = glb.parser;
@@ -170,149 +184,205 @@
 
 
 
-   
+
     function updateEmbroideryTexture(textureUrl) {
-  // Preload the image
-  var img = new Image();
-  img.src = textureUrl;
+      // Preload the image
+      var img = new Image();
+      img.src = textureUrl;
 
-  img.onload = function () {
-    // Image is preloaded, proceed with updating the texture
-    console.log('Embroidery texture change');
-    const loader = new THREE.TextureLoader();
-    loader.load(textureUrl, function (texture) {
-      texture.wrapS = THREE.RepeatWrapping;
-      texture.wrapT = THREE.RepeatWrapping;
-      texture.needsUpdate = true; // Ensure the texture is updated
+      img.onload = function () {
+        // Image is preloaded, proceed with updating the texture
+        console.log('Embroidery texture change');
+        const loader = new THREE.TextureLoader();
+        loader.load(textureUrl, function (texture) {
+          texture.wrapS = THREE.RepeatWrapping;
+          texture.wrapT = THREE.RepeatWrapping;
+          texture.needsUpdate = true; // Ensure the texture is updated
 
-      scene.traverse((child) => {
-        // Embriodery_plane005 use for new model and for old model use Embriodery_plane
-        if (child.isMesh && child.name === 'Embriodery_plane005') { // Ensure you have a way to identify the embroidery mesh
-            
-            
-            // Make the embroidery mesh visible
-            child.visible = true;
-            child.material.map = texture;
-            
-            // emisive
-            
-            child.material.emissive = new THREE.Color(0x000000);
-            child.material.needsUpdate = true;
-            child.material.emissive.set(0x000000);
-            child.material.emissiveIntensity = 0.2;
-            //alpha base color
-            // child.material.color.set(0xE7E7E7);
-            //alpha map
-            // child.material.alphaMap = texture;
-            //roughness 1.4
-            child.material.roughness = 1.4;
-            
-          
-            
-            child.material.needsUpdate = true;
-            child.material.transparent = true;
-            child.material.opacity = 0;
-            gsap.to(child.material, {
-              duration: 1,
-              opacity: 1,
-              onUpdate: function () {
-              child.material.needsUpdate = true;
+          scene.traverse((child) => {
+            // Embriodery_plane005 use for new model and for old model use Embriodery_plane
+            if (child.isMesh && child.name === 'Embriodery_plane005') { // Ensure you have a way to identify the embroidery mesh
+              child.visible = true;
+              
+          // Load the specular map
+          // Load the specular map
+          const specularLoader = new THREE.TextureLoader();
+          specularLoader.load('models/spec.jpeg', function (specularTexture) {
+            if (child.material) {
+              if (child.material.type === 'MeshStandardMaterial' || child.material.type === 'MeshPhongMaterial') {
+                child.material.specularMap = specularTexture;
+              } else if (child.material.type === 'MeshPhysicalMaterial') {
+                child.material.roughnessMap = specularTexture;
+                child.material.metalnessMap = specularTexture;
+              } else {
+                console.warn('Material does not support specular maps:', child.material);
               }
-            });
+              child.material.needsUpdate = true; // Ensure the material updates immediately
+            }
+          });
 
-          // Move the camera to view the embroidery
-          const embroideryPosition = child.position.clone();
-          const cameraTarget = new THREE.Vector3(embroideryPosition.x, embroideryPosition.y, embroideryPosition.z);
 
-          // Capture the current camera position, zoom level, and controls target
-          const currentCameraPosition = camera.position.clone();
-          const currentZoom = camera.zoom;
-          const currentTarget = controls.target.clone();
+              if (child.name === 'Embriodery_plane005') {
+                //remove old texture
+                //dispose old texture
+                if (child.material.map) {
+              child.material.map.dispose();
+              child.material.map = null;
+            }
+            //enviroment none
+            scene.environment = null;
 
-          // Log current camera and controls state
-          console.log('Current Camera Position:', currentCameraPosition);
-          console.log('Current Zoom:', currentZoom);
-          console.log('Current Controls Target:', currentTarget);
 
-          // Desired camera position, zoom level, and controls target
-          const desiredZoom = 5; // Adjust this value to zoom in
-          const desiredPosition = {
-            x: embroideryPosition.x + -3, // Adjust these values as needed
-            y: embroideryPosition.y + 0,
-            z: embroideryPosition.z + 5
-          };
-          const desiredTarget = embroideryPosition.clone();
+            child.material.needsUpdate = true; // Ensure the material updates immediately
+            child.material.map = texture;
 
-          // Log desired camera and controls state
-          console.log('Desired Camera Position:', desiredPosition);
-          console.log('Desired Zoom:', desiredZoom);
-          console.log('Desired Controls Target:', desiredTarget);
+            // Use emission map
+            child.material.emissiveMap = texture;
+            child.material.emissiveIntensity = 0.4; // Adjust emissive intensity
+            child.material.needsUpdate = true; // Ensure the material updates immediately
 
-          // Check if the camera is already at the desired zoom level and position
-if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) {
-  const timeline = gsap.timeline();
+            // Adjust roughness and metalness
+            // child.material.roughness = 0.2; // Adjust roughness
+            // child.material.metalness = 0.2; // Adjust metalness
 
-  var minZoom = 0.5;
-var maxZoom = 3;
-// controls.minDistance = minZoom; // Minimum zoom distance
-// controls.maxDistance = maxZoom; // Maximum zoom distance
 
-timeline.to(camera, {
-    duration: 1,
-    zoom: Math.max(minZoom, Math.min(maxZoom, desiredZoom)), // Ensure desiredZoom is within range
-    ease: "power2.inOut", // Use easing function for smooth animation
-    onUpdate: function () {
-      camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom)); // Clamp the zoom level
-      camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
-    },
-});
+                //get current base color code and apply for emisive 
+                //child.material.emissive.set(0x000000);
 
-  timeline.to(camera.position, {
-    duration: 1,
-    x: desiredPosition.x,
-    y: desiredPosition.y,
-    z: desiredPosition.z,
-    onUpdate: function () {
-      //camera zoom
-      camera.lookAt(cameraTarget);
-      controls.update(); // Ensure controls are updated
-      render();
-    }
-  }, 0); // Start at the same time as the zoom animation
 
-  timeline.to(controls.target, {
-    duration: 1,
-    x: desiredTarget.x,
-    y: desiredTarget.y,
-    z: desiredTarget.z,
-    onStart: function () {
-      controls.minDistance = 1; // Ensure min zoom distance is set before animation
-      controls.maxDistance = 20; // Ensure max zoom distance is set before animation
-    },
-    onUpdate: function () {
-      controls.update();
-      render();
-    },
-    onComplete: function () {
-      controls.update();
-      controls.minDistance = 1; // Ensure min zoom distance is set after animation
-      controls.maxDistance = 20; // Ensure max zoom distance is set after animation
-    }
-  }, 0); // Start at the same time as the zoom animation
-}
+
+
+
+                // child.material.emissiveIntensity = 0.5; // Set emissive intensity to 0
+                child.material.roughness = 1; // Adjust roughness
+                child.material.metalness = 0; // Adjust metalness
+
+                // child.material.transparent = true;
+                // child.material.opacity = 0;
+                // gsap.to(child.material, {
+                //   duration: 1,
+                //   opacity: 1,
+                //   onUpdate: function () {
+                //     child.material.needsUpdate = true;
+                //   }
+                // });
+              }
+
+              // Move the camera to view the embroidery
+              const embroideryPosition = child.position.clone();
+              const cameraTarget = new THREE.Vector3(embroideryPosition.x, embroideryPosition.y, embroideryPosition.z);
+
+              // Capture the current camera position, zoom level, and controls target
+              const currentCameraPosition = camera.position.clone();
+              const currentZoom = camera.zoom;
+              const currentTarget = controls.target.clone();
+
+              // Log current camera and controls state
+              console.log('Current Camera Position:', currentCameraPosition);
+              console.log('Current Zoom:', currentZoom);
+              console.log('Current Controls Target:', currentTarget);
+
+              // Desired camera position, zoom level, and controls target
+              const desiredZoom = 6; // Adjust this value to zoom in
+              const desiredPosition = {
+                x: embroideryPosition.x + -3, // Adjust these values as needed
+                y: embroideryPosition.y + 0,
+                z: embroideryPosition.z + 5
+              };
+              const desiredTarget = embroideryPosition.clone();
+
+              // Log desired camera and controls state
+              console.log('Desired Camera Position:', desiredPosition);
+              console.log('Desired Zoom:', desiredZoom);
+              console.log('Desired Controls Target:', desiredTarget);
+
+              // Check if the camera is already at the desired zoom level and position
+              if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) 
+              {
+                const timeline = gsap.timeline();
+
+                var minZoom = 0.1;
+                var maxZoom = 6;
+                controls.minDistance = minZoom; // Minimum zoom distance
+                controls.maxDistance = maxZoom; // Maximum zoom distance
+
+                timeline.to(camera, {
+                  duration: 1,
+                  zoom: Math.max(minZoom, Math.min(maxZoom, desiredZoom)), // Ensure desiredZoom is within range
+                  ease: "power2.inOut", // Use easing function for smooth animation
+                  onUpdate: function () {
+                    camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom)); // Clamp the zoom level
+                    camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
+                  },
+                });
+
+                timeline.to(camera.position, {
+                  duration: 1,
+                  x: desiredPosition.x,
+                  y: desiredPosition.y,
+                  z: desiredPosition.z,
+                  onUpdate: function () {
+                    //camera zoom
+                    camera.lookAt(cameraTarget);
+                    //move camera closer to model
+                    // camera.position.set(desiredPosition.x, desiredPosition.y, desiredPosition.z);
+                    controls.update(); // Ensure controls are updated
+                    render();
+                  }
+                }, 0); // Start at the same time as the zoom animation
+
+                timeline.to(controls.target, {
+                  duration: 1,
+                  x: desiredTarget.x,
+                  y: desiredTarget.y,
+                  z: desiredTarget.z,
+                  onStart: function () {
+                    controls.minDistance = 1; // Ensure min zoom distance is set before animation
+                    controls.maxDistance = 50; // Ensure max zoom distance is set before animation
+                  },
+                  onUpdate: function () {
+                    controls.update();
+                    render();
+                  },
+                  onComplete: function () {
+                    controls.update();
+                    controls.minDistance = 1; // Ensure min zoom distance is set after animation
+                    controls.maxDistance = 50; // Ensure max zoom distance is set after animation
+                  }
+                }, 0); // Start at the same time as the zoom animation
+                
+              }
+              render();
+            }
+          });
           render();
+        });
+      };
+    }
+
+    // Make updateEmbroideryTexture function available globally
+    window.updateEmbroideryTexture = updateEmbroideryTexture;
+  
+
+    // Function to remove embroidery texture
+    function removeEmbroideryTexture() {
+      console.log('Remove embroidery texture');
+      scene.traverse((child) => {
+        if (child.isMesh && child.name === 'Embriodery_plane005') {
+          //visible false
+          child.visible = false;
+          
+          
         }
       });
       render();
-    });
-  };
-}
+    }
 
-// Make updateEmbroideryTexture function available globally
-window.updateEmbroideryTexture = updateEmbroideryTexture;
-    // Make updateEmbroideryTexture function available globally
+    // Make removeEmbroideryTexture function available globally
+    window.removeEmbroideryTexture = removeEmbroideryTexture;
 
-    
+
+
 
 
 
@@ -320,7 +390,8 @@ window.updateEmbroideryTexture = updateEmbroideryTexture;
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    //envrionment none
+    renderer.toneMapping = THREE.LinearToneMapping;
     renderer.toneMappingExposure = 1;
     container.appendChild(renderer.domElement);
 
@@ -619,66 +690,73 @@ window.updateEmbroideryTexture = updateEmbroideryTexture;
           <div class="customize-option">
             <div class="images-option mt-0">
               <ul class="image-border">
+                <li class="active">
+
+              <div class="img"
+                onclick="removeEmbroideryTexture()">
+                <img src="models/embroidery/none.png" alt="" />
+              </div>
+              <h4 class="embroidery_style">No Embroidery</h4>
+              </li>
                 <li>
 
                   <div class="img"
-                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh01.png')">
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/new/E3.png')">
                     <img src="models/embroidery/_KA_4417.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 1</h4>
                 </li>
                 <li>
                   <div class="img"
-                    onclick="updateEmbroideryTexture( 'models/embroidery/E2.png')">
+                    onclick="updateEmbroideryTexture( 'assets/images/customizeyourkandora/embroidery/new/E2.png')">
                     <img src="models/embroidery/_KA_4427.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 2</h4>
                 </li>
                 <li>
                   <div class="img"
-                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh03.png')">
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/new/E4Final.png')">
                     <img src="models/embroidery/_KA_4440.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 3</h4>
                 </li>
                 <li>
                   <div class="img"
-                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh04.png')">
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/new/style4.png')">
                     <img src="models/embroidery/_KA_4446.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 4</h4>
                 </li>
                 <li>
                   <div class="img"
-                    onclick="updateEmbroideryTexture( 'assets/images/customizeyourkandora/embroidery/tarboosh05.png')">
+                    onclick="updateEmbroideryTexture( 'assets/images/customizeyourkandora/embroidery/new/style5.png')">
                     <img src="models/embroidery/_KA_4451.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 5</h4>
                 </li>
                 <li>
                   <div class="img"
-                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh06.png')">
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/new/style6.png')">
                     <img src="models/embroidery/_KA_4456.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 6</h4>
                 </li>
                 <li>
                   <div class="img"
-                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh07.png')">
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/new/style7.png')">
                     <img src="models/embroidery/_KA_4457.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 7</h4>
                 </li>
                 <li>
-                  <div class="img"
-                    onclick="updateEmbroideryTexture('models/embroidery/tarboosh08.png')">
+                  <div class="img" onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/new/style8.png')">
                     <img src="models/embroidery/_KA_4460.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 8</h4>
                 </li>
                 <li>
                   <div class="img"
-                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/tarboosh09.png')">
+                    onclick="updateEmbroideryTexture('assets/images/customizeyourkandora/embroidery/new/em1.png')">
                     <img src="models/embroidery/_KA_4461.png" alt="" />
                   </div>
                   <h4 class="embroidery_style">Style 9</h4>

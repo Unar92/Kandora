@@ -2433,11 +2433,32 @@ suggestions?.addEventListener("click", useSuggestion);
 
 //write function for screen less thank 1200px if click on .customize-option li or .customize-option .custom-radio than scroll to .panel-3d
 $(document).ready(function () {
+  let isScrolling = false;
+
   $(".customize-option li, .customize-option .custom-radio").click(function () {
     if ($(window).width() < 991) {
+      isScrolling = true;
       $('html, body').animate({
         scrollTop: $("#customize-scene").offset().top
-      }, 1000);
+      }, {
+        duration: 1000,
+        complete: function () {
+          isScrolling = false;
+          console.log('Scroll animation completed');
+        }
+      });
+    }
+  });
+
+  // Stop animation if user interacts with the website
+  $(window).on('touchstart touchmove', function () {
+    if (isScrolling) {
+    //stop scroll animation
+
+      $('html, body').stop();
+
+      console.log('Stopped');
+      isScrolling = false;
     }
   });
 });
