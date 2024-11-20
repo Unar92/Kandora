@@ -123,6 +123,16 @@
           glb.scene.position.set(0, -1.1, 0);
           scene.add(glb.scene);
 
+           //   add another model from glb and placed it over the first model
+            loader.load('collars.glb', function (glb) {
+              glb.scene.scale.set(1.7, 1.7, 1.7);
+              glb.scene.position.set(0, -1.1, 0);
+              scene.add(glb.scene);
+
+              //render
+                render();
+            });
+
           //remove embroidery_plane from scene
           // scene.traverse((child) => {
           //   if (child.isMesh && child.name === 'Embriodery_plane005') {
