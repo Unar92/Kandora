@@ -19,7 +19,10 @@
     }
 
     .panel-3d {
-        position: relative;
+      width:100%;
+      height:calc(75vh); 
+      position: relative;
+      
     }
 
     @media screen and (max-width:767px) {
@@ -36,6 +39,60 @@
         margin-right: 15px;
         border: 1px solid #777;
     }
+
+    .loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    position: absolute;
+    top: 50% ;
+    left: 50% ;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    }
+
+    .loading-assets .loader
+    {
+      opacity: 1;
+    }
+    
+
+    @keyframes rotation {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+  .panel-3d.loading-assets::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 0;
+  display: inline-block;
+  box-sizing: border-box;
+  opacity: 1;
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.panel-3d::after {
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0);
+}
 </style>
 
 <link rel="stylesheet" href="css/main.css" />
@@ -122,7 +179,7 @@
                 render();
                 const loader = new GLTFLoader().setPath('models/');
 
-                // Function to remove specific objects from a model
+               
                 // Function to remove specific objects from a model
                 function removeObjects(model) {
                     let objectsToRemove = [];
@@ -141,8 +198,14 @@
                             }
 
                             // remove Found mesh: cuff02_1 cuff02_2 cuff02_3 cuff3_1 cuff3_2  cuff3_3  cuff4_1 cuff4_2 cuff4_3
-                            if (child.name === 'cuff02_1' || child.name === 'cuff02_2' || child.name === 'cuff02_3' || child.name === 'cuff3_1' || child.name === 'cuff3_2' || child.name === 'cuff3_3' || child.name === 'cuff4_1' || child.name === 'cuff4_2' || child.name === 'cuff4_3') {
+                            if (child.name === 'cuff01_1' || child.name === 'cuff01_2' || child.name === 'cuff02_1' || child.name === 'cuff02_2' || child.name === 'cuff02_3' || child.name === 'cuff3_1' || child.name === 'cuff3_2' || child.name === 'cuff3_3' || child.name === 'cuff4_1' || child.name === 'cuff4_2' || child.name === 'cuff4_3') {
                               child.visible = false;
+                            }
+
+                            // remove Found mesh: cuff02_1 cuff02_2 cuff02_3 cuff3_1 cuff3_2  cuff3_3  cuff4_1 cuff4_2 cuff4_3
+                            if (child.name === 'collar1_1' || child.name === 'collar1_2' || child.name === 'collar1_3' ||  child.name === 'collar2_2' ||  child.name === 'collar2_2' || child.name === 'collar3_1' || child.name === 'collar3_2' || child.name === 'collar4_1' || child.name === 'collar4_2' || child.name === 'collar4_3' || child.name === 'collar5_1' || child.name === 'collar5_2' || child.name === 'collar6_1' || child.name === 'collar6_2' || child.name === 'collar7_1'  || child.name === 'collar7_2'  || child.name === 'collar8'  || child.name === 'collar9') {
+                              child.visible = false;
+                             console.log("rRemove Collar", child.name);
                             }
 
                         }
@@ -156,7 +219,7 @@
                     });
                 }
 
-                // Load the first GLB file
+             
                 // Load the first GLB file
                 loader.load('7 11 24 (2).glb', function (glb1) {
                     glb1.scene.scale.set(1.7, 1.7, 1.7);
@@ -165,9 +228,23 @@
 
                     // Remove specific objects from the first GLB model
                     removeObjects(glb1.scene);
+                    render();
 
                     // Load the second GLB file
-                    loader.load('collars(2).glb', function (glb2) {
+                   //add collar to the scene when function is triggered
+                  function addCollar(collarstyle) {
+                    // class loading-assets to panel-3d
+                    document.querySelector('.panel-3d').classList.add('loading-assets');
+                    // Check if the collar is already added
+                    let collarAdded = false;
+                    scene.traverse((child) => {
+                      if (child.isMesh && child.name.includes('collar')) {
+                        collarAdded = true;
+                      }
+                    });
+
+                    if (!collarAdded) {
+                      loader.load('collar.glb', function (glb2) {
                         glb2.scene.scale.set(1.7, 1.7, 1.7);
                         glb2.scene.position.set(0, -1.1, 0);
                         scene.add(glb2.scene);
@@ -175,12 +252,66 @@
                         // Remove specific objects from the second GLB model
                         removeObjects(glb2.scene);
 
+                        // Make the specified collar styles visible
+                        const collarStyles = collarstyle.split(',').map(style => style.trim());
+                        glb2.scene.traverse((child) => {
+                          if (child.isMesh && collarStyles.some(style => child.name.includes(style))) {
+                            child.visible = true;
+                          }
+                        });
+
                         // Render the scene after both models are loaded
+                        setTimeout(() => {
+                          document.querySelector('.panel-3d').classList.remove('loading-assets');
+                          render();
+                          // animateCameraToObjPosition("collar");
+                        }, 500); // Delay of 500 milliseconds
+                      });
+                    } else {
+                      // Modify the current loaded model
+                      const collarStyles = collarstyle.split(',').map(style => style.trim());
+
+                      // Hide all elements first
+                      scene.traverse((child) => {
+                        if (child.isMesh && child.name.toLowerCase().includes('collar')) {
+                          child.visible = false;
+                        }
+                      });
+
+                      scene.traverse((child) => {
+                        if (child.isMesh && collarStyles.some(style => child.name.includes(style))) {
+                          child.visible = true;
+                        }
+                      });
+
+                      // Render the scene after modifying the model
+                      setTimeout(() => {
+                        document.querySelector('.panel-3d').classList.remove('loading-assets');
                         render();
+                        // animateCameraToObjPosition("collar");
+                      }, 500); // Delay of 500 milliseconds
+                    }
+                  }
+
+                //global add collar function
+                window.addCollar = addCollar;
+                  
+
+                //add cuff to the scene when function is triggered
+                function addCuff(cuffstyle) {
+                  // class loading-assets to panel-3d
+                  document.querySelector('.panel-3d').classList.add('loading-assets');
+                // Check if the cuff is already added
+                    let cuffAdded = false;
+                    scene.traverse((child) => {
+                      if (child.isMesh && child.name.includes('cuff')) {
+                        cuffAdded = true;
+                        // console.log('Cuff already added');
+                      }
                     });
 
-                    // Load the second GLB file
-                    loader.load('cuff.glb', function (glb2) {
+                    if (!cuffAdded) {
+                      loader.load('cuff.glb', function (glb2) {
                         glb2.scene.scale.set(1.7, 1.7, 1.7);
                         glb2.scene.position.set(0, -1.1, 0);
                         scene.add(glb2.scene);
@@ -188,10 +319,65 @@
                         // Remove specific objects from the second GLB model
                         removeObjects(glb2.scene);
 
-                        // Render the scene after both models are loaded
-                        render();
-                    });
+                        // Make the specified cuff styles visible
+                        const cuffStyles = cuffstyle.split(',').map(style => style.trim());
+                        glb2.scene.traverse((child) => {
+                          if (child.isMesh && cuffStyles.some(style => child.name.includes(style))) {
+                            child.visible = true;
+                          }
+                        });
 
+                        // Render the scene after both models are loaded
+                        setTimeout(() => {
+                          document.querySelector('.panel-3d').classList.remove('loading-assets');
+                          render(); 
+                          animateCameraToObjPosition("cuff");
+                          
+
+                        }, 500); // Delay of 500 milliseconds
+                         
+                      });
+                    } else {
+                      // Modify the current loaded model
+                      
+                      const cuffStyles = cuffstyle.split(',').map(style => style.trim());
+                      
+                      //hide all element first
+                      scene.traverse((child) => {
+                        if (child.isMesh && child.name.toLowerCase().includes('cuff')) {
+                          child.visible = false;
+                        
+                        }
+                      });
+
+
+                      scene.traverse((child) => {
+                        
+                        if (child.isMesh && cuffStyles.some(style => child.name.includes(style))) {
+                          child.visible = true;
+                          console.log(cuffStyles, "visible");
+                        }
+                      });
+                      
+                      console.log('Cuff already added');
+
+                      // Render the scene after modifying the model
+                      
+                        setTimeout(() => {
+                          document.querySelector('.panel-3d').classList.remove('loading-assets');
+                          render(); 
+                          animateCameraToObjPosition("cuff");
+                          
+
+                        }, 500); // Delay of 500 milliseconds
+                         
+
+                    }
+                  }
+
+
+                //global add cuff function
+                window.addCuff = addCuff;
                     
                
             
@@ -211,6 +397,120 @@
                 updateColorProperty(colorValue);
             });
         });
+
+
+        
+        
+        
+
+        //function to animate camera to cuff position using gsap
+        function animateCameraToObjPosition(objType) {
+            // Capture the current camera position, zoom level, and controls target
+            const currentCameraPosition = camera.position.clone();
+            const currentZoom = camera.zoom;
+            const currentTarget = controls.target.clone();
+
+            
+            var minZoom = 0.1;
+                var maxZoom = 3;
+
+            // Desired camera position, zoom level, and controls target
+            let desiredZoom = 3; // Adjust this value to zoom in
+            const desiredPosition = {
+                x: 1, // Adjust these values as needed
+                y: 7,
+                z: 8
+            };
+
+            //if objType is cuff
+            if (objType === 'cuff') {
+                desiredPosition.x = 1;
+                desiredPosition.y = 7;
+                desiredPosition.z = 8;
+                
+            }
+
+            //if objType is collar
+            if (objType === 'collar') {
+              desiredZoom = 8;
+              desiredPosition.x = 1.02;
+              desiredPosition.y = 35.75;
+              desiredPosition.z = 40.04;
+              maxZoom = 8;
+              console.log('Collar position:', desiredPosition);
+            }
+
+            let desiredTarget = new THREE.Vector3(0, 0, 0);
+           
+            if (objType === 'collar') {
+                scene.traverse((child) => {
+                    if (child.isMesh && child.name.includes('collar')) {
+                        desiredTarget = child.position.clone();
+                    }
+                });
+            }
+
+
+
+            // Check if the camera is already at the desired zoom level and position
+            if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) {
+                const timeline = gsap.timeline();
+
+                
+
+                
+                controls.minDistance = minZoom; // Minimum zoom distance
+                controls.maxDistance = maxZoom; // Maximum zoom distance
+
+                timeline.to(camera, {
+                    duration: 1,
+                    zoom: Math.max(minZoom, Math.min(maxZoom, desiredZoom)), // Ensure desiredZoom is within range
+                    ease: "power2.inOut", // Use easing function for smooth animation
+                    onUpdate: function () {
+                        camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom)); // Clamp the zoom level
+                        camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
+                    },
+                });
+
+                timeline.to(camera.position, {
+                    duration: 1,
+                    x: desiredPosition.x,
+                    y: desiredPosition.y,
+                    z: desiredPosition.z,
+                    onUpdate: function () {
+                        //camera zoom
+                        camera.lookAt(desiredTarget);
+                        //move camera closer to model
+                        // camera.position.set(desiredPosition.x, desiredPosition.y, desiredPosition.z);
+                        controls.update(); // Ensure controls are updated
+                        render();
+                    }
+                }, 0); // Start at the same time as the zoom animation
+
+                timeline.to(controls.target, {
+                    duration: 1,
+                    x: desiredTarget.x,
+                    y: desiredTarget.y,
+                    z: desiredTarget.z,
+                    onStart: function () {
+                        controls.minDistance = 1; // Ensure min zoom distance is
+                        controls.maxDistance = 50; // Ensure max zoom distance is set before animation
+                    },
+                    onUpdate: function () {
+                        controls.update();
+                        render();
+                    },
+                    onComplete: function () {
+                        controls.update();
+                        controls.minDistance = 1; // Ensure min zoom distance is set after animation
+                        controls.maxDistance = 50; // Ensure max zoom distance is set after animation
+                    }
+                }, 0); // Start at the same time as the zoom animation
+            }
+
+            render();
+        }
+
 
 
 
@@ -458,6 +758,13 @@
         controls.target.set(0, 0.5, -0.2);
         controls.update();
 
+        //get camera position and zoom level in console log when user move the camera
+        controls.addEventListener('change', function () {
+            console.log('Camera Position:', camera.position);
+            console.log('Camera Zoom:', camera.zoom);
+        });
+        
+
         window.addEventListener('resize', onWindowResize);
 
         function selectVariant(scene, parser, extension, variantName) {
@@ -519,6 +826,7 @@
     <div class="container-1550">
         <div class="customize-your-kandora-main">
             <div class="kandora-image-section" id="customize-scene">
+      
                 <h3 class="image-heading">Choose Your Kandora Style</h3>
                 <!-- <div class="kandora-style-slider sticky-portion">
           <div class="kandora-style-items">
@@ -534,8 +842,8 @@
 
 </iframe> -->
 
-                <div class="panel-3d" style="width:100%;height:calc(75vh);">
-
+                <div class="panel-3d" style="">
+                  <span class="loader"></span>
                 </div>
                 <div class="kandora-image-select">
                     <img src="assets/images/customizeyourkandora/select-img.png" alt="">
@@ -738,6 +1046,112 @@
             </div>
           </div>
         </div> -->
+
+        <div class="customize-section-box">
+          <div class="heading" >
+            <h3>Choose Collar Style</h3>
+            <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="" />
+          </div>
+          <div class="customize-option">
+            <div class="images-option mt-0">
+              <ul class="image-border">
+                <li onclick="addCollar('collar1_1, collar1_2, collar1_3')">
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/collar-2.png" alt="" />
+                  </div>
+                  <h4 class="collar_style">1</h4>
+                </li>
+                <li onclick="addCollar('collar2_1, collar2_2')">
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/collar-3.png" alt="" />
+                  </div>
+                  <h4 class="collar_style">2</h4>
+                </li>
+                <li onclick="addCollar('collar3_1, collar3_2')">
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/collar-2.png" alt="" />
+                  </div>
+                  <h4 class="collar_style">3</h4>
+                </li>
+                <li onclick="addCollar('collar4_1, collar4_2')">
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/collar-3.png" alt="" />
+                  </div>
+                  <h4 class="collar_style">4</h4>
+                </li>
+
+                <li onclick="addCollar('collar5_1, collar5_2')">
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/collar-2.png" alt="" />
+                  </div>
+                  <h4 class="collar_style">5</h4>
+                </li>
+                <li onclick="addCollar('collar6_1, collar6_2')">
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/collar-3.png" alt="" />
+                  </div>
+                  <h4 class="collar_style">6</h4>
+                </li>
+                <li onclick="addCollar('collar7_1, collar7_2')">
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/collar-2.png" alt="" />
+                  </div>
+                  <h4 class="collar_style">7</h4>
+                </li>
+                <li onclick="addCollar('collar8')">
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/collar-3.png" alt="" />
+                  </div>
+                  <h4 class="collar_style">8</h4>
+                </li>
+                <li onclick="addCollar('collar9')">
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/collar-3.png" alt="" />
+                  </div>
+                  <h4 class="collar_style">9</h4>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="customize-section-box">
+          <div class="heading" >
+            <h3>Choose Cuffs</h3>
+            <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="" />
+          </div>
+          <div class="customize-option">
+            <div class="images-option mt-0">
+              <ul class="image-border">
+                <li onclick='addCuff("Cuff01_1, Cuff01_2")'>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/one-type.png" alt="" />
+                  </div>
+                  <h4 class="cuffs">One Type</h4>
+                </li>
+                <li onclick='addCuff("cuff02_1, cuff02_2, cuff02_3")'>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/one-button.png" alt="" />
+                  </div>
+                  <h4 class="cuffs">One Button</h4>
+                </li>
+                <li onclick='addCuff("cuff3_1, cuff3_2, cuff3_3")'>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/two-buttons.png" alt="" />
+                  </div>
+                  <h4 class="cuffs">Two Buttons</h4>
+                </li>
+                <li onclick='addCuff("cuff4_1, cuff4_2 , cuff4_3")'>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/french-cuffs.png" alt="" />
+                  </div>
+                  <h4 class="cuffs">French Cuffs</h4>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
                 <div class="customize-section-box">
                     <div class="heading">
                         <h3>Choose Embroidery Style</h3>
