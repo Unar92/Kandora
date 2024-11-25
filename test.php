@@ -208,6 +208,34 @@
                              console.log("rRemove Collar", child.name);
                             }
 
+                            //if child includes front_style
+                            if (child.name.includes('front_style')) {
+                                child.visible = false;
+                                console.log("Remove front_style", child.name);
+                            }
+
+                            //if child includes pocket
+                            if (child.name.includes('pocket')) {
+                                child.visible = false;
+                                console.log("Remove pocket", child.name);
+                            }
+
+                            // if child includes Stiches_plane
+                            if (child.name.includes('Stiches_plane')) {
+                                child.visible = false;
+                                console.log("Remove Stiches_plane", child.name);
+                            }
+
+                            // if child includes Pleat
+                            if (child.name.includes('Pleat')) {
+                                child.visible = false;
+                                console.log("Remove Pleat", child.name);
+                            }
+                            
+
+                            
+                            
+
                         }
                     });
 
@@ -252,76 +280,156 @@
                         render();
                     });
 
+                    //add frontstyle.glb to the scene
+                    loader.load('frontstyle.glb', function (glb4) {
+                        glb4.scene.scale.set(1.7, 1.7, 1.7);
+                        glb4.scene.position.set(0, -1.1, 0);
+                        scene.add(glb4.scene);
+
+                        // Remove specific objects from the second GLB model
+                        removeObjects(glb4.scene);
+                        render();
+                    });
+
 
 
 
                      //add object to the scene when function is triggered
-                  function addObj(objectType) {
+                  // function addObj(objectType) {
 
                     
 
-                    // class loading-assets to panel-3d
-                    document.querySelector('.panel-3d').classList.add('loading-assets');
-                    // Check if the collar is already added
-                    let addObjadded = false;
-                    scene.traverse((child) => {
-                      if (child.isMesh && child.name.includes('collar')) {
-                        addObjadded = true;
-                      }
-                    });
+                  //   // class loading-assets to panel-3d
+                  //   document.querySelector('.panel-3d').classList.add('loading-assets');
+                  //   // Check if the collar is already added
+                  //   let addObjadded = false;
+                  //   scene.traverse((child) => {
+                  //     if (child.isMesh && child.name.includes('collar')) {
+                  //       addObjadded = true;
+                  //     }
+                  //   });
 
-                    if (!addObjadded) {
-                      loader.load('collar.glb', function (glb2) {
-                        glb2.scene.scale.set(1.7, 1.7, 1.7);
-                        glb2.scene.position.set(0, -1.1, 0);
-                        scene.add(glb2.scene);
+                  //   if (!addObjadded) {
+                  //     loader.load('collar.glb', function (glb2) {
+                  //       glb2.scene.scale.set(1.7, 1.7, 1.7);
+                  //       glb2.scene.position.set(0, -1.1, 0);
+                  //       scene.add(glb2.scene);
 
-                        // Remove specific objects from the second GLB model
-                        removeObjects(glb2.scene);
+                  //       // Remove specific objects from the second GLB model
+                  //       removeObjects(glb2.scene);
 
-                        // Make the specified collar styles visible
-                        const collarStyles = collarstyle.split(',').map(style => style.trim());
-                        glb2.scene.traverse((child) => {
-                          if (child.isMesh && collarStyles.some(style => child.name.includes(style))) {
-                            child.visible = true;
-                          }
-                        });
+                  //       // Make the specified collar styles visible
+                  //       const collarStyles = collarstyle.split(',').map(style => style.trim());
+                  //       glb2.scene.traverse((child) => {
+                  //         if (child.isMesh && collarStyles.some(style => child.name.includes(style))) {
+                  //           child.visible = true;
+                  //         }
+                  //       });
 
-                        // Render the scene after both models are loaded
-                        setTimeout(() => {
-                          document.querySelector('.panel-3d').classList.remove('loading-assets');
-                          render();
-                          // animateCameraToObjPosition("collar");
-                        }, 500); // Delay of 500 milliseconds
-                      });
-                    } else {
-                      // Modify the current loaded model
-                      const collarStyles = collarstyle.split(',').map(style => style.trim());
+                  //       // Render the scene after both models are loaded
+                  //       setTimeout(() => {
+                  //         document.querySelector('.panel-3d').classList.remove('loading-assets');
+                  //         render();
+                  //         // animateCameraToObjPosition("collar");
+                  //       }, 500); // Delay of 500 milliseconds
+                  //     });
+                  //   } else {
+                  //     // Modify the current loaded model
+                  //     const collarStyles = collarstyle.split(',').map(style => style.trim());
 
-                      // Hide all elements first
-                      scene.traverse((child) => {
-                        if (child.isMesh && child.name.toLowerCase().includes('collar')) {
-                          child.visible = false;
-                        }
-                      });
+                  //     // Hide all elements first
+                  //     scene.traverse((child) => {
+                  //       if (child.isMesh && child.name.toLowerCase().includes('collar')) {
+                  //         child.visible = false;
+                  //       }
+                  //     });
 
-                      scene.traverse((child) => {
-                        if (child.isMesh && collarStyles.some(style => child.name.includes(style))) {
-                          child.visible = true;
-                        }
-                      });
+                  //     scene.traverse((child) => {
+                  //       if (child.isMesh && collarStyles.some(style => child.name.includes(style))) {
+                  //         child.visible = true;
+                  //       }
+                  //     });
 
-                      // Render the scene after modifying the model
-                      setTimeout(() => {
-                        document.querySelector('.panel-3d').classList.remove('loading-assets');
-                        render();
-                        // animateCameraToObjPosition("collar");
-                      }, 500); // Delay of 500 milliseconds
-                    }
-                  }
+                  //     // Render the scene after modifying the model
+                  //     setTimeout(() => {
+                  //       document.querySelector('.panel-3d').classList.remove('loading-assets');
+                  //       render();
+                  //       // animateCameraToObjPosition("collar");
+                  //     }, 500); // Delay of 500 milliseconds
+                  //   }
+                  // }
+
+
+                  function addObj(objectType, objectFile, objectStyles) {
+  // class loading-assets to panel-3d
+  document.querySelector('.panel-3d').classList.add('loading-assets');
+  
+  // Check if the object is already added
+  let objAdded = false;
+  scene.traverse((child) => {
+    if (child.isMesh && child.name.includes(objectType)) {
+      objAdded = true;
+    }
+  });
+
+  if (!objAdded) {
+    loader.load(objectFile, function (glb) {
+      glb.scene.scale.set(1.7, 1.7, 1.7);
+      glb.scene.position.set(0, -1.1, 0);
+      scene.add(glb.scene);
+
+      // Remove specific objects from the GLB model
+      removeObjects(glb.scene);
+
+      // Make the specified styles visible
+      const styles = objectStyles.split(',').map(style => style.trim());
+      glb.scene.traverse((child) => {
+        if (child.isMesh && styles.some(style => child.name.includes(style))) {
+          child.visible = true;
+        }
+      });
+
+      // Render the scene after the model is loaded
+      setTimeout(() => {
+        document.querySelector('.panel-3d').classList.remove('loading-assets');
+        render();
+        // animateCameraToObjPosition(objectType);
+      }, 500); // Delay of 500 milliseconds
+    });
+  } else {
+    // Modify the current loaded model
+    const styles = objectStyles.split(',').map(style => style.trim());
+
+    // Hide all elements first
+    scene.traverse((child) => {
+      if (child.isMesh && child.name.toLowerCase().includes(objectType)) {
+        child.visible = false;
+      }
+    });
+
+    // Make the specified styles visible
+    scene.traverse((child) => {
+      if (child.isMesh && styles.some(style => child.name.includes(style))) {
+        child.visible = true;
+      }
+    });
+
+    // Render the scene after modifying the model
+    setTimeout(() => {
+      document.querySelector('.panel-3d').classList.remove('loading-assets');
+      render();
+      // animateCameraToObjPosition(objectType);
+    }, 500); // Delay of 500 milliseconds
+  }
+}
 
                 //global add collar function
                 window.addObj = addObj;
+
+//                 addObj('collar', 'collar.glb', 'style1,style2');
+// addObj('stitches', 'stitches.glb', 'styleA,styleB');
+// addObj('pleats', 'pleats.glb', 'styleX,styleY');
+// addObj('frontstyle', 'frontstyle.glb', 'styleM,styleN');
 
                     // add pocket.glb to the scene
                     loader.load('pocket.glb', function (glb4) {
@@ -1114,6 +1222,45 @@
             </div>
           </div>
         </div> -->
+
+        <div class="customize-section-box">
+          <div class="heading" >
+            <h3>Choose Front Pleat Style</h3>
+            <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="" />
+          </div>
+          <div class="customize-option">
+            <div class="images-option mt-0">
+              <ul class="image-border">
+                <li>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/frontpleat-plain.png" alt="" />
+                  </div>
+                  <h4 class="front_pleat_style">Plain</h4>
+                </li>
+                <li>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/frontpleat-plain.png" alt="" />
+                  </div>
+                  <h4 class="front_pleat_style">Pleat (Kasra)</h4>
+                </li>
+                <li>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/frontpleat-plain.png" alt="" />
+                  </div>
+                  <h4 class="front_pleat_style">Plain</h4>
+                </li>
+                <li>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/frontpleat-plain.png" alt="" />
+                  </div>
+                  <h4 class="front_pleat_style">Pleat (Kasra)</h4>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+
         <div class="customize-section-box">
           <div class="heading">
             <h3>Choose Stitch Style</h3>
@@ -1342,31 +1489,77 @@
 
                 <div class="customize-section-box">
           <div class="heading" >
-            <h3>Choose Pocket Edging</h3>
-            <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="">
+            <h3>Choose Back Style</h3>
+            <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="" />
           </div>
           <div class="customize-option">
-            <div class="custom-radio-group">
-              <label class="custom-radio">
-                <input type="radio" name="pocket_edging" data-value="Extra Soft">
-                <span>Extra Soft</span>
-              </label>
-              <label class="custom-radio">
-                <input type="radio" name="pocket_edging" data-value="Soft">
-                <span>Soft</span>
-              </label>
-              <label class="custom-radio">
-                <input type="radio" name="pocket_edging" data-value="Medium">
-                <span>Medium</span>
-              </label>
-              <label class="custom-radio">
-                <input type="radio" name="pocket_edging" data-value="Hard">
-                <span>Hard</span>
-              </label>
+            <div class="images-option mt-0">
+              <ul class="image-border align-items-end">
+                <li>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/Back-plain.png" alt="" />
+                  </div>
+                  <h4 class="back_style">Plain</h4>
+                </li>
+                <li>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/Back-side-pleats.png" alt="" />
+                  </div>
+                  <h4 class="back_style">Side Pleats</h4>
+                </li>
+                <li>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/Back-center-pleat.png" alt="" />
+                  </div>
+                  <h4 class="back_style">Center Pleat</h4>
+                </li>
+                <li>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/Back-center-box-pleat.png" alt="" />
+                  </div>
+                  <h4 class="back_style">Center Box Pleat</h4>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
 
+                <div class="customize-section-box">
+          <div class="heading" >
+            <h3>Choose Pockets</h3>
+            <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="" />
+          </div>
+          <div class="customize-option">
+            <div class="images-option mt-0">
+              <ul class="image-border no-pocket">
+                <li>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/No-Pocket.png" alt="" />
+                  </div>
+                  <h4 class="pockets">No Pocket</h4>
+                </li>
+                <li>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/Pocket-angled.png" alt="" />
+                  </div>
+                  <h4 class="pockets">Angled</h4>
+                </li>
+                <li>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/Pocket-v-shaped.png" alt="" />
+                  </div>
+                  <h4 class="pockets">V Shaped</h4>
+                </li>
+                <li>
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/Pocket-rounded.png" alt="" />
+                  </div>
+                  <h4 class="pockets">Rounded</h4>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
                 <!-- <div class="customize-section-box">
           <div class="heading">
             <h3>Choose Tarboosh Style</h3>
