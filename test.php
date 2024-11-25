@@ -230,6 +230,110 @@
                     removeObjects(glb1.scene);
                     render();
 
+                    //add back Pleats.glb to the scene
+                    loader.load('back Pleats.glb', function (glb2) {
+                        glb2.scene.scale.set(1.7, 1.7, 1.7);
+                        glb2.scene.position.set(0, -1.1, 0);
+                        scene.add(glb2.scene);
+
+                        // Remove specific objects from the second GLB model
+                        removeObjects(glb2.scene);
+                        render();
+                    });
+
+                    //add stich.glb to the scene
+                    loader.load('stich.glb', function (glb3) {
+                        glb3.scene.scale.set(1.7, 1.7, 1.7);
+                        glb3.scene.position.set(0, -1.1, 0);
+                        scene.add(glb3.scene);
+
+                        // Remove specific objects from the second GLB model
+                        removeObjects(glb3.scene);
+                        render();
+                    });
+
+
+
+
+                     //add object to the scene when function is triggered
+                  function addObj(objectType) {
+
+                    
+
+                    // class loading-assets to panel-3d
+                    document.querySelector('.panel-3d').classList.add('loading-assets');
+                    // Check if the collar is already added
+                    let addObjadded = false;
+                    scene.traverse((child) => {
+                      if (child.isMesh && child.name.includes('collar')) {
+                        addObjadded = true;
+                      }
+                    });
+
+                    if (!addObjadded) {
+                      loader.load('collar.glb', function (glb2) {
+                        glb2.scene.scale.set(1.7, 1.7, 1.7);
+                        glb2.scene.position.set(0, -1.1, 0);
+                        scene.add(glb2.scene);
+
+                        // Remove specific objects from the second GLB model
+                        removeObjects(glb2.scene);
+
+                        // Make the specified collar styles visible
+                        const collarStyles = collarstyle.split(',').map(style => style.trim());
+                        glb2.scene.traverse((child) => {
+                          if (child.isMesh && collarStyles.some(style => child.name.includes(style))) {
+                            child.visible = true;
+                          }
+                        });
+
+                        // Render the scene after both models are loaded
+                        setTimeout(() => {
+                          document.querySelector('.panel-3d').classList.remove('loading-assets');
+                          render();
+                          // animateCameraToObjPosition("collar");
+                        }, 500); // Delay of 500 milliseconds
+                      });
+                    } else {
+                      // Modify the current loaded model
+                      const collarStyles = collarstyle.split(',').map(style => style.trim());
+
+                      // Hide all elements first
+                      scene.traverse((child) => {
+                        if (child.isMesh && child.name.toLowerCase().includes('collar')) {
+                          child.visible = false;
+                        }
+                      });
+
+                      scene.traverse((child) => {
+                        if (child.isMesh && collarStyles.some(style => child.name.includes(style))) {
+                          child.visible = true;
+                        }
+                      });
+
+                      // Render the scene after modifying the model
+                      setTimeout(() => {
+                        document.querySelector('.panel-3d').classList.remove('loading-assets');
+                        render();
+                        // animateCameraToObjPosition("collar");
+                      }, 500); // Delay of 500 milliseconds
+                    }
+                  }
+
+                //global add collar function
+                window.addObj = addObj;
+
+                    // add pocket.glb to the scene
+                    loader.load('pocket.glb', function (glb4) {
+                        glb4.scene.scale.set(1.7, 1.7, 1.7);
+                        glb4.scene.position.set(0, -1.1, 0);
+                        scene.add(glb4.scene);
+
+                        // Remove specific objects from the second GLB model
+                        removeObjects(glb4.scene);
+                        render();
+                    });
+
                     // Load the second GLB file
                    //add collar to the scene when function is triggered
                   function addCollar(collarstyle) {
@@ -759,10 +863,10 @@
         controls.update();
 
         //get camera position and zoom level in console log when user move the camera
-        controls.addEventListener('change', function () {
-            console.log('Camera Position:', camera.position);
-            console.log('Camera Zoom:', camera.zoom);
-        });
+        // controls.addEventListener('change', function () {
+        //     console.log('Camera Position:', camera.position);
+        //     console.log('Camera Zoom:', camera.zoom);
+        // });
         
 
         window.addEventListener('resize', onWindowResize);
@@ -1010,7 +1114,7 @@
             </div>
           </div>
         </div> -->
-                <!-- <div class="customize-section-box">
+        <div class="customize-section-box">
           <div class="heading">
             <h3>Choose Stitch Style</h3>
             <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="" />
@@ -1045,7 +1149,7 @@
               </ul>
             </div>
           </div>
-        </div> -->
+        </div>
 
         <div class="customize-section-box">
           <div class="heading" >
@@ -1235,6 +1339,33 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="customize-section-box">
+          <div class="heading" >
+            <h3>Choose Pocket Edging</h3>
+            <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="">
+          </div>
+          <div class="customize-option">
+            <div class="custom-radio-group">
+              <label class="custom-radio">
+                <input type="radio" name="pocket_edging" data-value="Extra Soft">
+                <span>Extra Soft</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="pocket_edging" data-value="Soft">
+                <span>Soft</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="pocket_edging" data-value="Medium">
+                <span>Medium</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="pocket_edging" data-value="Hard">
+                <span>Hard</span>
+              </label>
+            </div>
+          </div>
+        </div>
 
                 <!-- <div class="customize-section-box">
           <div class="heading">

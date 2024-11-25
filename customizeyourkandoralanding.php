@@ -656,7 +656,8 @@
             </div>
           </div>
         </div> -->
-        <!-- <div class="customize-section-box">
+
+        <div class="customize-section-box">
           <div class="heading">
             <h3>Choose Stitch Style</h3>
             <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="" />
@@ -691,7 +692,7 @@
               </ul>
             </div>
           </div>
-        </div> -->
+        </div>
         <div class="customize-section-box">
           <div class="heading">
             <h3>Choose Embroidery Style</h3>
