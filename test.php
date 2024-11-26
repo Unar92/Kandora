@@ -22,6 +22,7 @@
       width:100%;
       height:calc(75vh); 
       position: relative;
+      background-color: #f1f1f1;
       
     }
 
@@ -189,12 +190,18 @@
                             console.log("Found mesh:", child.name);
                             if (child.name === 'collar02model_1' || child.name === 'collar02model_2' || child.name === 'collar03model_1' || child.name === 'collar03model_2') {
                                 objectsToRemove.push(child);
-                                console.log("Marked for removal", child.name);
+                                // console.log("Marked for removal", child.name);
                             }
 
                             if (child.name === 'Embriodery_plane005' || child.name === 'Embriodery_plane002' || child.name === 'tarboosh_tongue' || child.name === 'tarboosh_1') {
                                 child.visible = false;
-                                console.log("Made invisible", child.name);
+                                // console.log("Made invisible", child.name);
+                            }
+
+                            //if kandora_front_part_for_button
+                            if (child.name === 'kandora_front_part_for_button') {
+                                child.visible = false;
+                                // console.log("Remove kandora_front_part_for_button", child.name);
                             }
 
                             // remove Found mesh: cuff02_1 cuff02_2 cuff02_3 cuff3_1 cuff3_2  cuff3_3  cuff4_1 cuff4_2 cuff4_3
@@ -203,33 +210,39 @@
                             }
 
                             // remove Found mesh: cuff02_1 cuff02_2 cuff02_3 cuff3_1 cuff3_2  cuff3_3  cuff4_1 cuff4_2 cuff4_3
-                            if (child.name === 'collar1_1' || child.name === 'collar1_2' || child.name === 'collar1_3' ||  child.name === 'collar2_2' ||  child.name === 'collar2_2' || child.name === 'collar3_1' || child.name === 'collar3_2' || child.name === 'collar4_1' || child.name === 'collar4_2' || child.name === 'collar4_3' || child.name === 'collar5_1' || child.name === 'collar5_2' || child.name === 'collar6_1' || child.name === 'collar6_2' || child.name === 'collar7_1'  || child.name === 'collar7_2'  || child.name === 'collar8'  || child.name === 'collar9') {
-                              child.visible = false;
-                             console.log("rRemove Collar", child.name);
+                            // if (child.name === 'collar1_1' || child.name === 'collar1_2' || child.name === 'collar1_3' ||  child.name === 'collar2_2' ||  child.name === 'collar2_2' || child.name === 'collar3_1' || child.name === 'collar3_2' || child.name === 'collar4_1' || child.name === 'collar4_2' || child.name === 'collar4_3' || child.name === 'collar5_1' || child.name === 'collar5_2' || child.name === 'collar6_1' || child.name === 'collar6_2' || child.name === 'collar7_1'  || child.name === 'collar7_2'  || child.name === 'collar8'  || child.name === 'collar9') {
+                            //   child.visible = false;
+                            // //  console.log("rRemove Collar", child.name);
+                            // }
+
+                            //if child incluse collar
+                            if (child.name.includes('collar')) {
+                                child.visible = false;
+                                // console.log("Remove collar", child.name);
                             }
 
                             //if child includes front_style
                             if (child.name.includes('front_style')) {
                                 child.visible = false;
-                                console.log("Remove front_style", child.name);
+                                // console.log("Remove front_style", child.name);
                             }
 
                             //if child includes pocket
                             if (child.name.includes('pocket')) {
                                 child.visible = false;
-                                console.log("Remove pocket", child.name);
+                                // console.log("Remove pocket", child.name);
                             }
 
                             // if child includes Stiches_plane
                             if (child.name.includes('Stiches_plane')) {
                                 child.visible = false;
-                                console.log("Remove Stiches_plane", child.name);
+                                // console.log("Remove Stiches_plane", child.name);
                             }
 
                             // if child includes Pleat
                             if (child.name.includes('Pleat')) {
                                 child.visible = false;
-                                console.log("Remove Pleat", child.name);
+                                // console.log("Remove Pleat", child.name);
                             }
                             
 
@@ -258,38 +271,38 @@
                     removeObjects(glb1.scene);
                     render();
 
-                    //add back Pleats.glb to the scene
-                    loader.load('back Pleats.glb', function (glb2) {
-                        glb2.scene.scale.set(1.7, 1.7, 1.7);
-                        glb2.scene.position.set(0, -1.1, 0);
-                        scene.add(glb2.scene);
+                    // //add back Pleats.glb to the scene
+                    // loader.load('back Pleats.glb', function (glb2) {
+                    //     glb2.scene.scale.set(1.7, 1.7, 1.7);
+                    //     glb2.scene.position.set(0, -1.1, 0);
+                    //     scene.add(glb2.scene);
 
-                        // Remove specific objects from the second GLB model
-                        removeObjects(glb2.scene);
-                        render();
-                    });
+                    //     // Remove specific objects from the second GLB model
+                    //     removeObjects(glb2.scene);
+                    //     render();
+                    // });
 
-                    //add stich.glb to the scene
-                    loader.load('stich.glb', function (glb3) {
-                        glb3.scene.scale.set(1.7, 1.7, 1.7);
-                        glb3.scene.position.set(0, -1.1, 0);
-                        scene.add(glb3.scene);
+                    // //add stich.glb to the scene
+                    // loader.load('stich.glb', function (glb3) {
+                    //     glb3.scene.scale.set(1.7, 1.7, 1.7);
+                    //     glb3.scene.position.set(0, -1.1, 0);
+                    //     scene.add(glb3.scene);
 
-                        // Remove specific objects from the second GLB model
-                        removeObjects(glb3.scene);
-                        render();
-                    });
+                    //     // Remove specific objects from the second GLB model
+                    //     removeObjects(glb3.scene);
+                    //     render();
+                    // });
 
-                    //add frontstyle.glb to the scene
-                    loader.load('frontstyle.glb', function (glb4) {
-                        glb4.scene.scale.set(1.7, 1.7, 1.7);
-                        glb4.scene.position.set(0, -1.1, 0);
-                        scene.add(glb4.scene);
+                    // //add frontstyle.glb to the scene
+                    // loader.load('frontstyle.glb', function (glb4) {
+                    //     glb4.scene.scale.set(1.7, 1.7, 1.7);
+                    //     glb4.scene.position.set(0, -1.1, 0);
+                    //     scene.add(glb4.scene);
 
-                        // Remove specific objects from the second GLB model
-                        removeObjects(glb4.scene);
-                        render();
-                    });
+                    //     // Remove specific objects from the second GLB model
+                    //     removeObjects(glb4.scene);
+                    //     render();
+                    // });
 
 
 
@@ -393,7 +406,7 @@
       setTimeout(() => {
         document.querySelector('.panel-3d').classList.remove('loading-assets');
         render();
-        // animateCameraToObjPosition(objectType);
+        animateCameraToObjPosition(objectType);
       }, 500); // Delay of 500 milliseconds
     });
   } else {
@@ -418,7 +431,7 @@
     setTimeout(() => {
       document.querySelector('.panel-3d').classList.remove('loading-assets');
       render();
-      // animateCameraToObjPosition(objectType);
+      animateCameraToObjPosition(objectType);
     }, 500); // Delay of 500 milliseconds
   }
 }
@@ -426,21 +439,21 @@
                 //global add collar function
                 window.addObj = addObj;
 
-//                 addObj('collar', 'collar.glb', 'style1,style2');
+                // addObj('collar', 'collar.glb', 'style1,style2');
 // addObj('stitches', 'stitches.glb', 'styleA,styleB');
 // addObj('pleats', 'pleats.glb', 'styleX,styleY');
 // addObj('frontstyle', 'frontstyle.glb', 'styleM,styleN');
 
                     // add pocket.glb to the scene
-                    loader.load('pocket.glb', function (glb4) {
-                        glb4.scene.scale.set(1.7, 1.7, 1.7);
-                        glb4.scene.position.set(0, -1.1, 0);
-                        scene.add(glb4.scene);
+                    // loader.load('pocket.glb', function (glb4) {
+                    //     glb4.scene.scale.set(1.7, 1.7, 1.7);
+                    //     glb4.scene.position.set(0, -1.1, 0);
+                    //     scene.add(glb4.scene);
 
-                        // Remove specific objects from the second GLB model
-                        removeObjects(glb4.scene);
-                        render();
-                    });
+                    //     // Remove specific objects from the second GLB model
+                    //     removeObjects(glb4.scene);
+                    //     render();
+                    // });
 
                     // Load the second GLB file
                    //add collar to the scene when function is triggered
@@ -652,7 +665,63 @@
               console.log('Collar position:', desiredPosition);
             }
 
-            let desiredTarget = new THREE.Vector3(0, 0, 0);
+
+            //if objType is pleat camera.position.set(1, 2, 8);
+            if (objType === 'Pleat') {
+              desiredZoom = 2;
+              desiredPosition.x = -2.3;
+              desiredPosition.y = 3.8;
+              desiredPosition.z = -6.70;
+              maxZoom = 3;
+              console.log('Pleat position:', desiredPosition);
+            }
+
+            //if objType is frontstyle
+            if (objType === 'front_style') {
+              desiredZoom = 1;
+              desiredPosition.x = 0.47;
+              desiredPosition.y = 2.13;
+              desiredPosition.z = 2.70;
+              maxZoom = 3;
+              console.log('Frontstyle position:', desiredPosition);
+
+              // Set the camera position
+             // Set the camera position
+            camera.position.set(desiredPosition.x, desiredPosition.y, desiredPosition.z);
+            camera.zoom = desiredZoom;
+            camera.updateProjectionMatrix();
+
+            // Set the desired control target to a point of interest
+            const targetPosition = new THREE.Vector3(0, 0.0009239999999999999, -0.00037); // Adjust this to the point you want the camera to look at
+            controls.target.copy(targetPosition);
+            controls.update(); 
+          }
+
+
+
+            //if objType is pocket
+            if (objType === 'pocket') {
+              desiredZoom = 3;
+              desiredPosition.x = 1.02;
+              desiredPosition.y = 7;
+              desiredPosition.z = 8;
+              maxZoom = 3;
+              console.log('Pocket position:', desiredPosition);
+            }
+
+            //if objType is stitches
+            if (objType === 'stitches') {
+              desiredZoom = 3;
+              desiredPosition.x = 1.02;
+              desiredPosition.y = 7;
+              desiredPosition.z = 8;
+              maxZoom = 3;
+              console.log('Stitches position:', desiredPosition);
+            }
+            
+
+
+            let desiredTarget = new THREE.Vector3(-0.06253863501371498, 1.6308571305580224,  -0.3992374464418679);
            
             if (objType === 'collar') {
                 scene.traverse((child) => {
@@ -963,19 +1032,29 @@
         //metalicness
 
 
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.addEventListener('change', render);
-        controls.minDistance = 1; // Minimum zoom distance
-        controls.maxDistance = 20; // Maximum zoom distance
-        controls.target.set(0, 0.5, -0.2);
-        controls.update();
+     
 
-        //get camera position and zoom level in console log when user move the camera
-        // controls.addEventListener('change', function () {
-        //     console.log('Camera Position:', camera.position);
-        //     console.log('Camera Zoom:', camera.zoom);
-        // });
-        
+
+
+      // Initialize OrbitControls
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.addEventListener('change', render);
+      controls.minDistance = 1; // Minimum zoom distance
+      controls.maxDistance = 20; // Maximum zoom distance
+      controls.target.set(0, 0.5, -0.2);
+      controls.update();
+
+
+      //get camera position and zoom level in console log when user move the camera
+    //   controls.addEventListener('change', function () {
+    //     console.log('Camera:', camera); // Check if camera is defined
+    // console.log('Controls:', controls); // Check if controls are defined
+    // console.log('Camera Position:', camera.position);
+    // console.log('Controls Target:', controls.target);
+ 
+                
+             
+    //         });
 
         window.addEventListener('resize', onWindowResize);
 
@@ -1225,6 +1304,39 @@
 
         <div class="customize-section-box">
           <div class="heading" >
+            <h3>Choose Front Style</h3>
+            <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="" />
+          </div>
+          <div class="customize-option">
+            <div class="images-option mt-0">
+              <ul class="image-border">
+                <li onclick="addObj('front_style', 'frontstyle.glb', 'front_style_01');">
+                  <div class="img"><img src="assets/images/customizeyourkandora/front-emirati.png" alt="" /></div>
+                  <h4 class="front_style">Emirati with Zipper</h4>
+                </li>
+                <li onclick="addObj('front_style', 'frontstyle.glb', 'front_style_02_1,front_style_02_2');">
+                  <div class="img"><img src="assets/images/customizeyourkandora/front-emirati.png" alt="" /></div>
+                  <h4 class="front_style">Emirati</h4>
+                </li>
+                <li onclick="addObj('front_style', 'frontstyle.glb', 'front_style_03_1,front_style_03_2');">
+                  <div class="img"><img src="assets/images/customizeyourkandora/front-emirati.png" alt="" /></div>
+                  <h4 class="front_style">Emirati</h4>
+                </li>
+                <li onclick="addObj('front_style', 'frontstyle.glb', 'front_style_04_1,front_style_04_2');">
+                  <div class="img"><img src="assets/images/customizeyourkandora/front-emirati.png" alt="" /></div>
+                  <h4 class="front_style">Emirati with Zipper</h4>
+                </li>
+                <li onclick="addObj('front_style', 'frontstyle.glb', 'front_style_04_1,front_style_04_2');">
+                  <div class="img"><img src="assets/images/customizeyourkandora/front-emirati.png" alt="" /></div>
+                  <h4 class="front_style">style 5</h4>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="customize-section-box">
+          <div class="heading"  disabled="disabled">
             <h3>Choose Front Pleat Style</h3>
             <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="" />
           </div>
@@ -1270,25 +1382,25 @@
             <div class="images-option mt-0">
               <ul class="image-border">
                 <li>
-                  <div class="img"   onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/Stiches1.png')">
+                  <div class="img"   onclick="addObj('Stiches', 'stich.glb', 'Stiches_plane');">
                     <img src="assets/images/customizeyourkandora/8-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">1 Stitche</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/stiches2.png')">
+                  <div class="img" onclick="addObj('Stiches', 'stich.glb', 'Stiches_plane');">
                     <img src="assets/images/customizeyourkandora/12-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">4 Stitches</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/stiches3.png')">
+                  <div class="img" onclick="addObj('Stiches', 'stich.glb', 'Stiches_plane');">
                     <img src="assets/images/customizeyourkandora/4-stitches-with-embroidery.png" alt="" />
                   </div>
                   <h4 class="stitch_style">6 Stitches with Embroidery</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="changeTextureByName('Stiches_plane', 'assets/images/customizeyourkandora/stitches/stiches4.png')">
+                  <div class="img" onclick="addObj('Stiches', 'stich.glb', 'Stiches_plane');">
                     <img src="assets/images/customizeyourkandora/12-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">8 Stitches</h4>
@@ -1495,25 +1607,25 @@
           <div class="customize-option">
             <div class="images-option mt-0">
               <ul class="image-border align-items-end">
-                <li>
+                <li onclick="addObj('Pleat', 'back Pleats.glb', 'Pleat1');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/Back-plain.png" alt="" />
                   </div>
                   <h4 class="back_style">Plain</h4>
                 </li>
-                <li>
+                <li onclick="addObj('Pleat', 'back Pleats.glb', 'Pleat2');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/Back-side-pleats.png" alt="" />
                   </div>
                   <h4 class="back_style">Side Pleats</h4>
                 </li>
-                <li>
+                <li onclick="alert('not available');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/Back-center-pleat.png" alt="" />
                   </div>
                   <h4 class="back_style">Center Pleat</h4>
                 </li>
-                <li>
+                <li onclick="alert('not available');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/Back-center-box-pleat.png" alt="" />
                   </div>
@@ -1532,30 +1644,38 @@
           <div class="customize-option">
             <div class="images-option mt-0">
               <ul class="image-border no-pocket">
-                <li>
+                <li onclick="addObj('pocket','pocket.glb','pocket2_1');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/No-Pocket.png" alt="" />
                   </div>
                   <h4 class="pockets">No Pocket</h4>
                 </li>
-                <li>
-                  <div class="img">
-                    <img src="assets/images/customizeyourkandora/Pocket-angled.png" alt="" />
-                  </div>
-                  <h4 class="pockets">Angled</h4>
-                </li>
-                <li>
-                  <div class="img">
-                    <img src="assets/images/customizeyourkandora/Pocket-v-shaped.png" alt="" />
-                  </div>
-                  <h4 class="pockets">V Shaped</h4>
-                </li>
-                <li>
+                <li onclick="addObj('pocket','pocket.glb','pocket1_1, pocket1_2');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/Pocket-rounded.png" alt="" />
                   </div>
-                  <h4 class="pockets">Rounded</h4>
+                  <h4 class="pockets">Style 1</h4>
                 </li>
+                <li onclick="addObj('pocket','pocket.glb','pocket2001_1, pocket2001_2');">
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/Pocket-angled.png" alt="" />
+                  </div>
+                  <h4 class="pockets">Style 2</h4>
+                </li>
+                <li onclick="addObj('pocket','pocket.glb','pocket3_1, pocket3_2');">
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/Pocket-v-shaped.png" alt="" />
+                  </div>
+                  <h4 class="pockets">Style 3</h4>
+                </li>
+                <li onclick="addObj('pocket','pocket.glb','pocket4_1, pocket4_2');">
+                  <div class="img">
+                    <img src="assets/images/customizeyourkandora/Pocket-rounded.png" alt="" />
+                  </div>
+                  <h4 class="pockets">Style 4</h4>
+                </li>
+        
+             
               </ul>
             </div>
           </div>
