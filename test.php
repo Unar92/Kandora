@@ -1436,7 +1436,7 @@
                   </div>
                   <h4 class="collar_style">3</h4>
                 </li>
-                <li onclick="addCollar('collar4_1, collar4_2')">
+                <li onclick="addCollar('collar4_1, collar4_2, collar4_3')">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/collar-3.png" alt="" />
                   </div>
@@ -1656,7 +1656,7 @@
                   </div>
                   <h4 class="pockets">Style 1</h4>
                 </li>
-                <li onclick="addObj('pocket','pocket.glb','pocket2001_1, pocket2001_2');">
+                <li onclick="addObj('pocket','pocket.glb','pocket2001, pocket2001_1');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/Pocket-angled.png" alt="" />
                   </div>
