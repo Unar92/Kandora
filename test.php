@@ -374,67 +374,71 @@
 
 
                   function addObj(objectType, objectFile, objectStyles) {
-  // class loading-assets to panel-3d
-  document.querySelector('.panel-3d').classList.add('loading-assets');
-  
-  // Check if the object is already added
-  let objAdded = false;
-  scene.traverse((child) => {
-    if (child.isMesh && child.name.includes(objectType)) {
-      objAdded = true;
-    }
-  });
+                // class loading-assets to panel-3d
+                document.querySelector('.panel-3d').classList.add('loading-assets');
+                
+                // Check if the object is already added
+                let objAdded = false;
+                scene.traverse((child) => {
+                  if (child.isMesh && child.name.includes(objectType)) {
+                    objAdded = true;
+                  }
+                });
 
-  if (!objAdded) {
-    loader.load(objectFile, function (glb) {
-      glb.scene.scale.set(1.7, 1.7, 1.7);
-      glb.scene.position.set(0, -1.1, 0);
-      scene.add(glb.scene);
+                if (!objAdded) {
+                  loader.load(objectFile, function (glb) {
+                    glb.scene.scale.set(1.7, 1.7, 1.7);
+                    if (objectFile === 'pocket.glb') {
+                      glb.scene.position.set(0, -1.1, 0.002);
+                    } else {
+                      glb.scene.position.set(0, -1.1, 0);
+                    }
+                    scene.add(glb.scene);
 
-      // Remove specific objects from the GLB model
-      removeObjects(glb.scene);
+                    // Remove specific objects from the GLB model
+                    removeObjects(glb.scene);
 
-      // Make the specified styles visible
-      const styles = objectStyles.split(',').map(style => style.trim());
-      glb.scene.traverse((child) => {
-        if (child.isMesh && styles.some(style => child.name.includes(style))) {
-          child.visible = true;
-        }
-      });
+                    // Make the specified styles visible
+                    const styles = objectStyles.split(',').map(style => style.trim());
+                    glb.scene.traverse((child) => {
+                      if (child.isMesh && styles.some(style => child.name.includes(style))) {
+                        child.visible = true;
+                      }
+                    });
 
-      // Render the scene after the model is loaded
-      setTimeout(() => {
-        document.querySelector('.panel-3d').classList.remove('loading-assets');
-        render();
-        animateCameraToObjPosition(objectType);
-      }, 500); // Delay of 500 milliseconds
-    });
-  } else {
-    // Modify the current loaded model
-    const styles = objectStyles.split(',').map(style => style.trim());
+                    // Render the scene after the model is loaded
+                    setTimeout(() => {
+                      document.querySelector('.panel-3d').classList.remove('loading-assets');
+                      render();
+                      animateCameraToObjPosition(objectType);
+                    }, 500); // Delay of 500 milliseconds
+                  });
+                } else {
+                  // Modify the current loaded model
+                  const styles = objectStyles.split(',').map(style => style.trim());
 
-    // Hide all elements first
-    scene.traverse((child) => {
-      if (child.isMesh && child.name.toLowerCase().includes(objectType)) {
-        child.visible = false;
-      }
-    });
+                  // Hide all elements first
+                  scene.traverse((child) => {
+                    if (child.isMesh && child.name.toLowerCase().includes(objectType)) {
+                      child.visible = false;
+                    }
+                  });
 
-    // Make the specified styles visible
-    scene.traverse((child) => {
-      if (child.isMesh && styles.some(style => child.name.includes(style))) {
-        child.visible = true;
-      }
-    });
+                  // Make the specified styles visible
+                  scene.traverse((child) => {
+                    if (child.isMesh && styles.some(style => child.name.includes(style))) {
+                      child.visible = true;
+                    }
+                  });
 
-    // Render the scene after modifying the model
-    setTimeout(() => {
-      document.querySelector('.panel-3d').classList.remove('loading-assets');
-      render();
-      animateCameraToObjPosition(objectType);
-    }, 500); // Delay of 500 milliseconds
-  }
-}
+                  // Render the scene after modifying the model
+                  setTimeout(() => {
+                    document.querySelector('.panel-3d').classList.remove('loading-assets');
+                    render();
+                    animateCameraToObjPosition(objectType);
+                  }, 500); // Delay of 500 milliseconds
+                }
+              }
 
                 //global add collar function
                 window.addObj = addObj;
