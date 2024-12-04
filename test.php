@@ -373,7 +373,7 @@
                   // }
 
 
-                  function addObj(objectType, objectFile, objectStyles) {
+              function addObj(objectType, objectFile, objectStyles, textureupdate) {
                 // class loading-assets to panel-3d
                 document.querySelector('.panel-3d').classList.add('loading-assets');
                 
@@ -384,12 +384,13 @@
                     objAdded = true;
                   }
                 });
+                
 
                 if (!objAdded) {
                   loader.load(objectFile, function (glb) {
                     glb.scene.scale.set(1.7, 1.7, 1.7);
                     if (objectFile === 'pocket.glb') {
-                      glb.scene.position.set(0, -1.1, 0.002);
+                      glb.scene.position.set(0, -1.1, 0.02);
                     } else {
                       glb.scene.position.set(0, -1.1, 0);
                     }
@@ -821,6 +822,10 @@
 
 
 
+        //update stich texture
+        
+
+                                
 
 
 
