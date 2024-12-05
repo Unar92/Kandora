@@ -307,73 +307,9 @@
 
 
 
-                     //add object to the scene when function is triggered
-                  // function addObj(objectType) {
+                  
 
-                    
-
-                  //   // class loading-assets to panel-3d
-                  //   document.querySelector('.panel-3d').classList.add('loading-assets');
-                  //   // Check if the collar is already added
-                  //   let addObjadded = false;
-                  //   scene.traverse((child) => {
-                  //     if (child.isMesh && child.name.includes('collar')) {
-                  //       addObjadded = true;
-                  //     }
-                  //   });
-
-                  //   if (!addObjadded) {
-                  //     loader.load('collar.glb', function (glb2) {
-                  //       glb2.scene.scale.set(1.7, 1.7, 1.7);
-                  //       glb2.scene.position.set(0, -1.1, 0);
-                  //       scene.add(glb2.scene);
-
-                  //       // Remove specific objects from the second GLB model
-                  //       removeObjects(glb2.scene);
-
-                  //       // Make the specified collar styles visible
-                  //       const collarStyles = collarstyle.split(',').map(style => style.trim());
-                  //       glb2.scene.traverse((child) => {
-                  //         if (child.isMesh && collarStyles.some(style => child.name.includes(style))) {
-                  //           child.visible = true;
-                  //         }
-                  //       });
-
-                  //       // Render the scene after both models are loaded
-                  //       setTimeout(() => {
-                  //         document.querySelector('.panel-3d').classList.remove('loading-assets');
-                  //         render();
-                  //         // animateCameraToObjPosition("collar");
-                  //       }, 500); // Delay of 500 milliseconds
-                  //     });
-                  //   } else {
-                  //     // Modify the current loaded model
-                  //     const collarStyles = collarstyle.split(',').map(style => style.trim());
-
-                  //     // Hide all elements first
-                  //     scene.traverse((child) => {
-                  //       if (child.isMesh && child.name.toLowerCase().includes('collar')) {
-                  //         child.visible = false;
-                  //       }
-                  //     });
-
-                  //     scene.traverse((child) => {
-                  //       if (child.isMesh && collarStyles.some(style => child.name.includes(style))) {
-                  //         child.visible = true;
-                  //       }
-                  //     });
-
-                  //     // Render the scene after modifying the model
-                  //     setTimeout(() => {
-                  //       document.querySelector('.panel-3d').classList.remove('loading-assets');
-                  //       render();
-                  //       // animateCameraToObjPosition("collar");
-                  //     }, 500); // Delay of 500 milliseconds
-                  //   }
-                  // }
-
-
-              function addObj(objectType, objectFile, objectStyles, textureupdate) {
+              function addObj(objectType, objectFile, objectStyles, textureURL) {
                 // class loading-assets to panel-3d
                 document.querySelector('.panel-3d').classList.add('loading-assets');
                 
@@ -407,6 +343,11 @@
                       }
                     });
 
+                    //if textureURL is not empty
+                    if (textureURL) {
+                      changeTextureByName(objectType, textureURL);
+                    }
+
                     // Render the scene after the model is loaded
                     setTimeout(() => {
                       document.querySelector('.panel-3d').classList.remove('loading-assets');
@@ -414,6 +355,8 @@
                       animateCameraToObjPosition(objectType);
                     }, 500); // Delay of 500 milliseconds
                   });
+
+
                 } else {
                   // Modify the current loaded model
                   const styles = objectStyles.split(',').map(style => style.trim());
@@ -431,6 +374,11 @@
                       child.visible = true;
                     }
                   });
+
+                  //if textureURL is not empty
+                  if (textureURL) {
+                      changeTextureByName(objectType, textureURL);
+                    }
 
                   // Render the scene after modifying the model
                   setTimeout(() => {
@@ -822,7 +770,49 @@
 
 
 
-        //update stich texture
+        function changeTextureByName(textureName, textureUrl) {
+            // Preload the image
+            var img = new Image();
+            img.src = textureUrl;
+
+            img.onload = function () {
+                // Image is preloaded, proceed with updating the texture
+                console.log('Texture change');
+                const loader = new THREE.TextureLoader();
+                loader.load(textureUrl, function (texture) {
+                    texture.wrapS = THREE.RepeatWrapping;
+                    texture.wrapT = THREE.RepeatWrapping;
+                    texture.needsUpdate = true; // Ensure the texture is updated
+
+                    scene.traverse((child) => {
+                        if (child.isMesh && child.name === textureName) { // Ensure you have a way to identify the mesh
+                            child.visible = true;
+
+                            //remove old texture
+                            //dispose old texture
+                            if (child.material.map) {
+                                child.material.map.dispose();
+                                child.material.map = null;
+                            }
+                            //enviroment none
+                            scene.environment = null;
+
+                            child.material.needsUpdate = true; // Ensure the material updates immediately
+                            child.material.map = texture;
+
+                            // Use emission map
+                            child.material.emissiveMap = texture;
+                            child.material.emissiveIntensity = 0.3; // Adjust emissive intensity
+                            child.material.needsUpdate = true; // Ensure the material updates immediately
+
+                            // Adjust roughness and metalness
+                            child.material.roughness = 0; // Adjust roughness
+                            child.material.metalness = 0; // Adjust metalness
+                        }
+                    });
+                });
+            };
+        }
         
 
                                 
@@ -1391,25 +1381,25 @@
             <div class="images-option mt-0">
               <ul class="image-border">
                 <li>
-                  <div class="img"   onclick="addObj('Stiches', 'stich.glb', 'Stiches_plane');">
+                  <div class="img"   onclick="addObj('Stiches_plane', 'stich.glb', 'Stiches_plane', 'assets/images/customizeyourkandora/stitches/Stiches1.png' );">
                     <img src="assets/images/customizeyourkandora/8-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">1 Stitche</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="addObj('Stiches', 'stich.glb', 'Stiches_plane');">
+                  <div class="img" onclick="addObj('Stiches_plane', 'stich.glb', 'Stiches_plane', 'assets/images/customizeyourkandora/stitches/stiches2.png');">
                     <img src="assets/images/customizeyourkandora/12-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">4 Stitches</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="addObj('Stiches', 'stich.glb', 'Stiches_plane');">
+                  <div class="img" onclick="addObj('Stiches_plane', 'stich.glb', 'Stiches_plane', 'assets/images/customizeyourkandora/stitches/stiches3.png');">
                     <img src="assets/images/customizeyourkandora/4-stitches-with-embroidery.png" alt="" />
                   </div>
                   <h4 class="stitch_style">6 Stitches with Embroidery</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="addObj('Stiches', 'stich.glb', 'Stiches_plane');">
+                  <div class="img" onclick="addObj('Stiches_plane', 'stich.glb', 'Stiches_plane', 'assets/images/customizeyourkandora/stitches/s4.png');">
                     <img src="assets/images/customizeyourkandora/12-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">8 Stitches</h4>
