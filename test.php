@@ -808,6 +808,19 @@
                             // Adjust roughness and metalness
                             child.material.roughness = 0; // Adjust roughness
                             child.material.metalness = 0; // Adjust metalness
+
+                            // alpha albedo
+                            // child.material.transparent = true;
+                            // child.material.opacity = 0;
+                            // gsap.to(child.material, {
+                            //   duration: 1,
+                            //   opacity: 1,
+                            //   onUpdate: function () {
+                            //     child.material.needsUpdate = true;
+                            //   }
+                            // });
+
+                            // render();
                         }
                     });
                 });
@@ -1381,25 +1394,25 @@
             <div class="images-option mt-0">
               <ul class="image-border">
                 <li>
-                  <div class="img"   onclick="addObj('Stiches_plane', 'stich.glb', 'Stiches_plane', 'assets/images/customizeyourkandora/stitches/Stiches1.png' );">
+                  <div class="img"   onclick="addObj('Stiches_plane', 'stich.glb', 'Stiches_plane', 'models/stitches/s1.png' );">
                     <img src="assets/images/customizeyourkandora/8-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">1 Stitche</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="addObj('Stiches_plane', 'stich.glb', 'Stiches_plane', 'assets/images/customizeyourkandora/stitches/stiches2.png');">
+                  <div class="img" onclick="addObj('Stiches_plane', 'stich.glb', 'Stiches_plane', 'models/stitches/s2.png');">
                     <img src="assets/images/customizeyourkandora/12-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">4 Stitches</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="addObj('Stiches_plane', 'stich.glb', 'Stiches_plane', 'assets/images/customizeyourkandora/stitches/stiches3.png');">
+                  <div class="img" onclick="addObj('Stiches_plane', 'stich.glb', 'Stiches_plane', 'models/stitches/s3.png');">
                     <img src="assets/images/customizeyourkandora/4-stitches-with-embroidery.png" alt="" />
                   </div>
                   <h4 class="stitch_style">6 Stitches with Embroidery</h4>
                 </li>
                 <li>
-                  <div class="img" onclick="addObj('Stiches_plane', 'stich.glb', 'Stiches_plane', 'assets/images/customizeyourkandora/stitches/s4.png');">
+                  <div class="img" onclick="addObj('Stiches_plane', 'stich.glb', 'Stiches_plane', 'models/stitches/s4.png');">
                     <img src="assets/images/customizeyourkandora/12-stitches.png" alt="" />
                   </div>
                   <h4 class="stitch_style">8 Stitches</h4>
