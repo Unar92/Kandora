@@ -393,9 +393,9 @@
                 window.addObj = addObj;
 
                 // addObj('collar', 'collar.glb', 'style1,style2');
-// addObj('stitches', 'stitches.glb', 'styleA,styleB');
-// addObj('pleats', 'pleats.glb', 'styleX,styleY');
-// addObj('frontstyle', 'frontstyle.glb', 'styleM,styleN');
+                // addObj('stitches', 'stitches.glb', 'styleA,styleB');
+                // addObj('pleats', 'pleats.glb', 'styleX,styleY');
+                // addObj('frontstyle', 'frontstyle.glb', 'styleM,styleN');
 
                     // add pocket.glb to the scene
                     // loader.load('pocket.glb', function (glb4) {
@@ -578,175 +578,124 @@
 
 
         
-        
+        function animateCameraToObjPosition(objType) {
+    console.log("Animating camera to object position:", objType);
+
+    let targetPosition = { x: 0, y: 0, z: 8 };
+      
+    if (objType === 'pocket') {
+        targetPosition = { x:  5, y: 0, z: 0};
+    }
+
+    const cameraTarget = new THREE.Vector3(targetPosition.x, targetPosition.y, targetPosition.z);
+
+    gsap.to(camera.position, {
+      duration: 1,
+      x: targetPosition.x,
+      y: targetPosition.y,
+      z: targetPosition.z,
+      onUpdate: function () {
+        console.log("Camera position:", camera.position);
+        camera.lookAt(cameraTarget);
+        controls.update();
+        render();
+      },
+      onComplete: function () {
+        console.log("Animation complete");
+      }
+    });
+
+    gsap.to(camera, {
+      duration: 1,
+      zoom: 2, // Adjust the zoom level as needed
+      onUpdate: function () {
+        camera.updateProjectionMatrix();
+        render();
+      }
+    });
+}
         
 
         //function to animate camera to cuff position using gsap
-        function animateCameraToObjPosition(objType) {
-            // Capture the current camera position, zoom level, and controls target
-            const currentCameraPosition = camera.position.clone();
-            const currentZoom = camera.zoom;
-            const currentTarget = controls.target.clone();
+        // function animateCameraToObjPosition(objType) {
+            
+        //     //animate camera to specific position using gsap
+        //     if (objType === 'cuff') {
+        //         gsap.to(camera.position, {
+        //             duration: 1,
+        //             x: 0,
+        //             y: 0,
+        //             z: 8,
+        //             onUpdate: function () {
+        //                 camera.lookAt(0, 0, 0);
+        //                 controls.update();
+        //                 render();
+        //             }
+        //         });
+        //     } else if (objType === 'collar') {
+        //         gsap.to(camera.position, {
+        //             duration: 1,
+        //             x: 0,
+        //             y: 0,
+        //             z: 8,
+        //             onUpdate: function () {
+        //                 camera.lookAt(0, 0, 0);
+        //                 controls.update();
+        //                 render();
+        //             }
+        //         });
+        //     } else if (objType === 'frontstyle') {
+        //         gsap.to(camera.position, {
+        //             duration: 1,
+        //             x: 0,
+        //             y: 0,
+        //             z: 8,
+        //             onUpdate: function () {
+        //                 camera.lookAt(0, 0, 0);
+        //                 controls.update();
+        //                 render();
+        //             }
+        //         });
+        //     } else if (objType === 'stitches') {
+        //         gsap.to(camera.position, {
+        //             duration: 1,
+        //             x: 0,
+        //             y: 0,
+        //             z: 8,
+        //             onUpdate: function () {
+        //                 // camera.lookAt(0, 0, 0);
+        //                 controls.update();
+        //                 render();
+        //             }
+        //         });
+        //     } else if (objType === 'pleats') {
+        //         gsap.to(camera.position, {
+        //             duration: 1,
+        //             x: 0,
+        //             y: 0,
+        //             z: 8,
+        //             onUpdate: function () {
+        //                 // camera.lookAt(0, 0, 0);
+        //                 controls.update();
+        //                 render();
+        //             }
+        //         });
+        //     } else if (objType === 'pocket') {
+        //         gsap.to(camera.position, {
+        //             duration: 1,
+        //             x: 1,
+        //             y: 2,
+        //             z: 8,
+        //             onUpdate: function () {
+        //                 // camera.lookAt(0, 0, 0);
+        //                 controls.update();
+        //                 render();
+        //             }
+        //         });
+        //     }
 
             
-            var minZoom = 0.1;
-                var maxZoom = 3;
-
-            // Desired camera position, zoom level, and controls target
-            let desiredZoom = 3; // Adjust this value to zoom in
-            const desiredPosition = {
-                x: 1, // Adjust these values as needed
-                y: 7,
-                z: 8
-            };
-
-            //if objType is cuff
-            if (objType === 'cuff') {
-                desiredPosition.x = 1;
-                desiredPosition.y = 7;
-                desiredPosition.z = 8;
-                
-            }
-
-            //if objType is collar
-            if (objType === 'collar') {
-              desiredZoom = 8;
-              desiredPosition.x = 1.02;
-              desiredPosition.y = 35.75;
-              desiredPosition.z = 40.04;
-              maxZoom = 8;
-              console.log('Collar position:', desiredPosition);
-            }
-
-
-            //if objType is pleat camera.position.set(1, 2, 8);
-            if (objType === 'Pleat') {
-              desiredZoom = 2;
-              desiredPosition.x = -2.3;
-              desiredPosition.y = 3.8;
-              desiredPosition.z = -6.70;
-              maxZoom = 3;
-              console.log('Pleat position:', desiredPosition);
-            }
-
-            //if objType is frontstyle
-            if (objType === 'front_style') {
-              desiredZoom = 1;
-              desiredPosition.x = 0.47;
-              desiredPosition.y = 2.13;
-              desiredPosition.z = 2.70;
-              maxZoom = 3;
-              console.log('Frontstyle position:', desiredPosition);
-
-              // Set the camera position
-             // Set the camera position
-            camera.position.set(desiredPosition.x, desiredPosition.y, desiredPosition.z);
-            camera.zoom = desiredZoom;
-            camera.updateProjectionMatrix();
-
-            // Set the desired control target to a point of interest
-            const targetPosition = new THREE.Vector3(0, 0.0009239999999999999, -0.00037); // Adjust this to the point you want the camera to look at
-            controls.target.copy(targetPosition);
-            controls.update(); 
-          }
-
-
-
-            //if objType is pocket
-            if (objType === 'pocket') {
-              desiredZoom = 3;
-              desiredPosition.x = 1.02;
-              desiredPosition.y = 7;
-              desiredPosition.z = 8;
-              maxZoom = 3;
-              console.log('Pocket position:', desiredPosition);
-            }
-
-            //if objType is stitches
-            if (objType === 'stitches') {
-              desiredZoom = 3;
-              desiredPosition.x = 1.02;
-              desiredPosition.y = 7;
-              desiredPosition.z = 8;
-              maxZoom = 3;
-              console.log('Stitches position:', desiredPosition);
-            }
-            
-
-
-            let desiredTarget = new THREE.Vector3(-0.06253863501371498, 1.6308571305580224,  -0.3992374464418679);
-           
-            if (objType === 'collar') {
-                scene.traverse((child) => {
-                    if (child.isMesh && child.name.includes('collar')) {
-                        desiredTarget = child.position.clone();
-                    }
-                });
-            }
-
-
-
-            // Check if the camera is already at the desired zoom level and position
-            if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) {
-                const timeline = gsap.timeline();
-
-                
-
-                
-                controls.minDistance = minZoom; // Minimum zoom distance
-                controls.maxDistance = maxZoom; // Maximum zoom distance
-
-                timeline.to(camera, {
-                    duration: 1,
-                    zoom: Math.max(minZoom, Math.min(maxZoom, desiredZoom)), // Ensure desiredZoom is within range
-                    ease: "power2.inOut", // Use easing function for smooth animation
-                    onUpdate: function () {
-                        camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom)); // Clamp the zoom level
-                        camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
-                    },
-                });
-
-                timeline.to(camera.position, {
-                    duration: 1,
-                    x: desiredPosition.x,
-                    y: desiredPosition.y,
-                    z: desiredPosition.z,
-                    onUpdate: function () {
-                        //camera zoom
-                        camera.lookAt(desiredTarget);
-                        //move camera closer to model
-                        // camera.position.set(desiredPosition.x, desiredPosition.y, desiredPosition.z);
-                        controls.update(); // Ensure controls are updated
-                        render();
-                    }
-                }, 0); // Start at the same time as the zoom animation
-
-                timeline.to(controls.target, {
-                    duration: 1,
-                    x: desiredTarget.x,
-                    y: desiredTarget.y,
-                    z: desiredTarget.z,
-                    onStart: function () {
-                        controls.minDistance = 1; // Ensure min zoom distance is
-                        controls.maxDistance = 50; // Ensure max zoom distance is set before animation
-                    },
-                    onUpdate: function () {
-                        controls.update();
-                        render();
-                    },
-                    onComplete: function () {
-                        controls.update();
-                        controls.minDistance = 1; // Ensure min zoom distance is set after animation
-                        controls.maxDistance = 50; // Ensure max zoom distance is set after animation
-                    }
-                }, 0); // Start at the same time as the zoom animation
-            }
-
-            render();
-        }
-
-
-
+        // }
 
         // Function to update color property
         function updateColorProperty(value) {
@@ -1057,16 +1006,28 @@
       controls.update();
 
 
-      //get camera position and zoom level in console log when user move the camera
-    //   controls.addEventListener('change', function () {
-    //     console.log('Camera:', camera); // Check if camera is defined
-    // console.log('Controls:', controls); // Check if controls are defined
-    // console.log('Camera Position:', camera.position);
-    // console.log('Controls Target:', controls.target);
+      // get camera position and zoom level in console log when user move the camera
+      controls.addEventListener('change', function () {
+        console.log('Camera:', camera); // Check if camera is defined
+    console.log('Controls:', controls); // Check if controls are defined
+    console.log('Camera Position:', camera.position);
+    console.log('Controls Target:', controls.target);
  
                 
              
-    //         });
+            });
+
+            // Add this function to log the camera and controls values
+// function logCameraAndControls() {
+//     console.log('Camera Position:', camera.position);
+//     console.log('Camera Zoom:', camera.zoom);
+//     console.log('Controls Target:', controls.target);
+// }
+
+// // Add event listeners to log values when the camera or controls are updated
+// controls.addEventListener('change', logCameraAndControls);
+// camera.addEventListener('change', logCameraAndControls);
+
 
         window.addEventListener('resize', onWindowResize);
 

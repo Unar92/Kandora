@@ -2436,12 +2436,12 @@ $(document).ready(function () {
   let isScrolling = false;
 
   $(".customize-option li, .customize-option .custom-radio").click(function () {
-    if ($(window).width() < 991) {
+    if ($(window).width() < 1200) {
       isScrolling = true;
       $('html, body').animate({
         scrollTop: $("#customize-scene").offset().top
       }, {
-        duration: 1000,
+        duration: 100,
         complete: function () {
           isScrolling = false;
           console.log('Scroll animation completed');
@@ -2453,16 +2453,13 @@ $(document).ready(function () {
   // Stop animation if user interacts with the website
   $(window).on('touchstart touchmove', function () {
     if (isScrolling) {
-    //stop scroll animation
-
+      //stop scroll animation
       $('html, body').stop();
-
       console.log('Stopped');
       isScrolling = false;
     }
   });
 });
-
 
 
 	 
