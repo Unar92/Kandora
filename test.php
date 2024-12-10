@@ -123,6 +123,7 @@
 
     let camera, scene, renderer;
     let gui;
+    let controls; // Define controls here
 
     const state = { variant: 'midnight' };
 
@@ -271,40 +272,6 @@
                     removeObjects(glb1.scene);
                     render();
 
-                    // //add back Pleats.glb to the scene
-                    // loader.load('back Pleats.glb', function (glb2) {
-                    //     glb2.scene.scale.set(1.7, 1.7, 1.7);
-                    //     glb2.scene.position.set(0, -1.1, 0);
-                    //     scene.add(glb2.scene);
-
-                    //     // Remove specific objects from the second GLB model
-                    //     removeObjects(glb2.scene);
-                    //     render();
-                    // });
-
-                    // //add stich.glb to the scene
-                    // loader.load('stich.glb', function (glb3) {
-                    //     glb3.scene.scale.set(1.7, 1.7, 1.7);
-                    //     glb3.scene.position.set(0, -1.1, 0);
-                    //     scene.add(glb3.scene);
-
-                    //     // Remove specific objects from the second GLB model
-                    //     removeObjects(glb3.scene);
-                    //     render();
-                    // });
-
-                    // //add frontstyle.glb to the scene
-                    // loader.load('frontstyle.glb', function (glb4) {
-                    //     glb4.scene.scale.set(1.7, 1.7, 1.7);
-                    //     glb4.scene.position.set(0, -1.1, 0);
-                    //     scene.add(glb4.scene);
-
-                    //     // Remove specific objects from the second GLB model
-                    //     removeObjects(glb4.scene);
-                    //     render();
-                    // });
-
-
 
 
                   
@@ -326,7 +293,7 @@
                   loader.load(objectFile, function (glb) {
                     glb.scene.scale.set(1.7, 1.7, 1.7);
                     if (objectFile === 'pocket.glb') {
-                      glb.scene.position.set(0, -1.1, 0.02);
+                      glb.scene.position.set(0, -1.1, 0.01);
                     } else {
                       glb.scene.position.set(0, -1.1, 0);
                     }
@@ -392,21 +359,7 @@
                 //global add collar function
                 window.addObj = addObj;
 
-                // addObj('collar', 'collar.glb', 'style1,style2');
-                // addObj('stitches', 'stitches.glb', 'styleA,styleB');
-                // addObj('pleats', 'pleats.glb', 'styleX,styleY');
-                // addObj('frontstyle', 'frontstyle.glb', 'styleM,styleN');
-
-                    // add pocket.glb to the scene
-                    // loader.load('pocket.glb', function (glb4) {
-                    //     glb4.scene.scale.set(1.7, 1.7, 1.7);
-                    //     glb4.scene.position.set(0, -1.1, 0);
-                    //     scene.add(glb4.scene);
-
-                    //     // Remove specific objects from the second GLB model
-                    //     removeObjects(glb4.scene);
-                    //     render();
-                    // });
+                
 
                     // Load the second GLB file
                    //add collar to the scene when function is triggered
@@ -442,7 +395,7 @@
                         setTimeout(() => {
                           document.querySelector('.panel-3d').classList.remove('loading-assets');
                           render();
-                          // animateCameraToObjPosition("collar");
+                          animateCameraToObjPosition("collar");
                         }, 500); // Delay of 500 milliseconds
                       });
                     } else {
@@ -466,7 +419,7 @@
                       setTimeout(() => {
                         document.querySelector('.panel-3d').classList.remove('loading-assets');
                         render();
-                        // animateCameraToObjPosition("collar");
+                        animateCameraToObjPosition("collar");
                       }, 500); // Delay of 500 milliseconds
                     }
                   }
@@ -578,124 +531,315 @@
 
 
         
-        function animateCameraToObjPosition(objType) {
-    console.log("Animating camera to object position:", objType);
+//         function animateCameraToObjPosition(objType) {
+//           scene.traverse((child) => {
+//         if (child.isMesh && child.name.includes(objType)) {
+//             // Move the camera to view the object
+//             const objPosition = child.position.clone();
+//             const cameraTarget = new THREE.Vector3(objPosition.x, objPosition.y, objPosition.z);
 
-    let targetPosition = { x: 0, y: 0, z: 8 };
+//             // Capture the current camera position, zoom level, and controls target
+//             const currentCameraPosition = camera.position.clone();
+//             const currentZoom = camera.zoom;
+//             const currentTarget = controls.target.clone();
+
+//             // Desired camera position, zoom level, and controls target
+//             let desiredZoom = 1; // Adjust this value to zoom in
+//             let desiredPosition = {
+//                 x: objPosition.x + 3, // Adjust these values as needed
+//                 y: objPosition.y + 4, // Increase y value to move vertically
+//                 z: objPosition.z + 5
+//             };
+
+            
+//             let desiredTarget = objPosition.clone();
+
+//             // If pocket then change position
+//             if (objType.includes('pocket')) {
+//                 desiredZoom = 3;
+//                 desiredPosition.x = objPosition.x + 1; // Adjust these values as needed
+//                 desiredPosition.y = objPosition.y + 5; // Increase y value to move vertically
+//                 desiredPosition.z = objPosition.z + 5;
+//             }
+
+//              //if objType is cuff
+//              if (objType === 'cuff') {
+//                 desiredPosition.x = 7;
+//                 desiredPosition.y = 7;
+//                 desiredPosition.z = 6;
+//                 desiredZoom = 5;
+                
+//             }
+
+//             //if objType is collar
+//             if (objType.includes('collar')) {
+//               desiredZoom = 1;
+//               desiredPosition.x = 1.02;
+//               desiredPosition.y = 35.75;
+//               desiredPosition.z = 40.04;
+//             }
+
+
+//             //if objType is pleat camera.position.set(1, 2, 8);
+//             if (objType.includes('Pleat')) {
+//               desiredZoom = 2;
+//               desiredPosition.x = -2.3;
+//               desiredPosition.y = 3.8;
+//               desiredPosition.z = -6.70;
+//               desiredTarget = child.position.clone();
+//               console.log('Pleat position:', desiredPosition);
+            
+//             }
+
+//             //if objType is frontstyle
+//             if (objType.includes('front_style')) {
+//               desiredZoom = 3;
+//               desiredPosition.x = 1;
+//               desiredPosition.y = -2;
+//               desiredPosition.z = 8;
+//               desiredTarget = child.position.clone();
+//               // console.log('Frontstyle position:', desiredPosition);
+//           }
+
+
+
+
+//             //if objType is stitches
+//             if (objType.includes('Stiches')) {
+//               desiredZoom = 3;
+//               desiredPosition.x = 1.02;
+//               desiredPosition.y = 7;
+//               desiredPosition.z = 8;
+//               desiredTarget = child.position.clone();
       
-    if (objType === 'pocket') {
-        targetPosition = { x:  5, y: 0, z: 0};
-    }
+//             }
+            
 
-    const cameraTarget = new THREE.Vector3(targetPosition.x, targetPosition.y, targetPosition.z);
 
-    gsap.to(camera.position, {
-      duration: 1,
-      x: targetPosition.x,
-      y: targetPosition.y,
-      z: targetPosition.z,
-      onUpdate: function () {
-        console.log("Camera position:", camera.position);
-        camera.lookAt(cameraTarget);
-        controls.update();
-        render();
-      },
-      onComplete: function () {
-        console.log("Animation complete");
-      }
-    });
+       
+//             if (objType.includes('collar')) {
+//                 scene.traverse((child) => {
+//                     if (child.isMesh && child.name.includes('collar')) {
+//                         desiredTarget = child.position.clone();
+//                     }
+//                 });
+//             }
 
-    gsap.to(camera, {
-      duration: 1,
-      zoom: 2, // Adjust the zoom level as needed
-      onUpdate: function () {
-        camera.updateProjectionMatrix();
-        render();
-      }
-    });
-}
+
+//             // Check if the camera is already at the desired zoom level and position
+//             if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) {
+//                 const timeline = gsap.timeline();
+
+//                 var minZoom = 0.1;
+//                 var maxZoom = 6;
+//                 controls.minDistance = minZoom; // Minimum zoom distance
+//                 controls.maxDistance = maxZoom; // Maximum zoom distance
+
+//                 timeline.to(camera, {
+//                     duration: 1,
+//                     zoom: Math.max(minZoom, Math.min(maxZoom, desiredZoom)), // Ensure desiredZoom is within range
+//                     ease: "power2.inOut", // Use easing function for smooth animation
+//                     onUpdate: function () {
+//                         camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom)); // Clamp the zoom level
+//                         camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
+//                     },
+//                 });
+
+//                 // console.log('Camera start:', camera.position);
+
+           
+//                 timeline.to(camera.position, {
+//                     duration: 1,
+//                     x: desiredPosition.x,
+//                     y: desiredPosition.y,
+//                     z: desiredPosition.z,
+//                     onUpdate: function () {
+//                       camera.lookAt(desiredTarget);
+//                         controls.update(); // Ensure controls are updated
+//                         render();
+//                     },
+//                     onComplete: function () {
+//                         // console.log('Camera end:', camera.position); // Log the camera position after the animation completes
+//                     }
+//                 }, 0); // Start at the same time as the zoom animation
+
+//                 timeline.to(controls.target, {
+//                     duration: 1,
+//                     x: desiredTarget.x,
+//                     y: desiredTarget.y,
+//                     z: desiredTarget.z,
+//                     onStart: function () {
+//                         controls.minDistance = 1; // Ensure min zoom distance is
+//                         controls.maxDistance = 50; // Ensure max zoom distance is set before animation
+//                     },
+//                     onUpdate: function () {
+//                         controls.update();
+//                         render();
+//                     },
+//                     onComplete: function () {
+//                         controls.update();
+//                         controls.minDistance = 1; // Ensure min zoom distance is set after animation
+//                         controls.maxDistance = 50; // Ensure max zoom distance is set after animation
+//                     }
+//                 }, 0); // Start at the same time as the zoom animation
+//             } 
+//             render();
+//         }
+//     });
+// }
         
 
-        //function to animate camera to cuff position using gsap
-        // function animateCameraToObjPosition(objType) {
-            
-        //     //animate camera to specific position using gsap
-        //     if (objType === 'cuff') {
-        //         gsap.to(camera.position, {
-        //             duration: 1,
-        //             x: 0,
-        //             y: 0,
-        //             z: 8,
-        //             onUpdate: function () {
-        //                 camera.lookAt(0, 0, 0);
-        //                 controls.update();
-        //                 render();
-        //             }
-        //         });
-        //     } else if (objType === 'collar') {
-        //         gsap.to(camera.position, {
-        //             duration: 1,
-        //             x: 0,
-        //             y: 0,
-        //             z: 8,
-        //             onUpdate: function () {
-        //                 camera.lookAt(0, 0, 0);
-        //                 controls.update();
-        //                 render();
-        //             }
-        //         });
-        //     } else if (objType === 'frontstyle') {
-        //         gsap.to(camera.position, {
-        //             duration: 1,
-        //             x: 0,
-        //             y: 0,
-        //             z: 8,
-        //             onUpdate: function () {
-        //                 camera.lookAt(0, 0, 0);
-        //                 controls.update();
-        //                 render();
-        //             }
-        //         });
-        //     } else if (objType === 'stitches') {
-        //         gsap.to(camera.position, {
-        //             duration: 1,
-        //             x: 0,
-        //             y: 0,
-        //             z: 8,
-        //             onUpdate: function () {
-        //                 // camera.lookAt(0, 0, 0);
-        //                 controls.update();
-        //                 render();
-        //             }
-        //         });
-        //     } else if (objType === 'pleats') {
-        //         gsap.to(camera.position, {
-        //             duration: 1,
-        //             x: 0,
-        //             y: 0,
-        //             z: 8,
-        //             onUpdate: function () {
-        //                 // camera.lookAt(0, 0, 0);
-        //                 controls.update();
-        //                 render();
-        //             }
-        //         });
-        //     } else if (objType === 'pocket') {
-        //         gsap.to(camera.position, {
-        //             duration: 1,
-        //             x: 1,
-        //             y: 2,
-        //             z: 8,
-        //             onUpdate: function () {
-        //                 // camera.lookAt(0, 0, 0);
-        //                 controls.update();
-        //                 render();
-        //             }
-        //         });
-        //     }
+function animateCameraToObjPosition(objType) {
+            // Capture the current camera position, zoom level, and controls target
+            const currentCameraPosition = camera.position.clone();
+            const currentZoom = camera.zoom;
+            const currentTarget = controls.target.clone();
 
             
-        // }
+            var minZoom = 0.1;
+                var maxZoom = 50;
+
+            // Desired camera position, zoom level, and controls target
+            let desiredZoom = 3; // Adjust this value to zoom in
+            const desiredPosition = {
+                x: 1, // Adjust these values as needed
+                y: 7,
+                z: 8
+            };
+
+            //if objType is cuff
+            if (objType.includes('cuff')) {
+                desiredPosition.x = 4;
+                desiredPosition.y = 2;
+                desiredPosition.z = 1;
+                desiredZoom = 1;
+            }
+
+            //if objType is collar
+            if (objType.includes('collar')) {
+              desiredZoom = 5;
+              desiredPosition.x = 1.02;
+              desiredPosition.y = 15;
+              desiredPosition.z = 15;
+            }
+
+
+            //if objType is pleat camera.position.set(1, 2, 8);
+            if (objType.includes('Pleat')) {
+              desiredZoom = 2;
+              desiredPosition.x = -1;
+              desiredPosition.y = 3.8;
+              desiredPosition.z = -6.70;
+              console.log('Pleat position:', desiredPosition);
+            }
+
+            //if objType is frontstyle
+            if (objType.includes('front_style')) {
+              desiredZoom = 1;
+              desiredPosition.x = 0.47;
+              desiredPosition.y = 2.13;
+              desiredPosition.z = 2.70;
+              console.log('Frontstyle position:', desiredPosition);
+
+     
+          }
+
+         
+
+
+            //if objType is pocket
+            if (objType.includes('pocket')) {
+              desiredZoom = 3;
+              desiredPosition.x = 1.02;
+              desiredPosition.y = 3;
+              desiredPosition.z = 8;
+        
+              console.log('Pocket position:', desiredPosition);
+            }
+
+            //if objType is stitches
+            if (objType.includes('Stiches')) {
+              desiredZoom = 7;
+              desiredPosition.x = -1.5;
+              desiredPosition.y = 2;
+              desiredPosition.z = 5;
+              console.log('Stitches position:', desiredPosition);
+            }
+            
+
+
+            let desiredTarget = new THREE.Vector3(-0.06253863501371498, 1.6308571305580224,  -0.3992374464418679);
+           
+            // if (objType === 'collar') {
+            //     scene.traverse((child) => {
+            //         if (child.isMesh && child.name.includes('collar')) {
+            //             desiredTarget = child.position.clone();
+            //         }
+            //     });
+            // }
+
+
+
+            // Check if the camera is already at the desired zoom level and position
+            if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) {
+                const timeline = gsap.timeline();
+
+                
+
+                
+                controls.minDistance = minZoom; // Minimum zoom distance
+                controls.maxDistance = maxZoom; // Maximum zoom distance
+
+                timeline.to(camera, {
+                    duration: 1,
+                    zoom: Math.max(minZoom, Math.min(maxZoom, desiredZoom)), // Ensure desiredZoom is within range
+                    ease: "power2.inOut", // Use easing function for smooth animation
+                    onUpdate: function () {
+                        camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom)); // Clamp the zoom level
+                        camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
+                    },
+                });
+
+                timeline.to(camera.position, {
+                    duration: 1,
+                    x: desiredPosition.x,
+                    y: desiredPosition.y,
+                    z: desiredPosition.z,
+                    onUpdate: function () {
+                        //camera zoom
+                        camera.lookAt(desiredTarget);
+                        //move camera closer to model
+                        // camera.position.set(desiredPosition.x, desiredPosition.y, desiredPosition.z);
+                        controls.update(); // Ensure controls are updated
+                        render();
+                    }
+                }, 0); // Start at the same time as the zoom animation
+
+                timeline.to(controls.target, {
+                    duration: 1,
+                    x: desiredTarget.x,
+                    y: desiredTarget.y,
+                    z: desiredTarget.z,
+                    onStart: function () {
+                        controls.minDistance = 1; // Ensure min zoom distance is
+                        controls.maxDistance = 50; // Ensure max zoom distance is set before animation
+                    },
+                    onUpdate: function () {
+                        controls.update();
+                        render();
+                    },
+                    onComplete: function () {
+                        controls.update();
+                        controls.minDistance = 1; // Ensure min zoom distance is set after animation
+                        controls.maxDistance = 50; // Ensure max zoom distance is set after animation
+                    }
+                }, 0); // Start at the same time as the zoom animation
+            }
+
+            render();
+        }
+
+
 
         // Function to update color property
         function updateColorProperty(value) {
@@ -1007,15 +1151,15 @@
 
 
       // get camera position and zoom level in console log when user move the camera
-      controls.addEventListener('change', function () {
-        console.log('Camera:', camera); // Check if camera is defined
-    console.log('Controls:', controls); // Check if controls are defined
-    console.log('Camera Position:', camera.position);
-    console.log('Controls Target:', controls.target);
+    //   controls.addEventListener('change', function () {
+    //     console.log('Camera:', camera); // Check if camera is defined
+    // console.log('Controls:', controls); // Check if controls are defined
+    // console.log('Camera Position:', camera.position);
+    // console.log('Controls Target:', controls.target);
  
                 
              
-            });
+    //         });
 
             // Add this function to log the camera and controls values
 // function logCameraAndControls() {
@@ -1308,7 +1452,7 @@
           </div>
         </div>
 
-        <div class="customize-section-box">
+        <!-- <div class="customize-section-box">
           <div class="heading"  disabled="disabled">
             <h3>Choose Front Pleat Style</h3>
             <img src="assets/images/customizeyourkandora/chevron-down.svg" alt="" />
@@ -1343,7 +1487,7 @@
               </ul>
             </div>
           </div>
-        </div>
+        </div> -->
 
 
         <div class="customize-section-box">

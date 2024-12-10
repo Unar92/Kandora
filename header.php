@@ -369,4 +369,4 @@
             </div>
         </div>
     </header>
-    <main class="overflow-hidden">
+    <main class="">
