@@ -462,7 +462,7 @@
                         setTimeout(() => {
                           document.querySelector('.panel-3d').classList.remove('loading-assets');
                           render(); 
-                          animateCameraToObjPosition("cuff");
+                          animateCameraToObjPosition("kandora_torso");
                           
 
                         }, 500); // Delay of 500 milliseconds
@@ -497,7 +497,7 @@
                         setTimeout(() => {
                           document.querySelector('.panel-3d').classList.remove('loading-assets');
                           render(); 
-                          animateCameraToObjPosition("cuff");
+                          animateCameraToObjPosition("kandora_torso");
                           
 
                         }, 500); // Delay of 500 milliseconds
@@ -697,7 +697,7 @@ function animateCameraToObjPosition(objType) {
 
             
             var minZoom = 0.1;
-                var maxZoom = 50;
+            var maxZoom = 50;
 
             // Desired camera position, zoom level, and controls target
             let desiredZoom = 3; // Adjust this value to zoom in
@@ -708,19 +708,19 @@ function animateCameraToObjPosition(objType) {
             };
 
             //if objType is cuff
-            if (objType.includes('cuff')) {
-                desiredPosition.x = 4;
-                desiredPosition.y = 2;
-                desiredPosition.z = 1;
-                desiredZoom = 1;
+            if (objType === 'kandora_torso') {
+                desiredPosition.x = 9;
+                desiredPosition.y = 8;
+                desiredPosition.z = 8;
+                desiredZoom = 5;
             }
 
             //if objType is collar
             if (objType.includes('collar')) {
               desiredZoom = 5;
               desiredPosition.x = 1.02;
-              desiredPosition.y = 15;
-              desiredPosition.z = 15;
+              desiredPosition.y = 10;
+              desiredPosition.z = 10;
             }
 
 
@@ -770,13 +770,10 @@ function animateCameraToObjPosition(objType) {
 
             let desiredTarget = new THREE.Vector3(-0.06253863501371498, 1.6308571305580224,  -0.3992374464418679);
            
-            // if (objType === 'collar') {
-            //     scene.traverse((child) => {
-            //         if (child.isMesh && child.name.includes('collar')) {
-            //             desiredTarget = child.position.clone();
-            //         }
-            //     });
-            // }
+            if (objType === 'cuff') {
+              let desiredTarget = new THREE.Vector3(0, 0, 0);
+           
+            }
 
 
 
@@ -784,7 +781,7 @@ function animateCameraToObjPosition(objType) {
             if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) {
                 const timeline = gsap.timeline();
 
-                
+                let cameraTarget = new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z);
 
                 
                 controls.minDistance = minZoom; // Minimum zoom distance
@@ -799,6 +796,10 @@ function animateCameraToObjPosition(objType) {
                         camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
                     },
                 });
+
+                if (objType === 'kandora_torso') {
+                  desiredTarget = new THREE.Vector3(0, 0, 0);
+                }
 
                 timeline.to(camera.position, {
                     duration: 1,
@@ -821,7 +822,7 @@ function animateCameraToObjPosition(objType) {
                     y: desiredTarget.y,
                     z: desiredTarget.z,
                     onStart: function () {
-                        controls.minDistance = 1; // Ensure min zoom distance is
+                        controls.minDistance = 1.8; // Ensure min zoom distance is
                         controls.maxDistance = 50; // Ensure max zoom distance is set before animation
                     },
                     onUpdate: function () {
@@ -830,7 +831,7 @@ function animateCameraToObjPosition(objType) {
                     },
                     onComplete: function () {
                         controls.update();
-                        controls.minDistance = 1; // Ensure min zoom distance is set after animation
+                        controls.minDistance = 1.8; // Ensure min zoom distance is set after animation
                         controls.maxDistance = 50; // Ensure max zoom distance is set after animation
                     }
                 }, 0); // Start at the same time as the zoom animation
@@ -1724,13 +1725,13 @@ function animateCameraToObjPosition(objType) {
           <div class="customize-option">
             <div class="images-option mt-0">
               <ul class="image-border align-items-end">
-                <li onclick="addObj('Pleat', 'back Pleats.glb', 'Pleat1');">
+                <li onclick="addObj('Pleat1', 'back Pleats.glb', 'Pleat1');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/Back-plain.png" alt="" />
                   </div>
                   <h4 class="back_style">Plain</h4>
                 </li>
-                <li onclick="addObj('Pleat', 'back Pleats.glb', 'Pleat2');">
+                <li onclick="addObj('Pleat2', 'back Pleats.glb', 'Pleat2');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/Back-side-pleats.png" alt="" />
                   </div>
