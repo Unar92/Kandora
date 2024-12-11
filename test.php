@@ -231,7 +231,7 @@
                             //if child includes pocket
                             if (child.name.includes('pocket')) {
                                 child.visible = false;
-                                // console.log("Remove pocket", child.name);
+                                console.log("Remove pocket", child.name);
                             }
 
                             // if child includes Stiches_plane
@@ -243,7 +243,7 @@
                             // if child includes Pleat
                             if (child.name.includes('Pleat')) {
                                 child.visible = false;
-                                // console.log("Remove Pleat", child.name);
+                                console.log("Remove Pleat", child.name);
                             }
                             
 
@@ -255,6 +255,7 @@
 
                     objectsToRemove.forEach((child) => {
                         if (child.parent) {
+                          child.visible = false;
                             child.parent.remove(child);
                             console.log("Removed", child.name);
                         }
@@ -276,86 +277,93 @@
 
                   
 
-              function addObj(objectType, objectFile, objectStyles, textureURL) {
-                // class loading-assets to panel-3d
-                document.querySelector('.panel-3d').classList.add('loading-assets');
-                
-                // Check if the object is already added
-                let objAdded = false;
-                scene.traverse((child) => {
-                  if (child.isMesh && child.name.includes(objectType)) {
-                    objAdded = true;
-                  }
-                });
-                
+                    function addObj(objectType, objectFile, objectStyles, textureURL) {
+  // Check if the object is already added
+  let objAdded = false;
+  scene.traverse((child) => {
+    if (child.isMesh && child.name.includes(objectType)) {
+      objAdded = true;
+    }
+  });
 
-                if (!objAdded) {
-                  loader.load(objectFile, function (glb) {
-                    glb.scene.scale.set(1.7, 1.7, 1.7);
-                    if (objectFile === 'pocket.glb') {
-                      glb.scene.position.set(0, -1.1, 0.01);
-                    } else {
-                      glb.scene.position.set(0, -1.1, 0);
-                    }
-                    scene.add(glb.scene);
+  if (!objAdded) {
+    // class loading-assets to panel-3d
+    document.querySelector('.panel-3d').classList.add('loading-assets');
 
-                    // Remove specific objects from the GLB model
-                    removeObjects(glb.scene);
+    loader.load(objectFile, function (glb) {
+      glb.scene.scale.set(1.7, 1.7, 1.7);
+      if (objectFile === 'pocketaftermath.glb') {
+        glb.scene.position.set(0, -1.1, 0);
+      } else {
+        glb.scene.position.set(0, -1.1, 0);
+      }
+      scene.add(glb.scene);
 
-                    // Make the specified styles visible
-                    const styles = objectStyles.split(',').map(style => style.trim());
-                    glb.scene.traverse((child) => {
-                      if (child.isMesh && styles.some(style => child.name.includes(style))) {
-                        child.visible = true;
-                      }
-                    });
+      // Remove specific objects from the GLB model
+      removeObjects(glb.scene);
 
-                    //if textureURL is not empty
-                    if (textureURL) {
-                      changeTextureByName(objectType, textureURL);
-                    }
+      // Make the specified styles visible
+      const styles = objectStyles.split(',').map(style => style.trim());
+      glb.scene.traverse((child) => {
+        if (child.isMesh && styles.some(style => child.name.includes(style))) {
+          child.visible = true;
+        }
+      });
 
-                    // Render the scene after the model is loaded
-                    setTimeout(() => {
-                      document.querySelector('.panel-3d').classList.remove('loading-assets');
-                      render();
-                      animateCameraToObjPosition(objectType);
-                    }, 500); // Delay of 500 milliseconds
-                  });
+      //if textureURL is not empty
+      if (textureURL) {
+        changeTextureByName(objectType, textureURL);
+      }
 
+      // Render the scene after the model is loaded
+      setTimeout(() => {
+        document.querySelector('.panel-3d').classList.remove('loading-assets');
+        render();
+        animateCameraToObjPosition(objectType);
+      }, 500); // Delay of 500 milliseconds
+    });
+  } else {
+    // Modify the current loaded model
+    const styles = objectStyles.split(',').map(style => style.trim());
 
-                } else {
-                  // Modify the current loaded model
-                  const styles = objectStyles.split(',').map(style => style.trim());
+    // Hide all elements first
+    scene.traverse((child) => {
+      if (child.isMesh && child.name.toLowerCase().includes(objectType)) {
+        child.visible = false;
+      }
+    });
 
-                  // Hide all elements first
-                  scene.traverse((child) => {
-                    if (child.isMesh && child.name.toLowerCase().includes(objectType)) {
-                      child.visible = false;
-                    }
-                  });
+    // Make the specified styles visible
+    scene.traverse((child) => {
+      if (child.isMesh && styles.some(style => child.name === style)) {
+        child.visible = true;
+      }
+    });
 
-                  // Make the specified styles visible
-                  scene.traverse((child) => {
-                    if (child.isMesh && styles.some(style => child.name.includes(style))) {
-                      child.visible = true;
-                    }
-                  });
+    console.log("object type", objectType);
 
-                  //if textureURL is not empty
-                  if (textureURL) {
-                      changeTextureByName(objectType, textureURL);
-                    }
+    //if Pleat1 than hide Pleat2
+    if (objectType === 'Pleat1') {
+      scene.traverse((child) => {
+        if (child.isMesh && child.name === 'Pleat2') {
+          child.visible = false;
+          console.log('Pleat2 hidden');
+        }
+      });
+    }
 
-                  // Render the scene after modifying the model
-                  setTimeout(() => {
-                    document.querySelector('.panel-3d').classList.remove('loading-assets');
-                    render();
-                    animateCameraToObjPosition(objectType);
-                  }, 500); // Delay of 500 milliseconds
-                }
-              }
+    //if textureURL is not empty
+    if (textureURL) {
+      changeTextureByName(objectType, textureURL);
+    }
 
+    // Render the scene after modifying the model
+    setTimeout(() => {
+      render();
+      animateCameraToObjPosition(objectType);
+    }, 500); // Delay of 500 milliseconds
+  }
+}
                 //global add collar function
                 window.addObj = addObj;
 
@@ -529,164 +537,6 @@
             });
         });
 
-
-        
-//         function animateCameraToObjPosition(objType) {
-//           scene.traverse((child) => {
-//         if (child.isMesh && child.name.includes(objType)) {
-//             // Move the camera to view the object
-//             const objPosition = child.position.clone();
-//             const cameraTarget = new THREE.Vector3(objPosition.x, objPosition.y, objPosition.z);
-
-//             // Capture the current camera position, zoom level, and controls target
-//             const currentCameraPosition = camera.position.clone();
-//             const currentZoom = camera.zoom;
-//             const currentTarget = controls.target.clone();
-
-//             // Desired camera position, zoom level, and controls target
-//             let desiredZoom = 1; // Adjust this value to zoom in
-//             let desiredPosition = {
-//                 x: objPosition.x + 3, // Adjust these values as needed
-//                 y: objPosition.y + 4, // Increase y value to move vertically
-//                 z: objPosition.z + 5
-//             };
-
-            
-//             let desiredTarget = objPosition.clone();
-
-//             // If pocket then change position
-//             if (objType.includes('pocket')) {
-//                 desiredZoom = 3;
-//                 desiredPosition.x = objPosition.x + 1; // Adjust these values as needed
-//                 desiredPosition.y = objPosition.y + 5; // Increase y value to move vertically
-//                 desiredPosition.z = objPosition.z + 5;
-//             }
-
-//              //if objType is cuff
-//              if (objType === 'cuff') {
-//                 desiredPosition.x = 7;
-//                 desiredPosition.y = 7;
-//                 desiredPosition.z = 6;
-//                 desiredZoom = 5;
-                
-//             }
-
-//             //if objType is collar
-//             if (objType.includes('collar')) {
-//               desiredZoom = 1;
-//               desiredPosition.x = 1.02;
-//               desiredPosition.y = 35.75;
-//               desiredPosition.z = 40.04;
-//             }
-
-
-//             //if objType is pleat camera.position.set(1, 2, 8);
-//             if (objType.includes('Pleat')) {
-//               desiredZoom = 2;
-//               desiredPosition.x = -2.3;
-//               desiredPosition.y = 3.8;
-//               desiredPosition.z = -6.70;
-//               desiredTarget = child.position.clone();
-//               console.log('Pleat position:', desiredPosition);
-            
-//             }
-
-//             //if objType is frontstyle
-//             if (objType.includes('front_style')) {
-//               desiredZoom = 3;
-//               desiredPosition.x = 1;
-//               desiredPosition.y = -2;
-//               desiredPosition.z = 8;
-//               desiredTarget = child.position.clone();
-//               // console.log('Frontstyle position:', desiredPosition);
-//           }
-
-
-
-
-//             //if objType is stitches
-//             if (objType.includes('Stiches')) {
-//               desiredZoom = 3;
-//               desiredPosition.x = 1.02;
-//               desiredPosition.y = 7;
-//               desiredPosition.z = 8;
-//               desiredTarget = child.position.clone();
-      
-//             }
-            
-
-
-       
-//             if (objType.includes('collar')) {
-//                 scene.traverse((child) => {
-//                     if (child.isMesh && child.name.includes('collar')) {
-//                         desiredTarget = child.position.clone();
-//                     }
-//                 });
-//             }
-
-
-//             // Check if the camera is already at the desired zoom level and position
-//             if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) {
-//                 const timeline = gsap.timeline();
-
-//                 var minZoom = 0.1;
-//                 var maxZoom = 6;
-//                 controls.minDistance = minZoom; // Minimum zoom distance
-//                 controls.maxDistance = maxZoom; // Maximum zoom distance
-
-//                 timeline.to(camera, {
-//                     duration: 1,
-//                     zoom: Math.max(minZoom, Math.min(maxZoom, desiredZoom)), // Ensure desiredZoom is within range
-//                     ease: "power2.inOut", // Use easing function for smooth animation
-//                     onUpdate: function () {
-//                         camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom)); // Clamp the zoom level
-//                         camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
-//                     },
-//                 });
-
-//                 // console.log('Camera start:', camera.position);
-
-           
-//                 timeline.to(camera.position, {
-//                     duration: 1,
-//                     x: desiredPosition.x,
-//                     y: desiredPosition.y,
-//                     z: desiredPosition.z,
-//                     onUpdate: function () {
-//                       camera.lookAt(desiredTarget);
-//                         controls.update(); // Ensure controls are updated
-//                         render();
-//                     },
-//                     onComplete: function () {
-//                         // console.log('Camera end:', camera.position); // Log the camera position after the animation completes
-//                     }
-//                 }, 0); // Start at the same time as the zoom animation
-
-//                 timeline.to(controls.target, {
-//                     duration: 1,
-//                     x: desiredTarget.x,
-//                     y: desiredTarget.y,
-//                     z: desiredTarget.z,
-//                     onStart: function () {
-//                         controls.minDistance = 1; // Ensure min zoom distance is
-//                         controls.maxDistance = 50; // Ensure max zoom distance is set before animation
-//                     },
-//                     onUpdate: function () {
-//                         controls.update();
-//                         render();
-//                     },
-//                     onComplete: function () {
-//                         controls.update();
-//                         controls.minDistance = 1; // Ensure min zoom distance is set after animation
-//                         controls.maxDistance = 50; // Ensure max zoom distance is set after animation
-//                     }
-//                 }, 0); // Start at the same time as the zoom animation
-//             } 
-//             render();
-//         }
-//     });
-// }
         
 
 function animateCameraToObjPosition(objType) {
@@ -694,6 +544,12 @@ function animateCameraToObjPosition(objType) {
             const currentCameraPosition = camera.position.clone();
             const currentZoom = camera.zoom;
             const currentTarget = controls.target.clone();
+
+              //reset orbiting up and down, left and right
+              controls.minPolarAngle = 0; // radians
+              controls.maxPolarAngle = Math.PI; // radians
+              controls.minAzimuthAngle = -Infinity; // radians
+              controls.maxAzimuthAngle = Infinity; // radians
 
             
             var minZoom = 0.1;
@@ -709,10 +565,17 @@ function animateCameraToObjPosition(objType) {
 
             //if objType is cuff
             if (objType === 'kandora_torso') {
-                desiredPosition.x = 9;
-                desiredPosition.y = 8;
-                desiredPosition.z = 8;
-                desiredZoom = 5;
+                desiredPosition.x = 10;
+                desiredPosition.y = 12;
+                desiredPosition.z = 12;
+                desiredZoom = 6;
+                  controls.maxPolarAngle = Math.PI / 2; // radians
+
+                controls.minAzimuthAngle = -Math.PI / 11; // radians
+
+                controls.maxPolarAngle = Math.PI / 2; // radians
+                controls.minAzimuthAngle = -Math.PI / 11; // radians
+                controls.maxAzimuthAngle = Math.PI / 5; // radians
             }
 
             //if objType is collar
@@ -721,6 +584,12 @@ function animateCameraToObjPosition(objType) {
               desiredPosition.x = 1.02;
               desiredPosition.y = 10;
               desiredPosition.z = 10;
+              // limi orbiting up and down, left and right
+
+              controls.minPolarAngle = 0; // radians
+                controls.maxPolarAngle = Math.PI / 2; // radians
+                controls.minAzimuthAngle = -Math.PI / 11; // radians
+                controls.maxAzimuthAngle = Math.PI / 5; // radians
             }
 
 
@@ -753,6 +622,15 @@ function animateCameraToObjPosition(objType) {
               desiredPosition.x = 1.02;
               desiredPosition.y = 3;
               desiredPosition.z = 8;
+              // limi orbiting up and down, left and right
+
+                controls.minPolarAngle = 0; // radians
+                controls.maxPolarAngle = Math.PI / 2; // radians
+                controls.minAzimuthAngle = -Math.PI / 11; // radians
+                controls.maxAzimuthAngle = Math.PI / 5; // radians
+
+             
+
         
               console.log('Pocket position:', desiredPosition);
             }
@@ -1762,31 +1640,31 @@ function animateCameraToObjPosition(objType) {
           <div class="customize-option">
             <div class="images-option mt-0">
               <ul class="image-border no-pocket">
-                <li onclick="addObj('pocket','pocket.glb','pocket2_1');">
+                <li onclick="addObj('pocket','pocketaftermath.glb','pocket2_1');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/No-Pocket.png" alt="" />
                   </div>
                   <h4 class="pockets">No Pocket</h4>
                 </li>
-                <li onclick="addObj('pocket','pocket.glb','pocket1_1, pocket1_2');">
+                <li onclick="addObj('pocket','pocketaftermath.glb','pocket1_1, pocket1_2');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/Pocket-rounded.png" alt="" />
                   </div>
                   <h4 class="pockets">Style 1</h4>
                 </li>
-                <li onclick="addObj('pocket','pocket.glb','pocket2001, pocket2001_1');">
+                <li onclick="addObj('pocket','pocketaftermath.glb','pocket2001, pocket2001_1');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/Pocket-angled.png" alt="" />
                   </div>
                   <h4 class="pockets">Style 2</h4>
                 </li>
-                <li onclick="addObj('pocket','pocket.glb','pocket3_1, pocket3_2');">
+                <li onclick="addObj('pocket','pocketaftermath.glb','pocket3_1, pocket3_2');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/Pocket-v-shaped.png" alt="" />
                   </div>
                   <h4 class="pockets">Style 3</h4>
                 </li>
-                <li onclick="addObj('pocket','pocket.glb','pocket4_1, pocket4_2');">
+                <li onclick="addObj('pocket','pocketaftermath.glb','pocket4_1, pocket4_2');">
                   <div class="img">
                     <img src="assets/images/customizeyourkandora/Pocket-rounded.png" alt="" />
                   </div>
