@@ -129,7 +129,8 @@
 
     init();
     render();
-
+    //global variable to store color of texture 
+    let currentColor = '#ffffff';
     function init() {
         const container = document.querySelector('.panel-3d');
 
@@ -718,7 +719,8 @@ function animateCameraToObjPosition(objType) {
             render();
         }
 
-
+       
+        
 
         // Function to update color property
         function updateColorProperty(value) {
@@ -736,7 +738,10 @@ function animateCameraToObjPosition(objType) {
                 }
             });
 
-            // Ensure the texture update is visible when the model is moved
+            
+
+            // update color
+            currentColor = value;
 
         }
 
@@ -1307,23 +1312,23 @@ function animateCameraToObjPosition(objType) {
             <div class="images-option mt-0">
               <ul class="image-border">
                 <li onclick="addObj('front_style', 'frontstyle.glb', 'front_style_01');">
-                  <div class="img"><img src="assets/images/customizeyourkandora/front-emirati.png" alt="" /></div>
+                  <div class="img"><img src="images/frontstyle/1.png" alt="" /></div>
                   <h4 class="front_style">Emirati with Zipper</h4>
                 </li>
                 <li onclick="addObj('front_style', 'frontstyle.glb', 'front_style_02_1,front_style_02_2');">
-                  <div class="img"><img src="assets/images/customizeyourkandora/front-emirati.png" alt="" /></div>
+                  <div class="img"><img src="images/frontstyle/_KA_4507.png" alt="" /></div>
                   <h4 class="front_style">Emirati</h4>
                 </li>
                 <li onclick="addObj('front_style', 'frontstyle.glb', 'front_style_03_1,front_style_03_2');">
-                  <div class="img"><img src="assets/images/customizeyourkandora/front-emirati.png" alt="" /></div>
+                  <div class="img"><img src="images/frontstyle/_KA_4522.png" alt="" /></div>
                   <h4 class="front_style">Emirati</h4>
                 </li>
                 <li onclick="addObj('front_style', 'frontstyle.glb', 'front_style_04_1,front_style_04_2');">
-                  <div class="img"><img src="assets/images/customizeyourkandora/front-emirati.png" alt="" /></div>
+                  <div class="img"><img src="images/frontstyle/1.png" alt="" /></div>
                   <h4 class="front_style">Emirati with Zipper</h4>
                 </li>
-                <li onclick="addObj('front_style', 'frontstyle.glb', 'front_style_04_1,front_style_04_2');">
-                  <div class="img"><img src="assets/images/customizeyourkandora/front-emirati.png" alt="" /></div>
+                <li onclick="addObj('front_style', 'frontstyle.glb', 'front_style_05_1,front_style_05_2');">
+                  <div class="img"><img src="images/frontstyle/f380ed75-a512-4892-9e18-8775faa6c585-0.png" alt="" /></div>
                   <h4 class="front_style">style 5</h4>
                 </li>
               </ul>
@@ -1416,56 +1421,56 @@ function animateCameraToObjPosition(objType) {
               <ul class="image-border">
                 <li onclick="addCollar('collar1_1, collar1_2, collar1_3')">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/collar-2.png" alt="" />
+                    <img src="images/collar/K1.png" alt="" />
                   </div>
                   <h4 class="collar_style">1</h4>
                 </li>
                 <li onclick="addCollar('collar2_1, collar2_2')">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/collar-3.png" alt="" />
+                    <img src="images/collar/K2.png" alt="" />
                   </div>
                   <h4 class="collar_style">2</h4>
                 </li>
                 <li onclick="addCollar('collar3_1, collar3_2')">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/collar-2.png" alt="" />
+                    <img src="images/collar/K3.png" alt="" />
                   </div>
                   <h4 class="collar_style">3</h4>
                 </li>
                 <li onclick="addCollar('collar4_1, collar4_2, collar4_3')">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/collar-3.png" alt="" />
+                    <img src="images/collar/K4.png" alt="" />
                   </div>
                   <h4 class="collar_style">4</h4>
                 </li>
 
                 <li onclick="addCollar('collar5_1, collar5_2')">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/collar-2.png" alt="" />
+                    <img src="images/collar/K5.png" alt="" />
                   </div>
                   <h4 class="collar_style">5</h4>
                 </li>
                 <li onclick="addCollar('collar6_1, collar6_2')">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/collar-3.png" alt="" />
+                    <img src="images/collar/K6.png" alt="" />
                   </div>
                   <h4 class="collar_style">6</h4>
                 </li>
                 <li onclick="addCollar('collar7_1, collar7_2')">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/collar-2.png" alt="" />
+                    <img src="images/collar/K7.png" alt="" />
                   </div>
                   <h4 class="collar_style">7</h4>
                 </li>
                 <li onclick="addCollar('collar8')">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/collar-3.png" alt="" />
+                    <img src="images/collar/Q1.png" alt="" />
                   </div>
                   <h4 class="collar_style">8</h4>
                 </li>
                 <li onclick="addCollar('collar9')">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/collar-3.png" alt="" />
+                    <img src="images/collar/Q2.png" alt="" />
                   </div>
                   <h4 class="collar_style">9</h4>
                 </li>
@@ -1484,25 +1489,25 @@ function animateCameraToObjPosition(objType) {
               <ul class="image-border">
                 <li onclick='addCuff("Cuff01_1, Cuff01_2")'>
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/one-type.png" alt="" />
+                    <img src="images/Cuff/_KA_4070-Edit.png" alt="" />
                   </div>
                   <h4 class="cuffs">One Type</h4>
                 </li>
                 <li onclick='addCuff("cuff02_1, cuff02_2, cuff02_3")'>
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/one-button.png" alt="" />
+                    <img src="images/Cuff/_KA_4071-Edit.png" alt="" />
                   </div>
                   <h4 class="cuffs">One Button</h4>
                 </li>
                 <li onclick='addCuff("cuff3_1, cuff3_2, cuff3_3")'>
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/two-buttons.png" alt="" />
+                    <img src="images/Cuff/_KA_4073-Edit.png" alt="" />
                   </div>
                   <h4 class="cuffs">Two Buttons</h4>
                 </li>
                 <li onclick='addCuff("cuff4_1, cuff4_2 , cuff4_3")'>
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/french-cuffs.png" alt="" />
+                    <img src="images/Cuff/1.png" alt="" />
                   </div>
                   <h4 class="cuffs">French Cuffs</h4>
                 </li>
@@ -1605,28 +1610,17 @@ function animateCameraToObjPosition(objType) {
               <ul class="image-border align-items-end">
                 <li onclick="addObj('Pleat1', 'back Pleats.glb', 'Pleat1');">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/Back-plain.png" alt="" />
+                    <img src="images/Backstyle/Plain.png" alt="" />
                   </div>
                   <h4 class="back_style">Plain</h4>
                 </li>
                 <li onclick="addObj('Pleat2', 'back Pleats.glb', 'Pleat2');">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/Back-side-pleats.png" alt="" />
+                    <img src="images/Backstyle/Sidepleats.png" alt="" />
                   </div>
                   <h4 class="back_style">Side Pleats</h4>
                 </li>
-                <li onclick="alert('not available');">
-                  <div class="img">
-                    <img src="assets/images/customizeyourkandora/Back-center-pleat.png" alt="" />
-                  </div>
-                  <h4 class="back_style">Center Pleat</h4>
-                </li>
-                <li onclick="alert('not available');">
-                  <div class="img">
-                    <img src="assets/images/customizeyourkandora/Back-center-box-pleat.png" alt="" />
-                  </div>
-                  <h4 class="back_style">Center Box Pleat</h4>
-                </li>
+                
               </ul>
             </div>
           </div>
@@ -1648,25 +1642,25 @@ function animateCameraToObjPosition(objType) {
                 </li>
                 <li onclick="addObj('pocket','pocketaftermath.glb','pocket1_1, pocket1_2');">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/Pocket-rounded.png" alt="" />
+                    <img src="images/Pocket/P1.png" alt="" />
                   </div>
                   <h4 class="pockets">Style 1</h4>
                 </li>
                 <li onclick="addObj('pocket','pocketaftermath.glb','pocket2001, pocket2001_1');">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/Pocket-angled.png" alt="" />
+                    <img src="images/Pocket/P2.png" alt="" />
                   </div>
                   <h4 class="pockets">Style 2</h4>
                 </li>
                 <li onclick="addObj('pocket','pocketaftermath.glb','pocket3_1, pocket3_2');">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/Pocket-v-shaped.png" alt="" />
+                    <img src="images/Pocket/P3.png" alt="" />
                   </div>
                   <h4 class="pockets">Style 3</h4>
                 </li>
                 <li onclick="addObj('pocket','pocketaftermath.glb','pocket4_1, pocket4_2');">
                   <div class="img">
-                    <img src="assets/images/customizeyourkandora/Pocket-rounded.png" alt="" />
+                    <img src="images/Pocket/P4.png" alt="" />
                   </div>
                   <h4 class="pockets">Style 4</h4>
                 </li>
