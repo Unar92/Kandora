@@ -125,12 +125,13 @@
     let gui;
     let controls; // Define controls here
 
+    let currentMeshColor = '';
+
     const state = { variant: 'midnight' };
 
     init();
     render();
-    //global variable to store color of texture 
-    let currentColor = '#ffffff';
+   
     function init() {
         const container = document.querySelector('.panel-3d');
 
@@ -315,7 +316,7 @@
       if (textureURL) {
         changeTextureByName(objectType, textureURL);
       }
-
+      updateColorProperty(currentMeshColor);
       // Render the scene after the model is loaded
       setTimeout(() => {
         document.querySelector('.panel-3d').classList.remove('loading-assets');
@@ -357,7 +358,7 @@
     if (textureURL) {
       changeTextureByName(objectType, textureURL);
     }
-
+    updateColorProperty(currentMeshColor);
     // Render the scene after modifying the model
     setTimeout(() => {
       render();
@@ -399,7 +400,7 @@
                             child.visible = true;
                           }
                         });
-
+                        updateColorProperty(currentMeshColor);
                         // Render the scene after both models are loaded
                         setTimeout(() => {
                           document.querySelector('.panel-3d').classList.remove('loading-assets');
@@ -423,7 +424,7 @@
                           child.visible = true;
                         }
                       });
-
+                      updateColorProperty(currentMeshColor);
                       // Render the scene after modifying the model
                       setTimeout(() => {
                         document.querySelector('.panel-3d').classList.remove('loading-assets');
@@ -468,6 +469,8 @@
                         });
 
                         // Render the scene after both models are loaded
+
+                        updateColorProperty(currentMeshColor);
                         setTimeout(() => {
                           document.querySelector('.panel-3d').classList.remove('loading-assets');
                           render(); 
@@ -503,6 +506,9 @@
 
                       // Render the scene after modifying the model
                       
+                        // change color of model with current color code with calling updatecolorproperty function
+                        updateColorProperty(currentMeshColor);
+                        
                         setTimeout(() => {
                           document.querySelector('.panel-3d').classList.remove('loading-assets');
                           render(); 
@@ -738,12 +744,16 @@ function animateCameraToObjPosition(objType) {
                 }
             });
 
-            
+            //store color code in global variable
+            currentMeshColor = value;
 
-            // update color
-            currentColor = value;
 
         }
+
+
+        
+
+        
 
 
 
