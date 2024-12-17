@@ -279,93 +279,99 @@
 
                   
 
-                    function addObj(objectType, objectFile, objectStyles, textureURL) {
-  // Check if the object is already added
-  let objAdded = false;
-  scene.traverse((child) => {
-    if (child.isMesh && child.name.includes(objectType)) {
-      objAdded = true;
-    }
-  });
+                  function addObj(objectType, objectFile, objectStyles, textureURL) {
+                    // Check if the object is already added
+                    let objAdded = false;
+                    scene.traverse((child) => {
+                      if (child.isMesh && child.name.includes(objectType)) {
+                        objAdded = true;
+                      }
+                    });
 
-  if (!objAdded) {
-    // class loading-assets to panel-3d
-    document.querySelector('.panel-3d').classList.add('loading-assets');
+                    if (!objAdded) {
+                            // class loading-assets to panel-3d
+                            document.querySelector('.panel-3d').classList.add('loading-assets');
 
-    loader.load(objectFile, function (glb) {
-      glb.scene.scale.set(1.7, 1.7, 1.7);
-      if (objectFile === 'pocketaftermath.glb') {
-        glb.scene.position.set(0, -1.1, 0);
-      } else {
-        glb.scene.position.set(0, -1.1, 0);
-      }
-      scene.add(glb.scene);
+                            loader.load(objectFile, function (glb) {
+                              glb.scene.scale.set(1.7, 1.7, 1.7);
+                              if (objectFile === 'pocketaftermath.glb') {
+                                glb.scene.position.set(0, -1.1, 0);
+                              } else {
+                                glb.scene.position.set(0, -1.1, 0);
+                              }
+                              scene.add(glb.scene);
 
-      // Remove specific objects from the GLB model
-      removeObjects(glb.scene);
+                              // Remove specific objects from the GLB model
+                              removeObjects(glb.scene);
 
-      // Make the specified styles visible
-      const styles = objectStyles.split(',').map(style => style.trim());
-      glb.scene.traverse((child) => {
-        if (child.isMesh && styles.some(style => child.name.includes(style))) {
-          child.visible = true;
-        }
-      });
+                              // Make the specified styles visible
+                              const styles = objectStyles.split(',').map(style => style.trim());
+                              glb.scene.traverse((child) => {
+                                if (child.isMesh && styles.some(style => child.name.includes(style))) {
+                                  child.visible = true;
+                                }
+                              });
 
-      //if textureURL is not empty
-      if (textureURL) {
-        changeTextureByName(objectType, textureURL);
-      }
-      updateColorProperty(currentMeshColor);
-      // Render the scene after the model is loaded
-      setTimeout(() => {
-        document.querySelector('.panel-3d').classList.remove('loading-assets');
-        render();
-        animateCameraToObjPosition(objectType);
-      }, 500); // Delay of 500 milliseconds
-    });
-  } else {
-    // Modify the current loaded model
-    const styles = objectStyles.split(',').map(style => style.trim());
+                              //if textureURL is not empty
+                              if (textureURL) {
+                                changeTextureByName(objectType, textureURL);
+                              }
+                              updateColorProperty(currentMeshColor);
+                              // Render the scene after the model is loaded
+                              setTimeout(() => {
+                                document.querySelector('.panel-3d').classList.remove('loading-assets');
+                                render();
+                                animateCameraToObjPosition(objectType);
+                              }, 500); // Delay of 500 milliseconds
+                            });
+                          } else {
+                            // Modify the current loaded model
+                            const styles = objectStyles.split(',').map(style => style.trim());
 
-    // Hide all elements first
-    scene.traverse((child) => {
-      if (child.isMesh && child.name.toLowerCase().includes(objectType)) {
-        child.visible = false;
-      }
-    });
+                            // Hide all elements first
+                            scene.traverse((child) => {
+                              if (child.isMesh && child.name.toLowerCase().includes(objectType)) {
+                                child.visible = false;
+                              }
+                            });
 
-    // Make the specified styles visible
-    scene.traverse((child) => {
-      if (child.isMesh && styles.some(style => child.name === style)) {
-        child.visible = true;
-      }
-    });
+                            // Add loading animation
+                             document.querySelector('.panel-3d').classList.add('loading-assets');
 
-    console.log("object type", objectType);
 
-    //if Pleat1 than hide Pleat2
-    if (objectType === 'Pleat1') {
-      scene.traverse((child) => {
-        if (child.isMesh && child.name === 'Pleat2') {
-          child.visible = false;
-          console.log('Pleat2 hidden');
-        }
-      });
-    }
+                            // Make the specified styles visible
+                            scene.traverse((child) => {
+                              if (child.isMesh && styles.some(style => child.name === style)) {
+                                child.visible = true;
+                              }
+                            });
 
-    //if textureURL is not empty
-    if (textureURL) {
-      changeTextureByName(objectType, textureURL);
-    }
-    updateColorProperty(currentMeshColor);
-    // Render the scene after modifying the model
-    setTimeout(() => {
-      render();
-      animateCameraToObjPosition(objectType);
-    }, 500); // Delay of 500 milliseconds
-  }
-}
+                            console.log("object type", objectType);
+
+                            //if Pleat1 than hide Pleat2
+                            if (objectType === 'Pleat1') {
+                              scene.traverse((child) => {
+                                if (child.isMesh && child.name === 'Pleat2') {
+                                  child.visible = false;
+                                  console.log('Pleat2 hidden');
+                                }
+                              });
+                            }
+
+                            //if textureURL is not empty
+                            if (textureURL) {
+                              changeTextureByName(objectType, textureURL);
+                            }
+                            updateColorProperty(currentMeshColor);
+                            // Render the scene after modifying the model
+                            setTimeout(() => {
+                              document.querySelector('.panel-3d').classList.remove('loading-assets');
+    
+                              render();
+                              animateCameraToObjPosition(objectType);
+                            }, 500); // Delay of 500 milliseconds
+                          }
+                        }
                 //global add collar function
                 window.addObj = addObj;
 
@@ -552,6 +558,30 @@ function animateCameraToObjPosition(objType) {
             const currentZoom = camera.zoom;
             const currentTarget = controls.target.clone();
 
+            // let objname = "pocket1_1"
+           
+            // let objPosition = new THREE.Vector3(0, 0, 0);
+
+            //  // get child position 
+            //  scene.traverse((child) => {
+            //     if (child.isMesh) {
+            //         console.log('child name:', child.name);
+            //         console.log('objType:', objType);
+            //         if (child.name === "pocket1_2") {
+            //             console.log('child position:', child.position);
+            //             if (objPosition) {
+            //                 objPosition = child.position.clone();
+
+            //             } else {
+            //                 console.error('objPosition is undefined');
+            //             }
+            //         } else {
+            //             console.log(`No match for objType: ${objType} in child name: ${child.name}`);
+            //         }
+            //     }
+            // });
+
+
               //reset orbiting up and down, left and right
               controls.minPolarAngle = 0; // radians
               controls.maxPolarAngle = Math.PI; // radians
@@ -617,7 +647,7 @@ function animateCameraToObjPosition(objType) {
               desiredPosition.z = 2.70;
               console.log('Frontstyle position:', desiredPosition);
 
-     
+             
           }
 
          
@@ -639,7 +669,7 @@ function animateCameraToObjPosition(objType) {
              
 
         
-              console.log('Pocket position:', desiredPosition);
+              // console.log('Pocket position:', desiredPosition);
             }
 
             //if objType is stitches
@@ -652,13 +682,21 @@ function animateCameraToObjPosition(objType) {
             }
             
 
-
+// 
             let desiredTarget = new THREE.Vector3(-0.06253863501371498, 1.6308571305580224,  -0.3992374464418679);
            
-            if (objType === 'cuff') {
-              let desiredTarget = new THREE.Vector3(0, 0, 0);
            
-            }
+          
+
+
+            // let desiredTarget = new THREE.Vector3(0, 0,  0);
+
+            // let desiredTarget = new THREE.Vector3(objPosition.x, objPosition.y, objPosition.z);
+
+            // if (objType === 'cuff') {
+            //   let desiredTarget = new THREE.Vector3(0, 0, 0);
+           
+            // }
 
 
 
@@ -693,33 +731,34 @@ function animateCameraToObjPosition(objType) {
                     z: desiredPosition.z,
                     onUpdate: function () {
                         //camera zoom
-                        camera.lookAt(desiredTarget);
+                        camera.lookAt(cameraTarget);
                         //move camera closer to model
                         // camera.position.set(desiredPosition.x, desiredPosition.y, desiredPosition.z);
+                        camera.updateProjectionMatrix();
                         controls.update(); // Ensure controls are updated
                         render();
                     }
                 }, 0); // Start at the same time as the zoom animation
 
                 timeline.to(controls.target, {
-                    duration: 1,
-                    x: desiredTarget.x,
-                    y: desiredTarget.y,
-                    z: desiredTarget.z,
-                    onStart: function () {
-                        controls.minDistance = 1.8; // Ensure min zoom distance is
-                        controls.maxDistance = 50; // Ensure max zoom distance is set before animation
-                    },
-                    onUpdate: function () {
-                        controls.update();
-                        render();
-                    },
-                    onComplete: function () {
-                        controls.update();
-                        controls.minDistance = 1.8; // Ensure min zoom distance is set after animation
-                        controls.maxDistance = 50; // Ensure max zoom distance is set after animation
-                    }
-                }, 0); // Start at the same time as the zoom animation
+                  duration: 1,
+                  x: desiredTarget.x,
+                  y: desiredTarget.y,
+                  z: desiredTarget.z,
+                  onStart: function () {
+                      controls.minDistance = 1; // Ensure min zoom distance is set before animation
+                      controls.maxDistance = 50; // Ensure max zoom distance is set before animation
+                  },
+                  onUpdate: function () {
+                      controls.update();
+                      render();
+                  },
+                  onComplete: function () {
+                      controls.update();
+                      controls.minDistance = 1; // Ensure min zoom distance is set after animation
+                      controls.maxDistance = 50; // Ensure max zoom distance is set after animation
+                  }
+              }, 0); // Start at the same time as the zoom animation
             }
 
             render();
