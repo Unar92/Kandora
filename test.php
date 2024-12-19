@@ -208,7 +208,7 @@
                             }
 
                             // remove Found mesh: cuff02_1 cuff02_2 cuff02_3 cuff3_1 cuff3_2  cuff3_3  cuff4_1 cuff4_2 cuff4_3
-                            if (child.name === 'cuff01_1' || child.name === 'cuff01_2' || child.name === 'cuff02_1' || child.name === 'cuff02_2' || child.name === 'cuff02_3' || child.name === 'cuff3_1' || child.name === 'cuff3_2' || child.name === 'cuff3_3' || child.name === 'cuff4_1' || child.name === 'cuff4_2' || child.name === 'cuff4_3') {
+                            if (child.name === 'Cuff01_1' || child.name === 'Cuff01_2' || child.name === 'cuff02_1' || child.name === 'cuff02_2' || child.name === 'cuff02_3' || child.name === 'cuff3_1' || child.name === 'cuff3_2' || child.name === 'cuff3_3' || child.name === 'cuff4_1' || child.name === 'cuff4_2' || child.name === 'cuff4_3') {
                               child.visible = false;
                             }
 
@@ -276,6 +276,8 @@
                     render();
 
 
+                
+
 
                   
 
@@ -320,9 +322,10 @@
                               // Render the scene after the model is loaded
                               setTimeout(() => {
                                 document.querySelector('.panel-3d').classList.remove('loading-assets');
-                                render();
+                               
                                 animateCameraToObjPosition(objectType);
                               }, 500); // Delay of 500 milliseconds
+                              render();
                             });
                           } else {
                             // Modify the current loaded model
@@ -367,8 +370,9 @@
                             setTimeout(() => {
                               document.querySelector('.panel-3d').classList.remove('loading-assets');
     
-                              render();
+                             
                               animateCameraToObjPosition(objectType);
+                              render();
                             }, 500); // Delay of 500 milliseconds
                           }
                         }
@@ -410,8 +414,9 @@
                         // Render the scene after both models are loaded
                         setTimeout(() => {
                           document.querySelector('.panel-3d').classList.remove('loading-assets');
-                          render();
+                      
                           animateCameraToObjPosition("collar");
+                          render();
                         }, 500); // Delay of 500 milliseconds
                       });
                     } else {
@@ -434,8 +439,9 @@
                       // Render the scene after modifying the model
                       setTimeout(() => {
                         document.querySelector('.panel-3d').classList.remove('loading-assets');
-                        render();
+                     
                         animateCameraToObjPosition("collar");
+                        render();
                       }, 500); // Delay of 500 milliseconds
                     }
                   }
@@ -479,10 +485,10 @@
                         updateColorProperty(currentMeshColor);
                         setTimeout(() => {
                           document.querySelector('.panel-3d').classList.remove('loading-assets');
-                          render(); 
-                          animateCameraToObjPosition("kandora_torso");
+                       
+                          animateCameraToObjPosition("cuff");
                           
-
+                          render(); 
                         }, 500); // Delay of 500 milliseconds
                          
                       });
@@ -517,10 +523,10 @@
                         
                         setTimeout(() => {
                           document.querySelector('.panel-3d').classList.remove('loading-assets');
-                          render(); 
-                          animateCameraToObjPosition("kandora_torso");
+                          ; 
+                          animateCameraToObjPosition("cuff");
                           
-
+                          render()
                         }, 500); // Delay of 500 milliseconds
                          
 
@@ -557,164 +563,140 @@ function animateCameraToObjPosition(objType) {
             const currentCameraPosition = camera.position.clone();
             const currentZoom = camera.zoom;
             const currentTarget = controls.target.clone();
+            const desiredZoom = 2; // Adjust this value to zoom in
 
-            // let objname = "pocket1_1"
-           
-            // let objPosition = new THREE.Vector3(0, 0, 0);
-
-            //  // get child position 
-            //  scene.traverse((child) => {
-            //     if (child.isMesh) {
-            //         console.log('child name:', child.name);
-            //         console.log('objType:', objType);
-            //         if (child.name === "pocket1_2") {
-            //             console.log('child position:', child.position);
-            //             if (objPosition) {
-            //                 objPosition = child.position.clone();
-
-            //             } else {
-            //                 console.error('objPosition is undefined');
-            //             }
-            //         } else {
-            //             console.log(`No match for objType: ${objType} in child name: ${child.name}`);
-            //         }
-            //     }
-            // });
-
-
+              const minZoom = 0.1;
+              const maxZoom = 6;
               //reset orbiting up and down, left and right
-              controls.minPolarAngle = 0; // radians
-              controls.maxPolarAngle = Math.PI; // radians
-              controls.minAzimuthAngle = -Infinity; // radians
-              controls.maxAzimuthAngle = Infinity; // radians
+              // controls.minPolarAngle = 0; // radians
+              // controls.maxPolarAngle = Math.PI; // radians
+              // controls.minAzimuthAngle = -Infinity; // radians
+              // controls.maxAzimuthAngle = Infinity; // radians
+
 
             
-            var minZoom = 0.1;
-            var maxZoom = 50;
-
-            // Desired camera position, zoom level, and controls target
-            let desiredZoom = 3; // Adjust this value to zoom in
-            const desiredPosition = {
-                x: 1, // Adjust these values as needed
-                y: 7,
-                z: 8
-            };
-
-            //if objType is cuff
-            if (objType === 'kandora_torso') {
-                desiredPosition.x = 10;
-                desiredPosition.y = 12;
-                desiredPosition.z = 12;
-                desiredZoom = 6;
-                  controls.maxPolarAngle = Math.PI / 2; // radians
-
-                controls.minAzimuthAngle = -Math.PI / 11; // radians
-
-                controls.maxPolarAngle = Math.PI / 2; // radians
-                controls.minAzimuthAngle = -Math.PI / 11; // radians
-                controls.maxAzimuthAngle = Math.PI / 5; // radians
-            }
-
-            //if objType is collar
-            if (objType.includes('collar')) {
-              desiredZoom = 5;
-              desiredPosition.x = 1.02;
-              desiredPosition.y = 10;
-              desiredPosition.z = 10;
-              // limi orbiting up and down, left and right
-
-              controls.minPolarAngle = 0; // radians
-                controls.maxPolarAngle = Math.PI / 2; // radians
-                controls.minAzimuthAngle = -Math.PI / 11; // radians
-                controls.maxAzimuthAngle = Math.PI / 5; // radians
-            }
-
-
-            //if objType is pleat camera.position.set(1, 2, 8);
-            if (objType.includes('Pleat')) {
-              desiredZoom = 2;
-              desiredPosition.x = -1;
-              desiredPosition.y = 3.8;
-              desiredPosition.z = -6.70;
-              console.log('Pleat position:', desiredPosition);
-            }
-
-            //if objType is frontstyle
-            if (objType.includes('front_style')) {
-              desiredZoom = 1;
-              desiredPosition.x = 0.47;
-              desiredPosition.y = 2.13;
-              desiredPosition.z = 2.70;
-              console.log('Frontstyle position:', desiredPosition);
-
-             
-          }
-
          
 
-
-            //if objType is pocket
-            if (objType.includes('pocket')) {
-              desiredZoom = 3;
-              desiredPosition.x = 1.02;
-              desiredPosition.y = 3;
-              desiredPosition.z = 8;
-              // limi orbiting up and down, left and right
-
-                controls.minPolarAngle = 0; // radians
-                controls.maxPolarAngle = Math.PI / 2; // radians
-                controls.minAzimuthAngle = -Math.PI / 11; // radians
-                controls.maxAzimuthAngle = Math.PI / 5; // radians
-
-             
-
-        
-              // console.log('Pocket position:', desiredPosition);
-            }
-
-            //if objType is stitches
-            if (objType.includes('Stiches')) {
-              desiredZoom = 7;
-              desiredPosition.x = -1.5;
-              desiredPosition.y = 2;
-              desiredPosition.z = 5;
-              console.log('Stitches position:', desiredPosition);
-            }
-            
-
-// 
-            let desiredTarget = new THREE.Vector3(-0.06253863501371498, 1.6308571305580224,  -0.3992374464418679);
-           
-           
-          
-
-
-            // let desiredTarget = new THREE.Vector3(0, 0,  0);
-
-            // let desiredTarget = new THREE.Vector3(objPosition.x, objPosition.y, objPosition.z);
-
-            // if (objType === 'cuff') {
-            //   let desiredTarget = new THREE.Vector3(0, 0, 0);
-           
-            // }
-
-
-
             // Check if the camera is already at the desired zoom level and position
-            if (currentZoom !== desiredZoom || !currentCameraPosition.equals(new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z))) {
                 const timeline = gsap.timeline();
 
-                let cameraTarget = new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z);
+                // let cameraTarget = new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z);
 
                 
                 controls.minDistance = minZoom; // Minimum zoom distance
                 controls.maxDistance = maxZoom; // Maximum zoom distance
+
+                // Desired camera position, zoom level, and controls target
+                let desiredPosition = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
+
+                let desiredTarget = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
+
+
+                //if pocket
+                if (objType.includes('pocket')) {
+                    desiredPosition = {
+                      x: 0.6537838300525007,
+                      y:2.0049606303488843,
+                      z: 2.695346242626239,
+                    };
+
+                    desiredTarget = {
+                      x: 0.07004663828851847,
+                      y:1.6796724077862337,
+                      z: -0.3386432076848833,
+                    };
+                }
+
+                //if front_style
+                if (objType.includes('front_style')) {
+                    desiredPosition = {
+                      x: 1.0310418162510335,
+                      y: 2.822994792846132,
+                      z: 4.101052137554581,
+                    };
+
+                    desiredTarget = {
+                      x: -0.20023481906162138,
+                      y:  1.3583501306971866,
+                      z: -0.7220336843873053,
+                    };
+                }
+
+                //if stitch
+                if (objType.includes('Stiches_plane')) {
+                    desiredPosition = {
+                      x: -0.2170975720067706,
+                      y: 2.833773137358597,
+                      z: 1.3252673091813074,
+                    };
+
+                    desiredTarget = {
+                      x: -0.04519897689870111,
+                      y: 0.6456255802437604,
+                      z: -0.4193797814752166,
+                    };
+                }
+
+                //if collar
+                if (objType.includes('collar')) {
+                    desiredPosition = {
+                      x: -0.03228005769457376,
+                      y: 2.8984753041502422,
+                      z: 4.122503560563652,
+                    };
+
+                    desiredTarget = {
+                      x: 0.01690763772525074,
+                      y: 1.753887059573311,
+                      z: -0.9382158849144843,
+                    };
+                }
+
+                //if cuff
+                if (objType.includes('cuff')) {
+                  desiredPosition = {
+                    x: 2.026025029339048,
+                    y: 1.767713158934895,
+                    z: 1.9072892610599246,
+                  };
+
+                  desiredTarget = {
+                    x: 0,
+                    y: 0.5,
+                    z: -0.20000000000000004,
+                  };
+                }
+
+                //if Pleat
+                if (objType.includes('Pleat')) {
+                    desiredPosition = {
+                      x: -1.5710221814094587,
+                      y: 1.2076031510606295,
+                      z: -4.487272457130005,
+                    };
+
+                    desiredTarget = {
+                      x: 0.022966,
+                      y: 1.601402,
+                      z: 0.002886,
+                    };
+                }
+                
 
                 timeline.to(camera, {
                     duration: 1,
                     zoom: Math.max(minZoom, Math.min(maxZoom, desiredZoom)), // Ensure desiredZoom is within range
                     ease: "power2.inOut", // Use easing function for smooth animation
                     onUpdate: function () {
+                        camera.lookAt(0,0,0);
                         camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom)); // Clamp the zoom level
                         camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
                     },
@@ -731,9 +713,7 @@ function animateCameraToObjPosition(objType) {
                     z: desiredPosition.z,
                     onUpdate: function () {
                         //camera zoom
-                        camera.lookAt(cameraTarget);
-                        //move camera closer to model
-                        // camera.position.set(desiredPosition.x, desiredPosition.y, desiredPosition.z);
+                        camera.lookAt(0,0,0);
                         camera.updateProjectionMatrix();
                         controls.update(); // Ensure controls are updated
                         render();
@@ -746,8 +726,8 @@ function animateCameraToObjPosition(objType) {
                   y: desiredTarget.y,
                   z: desiredTarget.z,
                   onStart: function () {
-                      controls.minDistance = 1; // Ensure min zoom distance is set before animation
-                      controls.maxDistance = 50; // Ensure max zoom distance is set before animation
+                      controls.minDistance = 1.3; // Ensure min zoom distance is set before animation
+                      controls.maxDistance = 20; // Ensure max zoom distance is set before animation
                   },
                   onUpdate: function () {
                       controls.update();
@@ -755,11 +735,11 @@ function animateCameraToObjPosition(objType) {
                   },
                   onComplete: function () {
                       controls.update();
-                      controls.minDistance = 1; // Ensure min zoom distance is set after animation
-                      controls.maxDistance = 50; // Ensure max zoom distance is set after animation
+                      controls.minDistance = 1.7; // Ensure min zoom distance is set after animation
+                      controls.maxDistance = 20; // Ensure max zoom distance is set after animation
                   }
               }, 0); // Start at the same time as the zoom animation
-            }
+          
 
             render();
         }
@@ -1077,22 +1057,22 @@ function animateCameraToObjPosition(objType) {
       // Initialize OrbitControls
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.addEventListener('change', render);
-      controls.minDistance = 1; // Minimum zoom distance
+      controls.minDistance = 1.3; // Minimum zoom distance
       controls.maxDistance = 20; // Maximum zoom distance
       controls.target.set(0, 0.5, -0.2);
       controls.update();
 
 
       // get camera position and zoom level in console log when user move the camera
-    //   controls.addEventListener('change', function () {
-    //     console.log('Camera:', camera); // Check if camera is defined
-    // console.log('Controls:', controls); // Check if controls are defined
-    // console.log('Camera Position:', camera.position);
-    // console.log('Controls Target:', controls.target);
+      controls.addEventListener('change', function () {
+        console.log('Camera:', camera); // Check if camera is defined
+    console.log('Controls:', controls); // Check if controls are defined
+    console.log('Camera Position:', camera.position);
+    console.log('Controls Target:', controls.target);
  
                 
              
-    //         });
+            });
 
             // Add this function to log the camera and controls values
 // function logCameraAndControls() {
