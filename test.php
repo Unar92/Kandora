@@ -711,17 +711,17 @@ function animateCameraToObjPosition(objType) {
                 }
 
                 timeline.to(camera.position, {
-                    duration: 1,
-                    x: desiredPosition.x,
-                    y: desiredPosition.y,
-                    z: desiredPosition.z,
-                    onUpdate: function () {
-                        //camera zoom
-                        camera.lookAt(0,0,0);
-                        camera.updateProjectionMatrix();
-                        controls.update(); // Ensure controls are updated
-                        render();
-                    }
+                  duration: 1,
+                  x: desiredPosition.x,
+                  y: desiredPosition.y,
+                  z: desiredPosition.z,
+                  onUpdate: function () {
+                    //camera zoom
+                    camera.lookAt(0, 0, 0);
+                    // camera.updateProjectionMatrix();
+                    controls.update(); // Ensure controls are updated
+                    render();
+                  }
                 }, 0); // Start at the same time as the zoom animation
 
                 timeline.to(controls.target, {
@@ -730,21 +730,18 @@ function animateCameraToObjPosition(objType) {
                   y: desiredTarget.y,
                   z: desiredTarget.z,
                   onStart: function () {
-                      controls.minDistance = 1.3; // Ensure min zoom distance is set before animation
-                      controls.maxDistance = 20; // Ensure max zoom distance is set before animation
+                    controls.minDistance = 1.3; // Ensure min zoom distance is set before animation
+                    controls.maxDistance = 20; // Ensure max zoom distance is set before animation
                   },
                   onUpdate: function () {
-                      controls.update();
-                      render();
+                    controls.update();
                   },
                   onComplete: function () {
-                      render();
-                      controls.update();
-                      controls.minDistance = 1.7; // Ensure min zoom distance is set after animation
-                      controls.maxDistance = 20; // Ensure max zoom distance is set after animation
+                    controls.update();
+                    controls.minDistance = 1.3; // Ensure min zoom distance is set after animation
+                    controls.maxDistance = 20; // Ensure max zoom distance is set after animation
                   }
-              }, 0); // Start at the same time as the zoom animation
-          
+                }, 0); // Start at the same time as the zoom animation
 
             render();
         }
