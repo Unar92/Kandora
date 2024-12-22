@@ -305,6 +305,7 @@
 
                               // Remove specific objects from the GLB model
                               removeObjects(glb.scene);
+                              setTimeout(() => {
 
                               // Make the specified styles visible
                               const styles = objectStyles.split(',').map(style => style.trim());
@@ -320,12 +321,13 @@
                               }
                               updateColorProperty(currentMeshColor);
                               // Render the scene after the model is loaded
-                              setTimeout(() => {
+                             
                                 document.querySelector('.panel-3d').classList.remove('loading-assets');
-                               
+                              
                                 animateCameraToObjPosition(objectType);
+                                render();
                               }, 500); // Delay of 500 milliseconds
-                              render();
+                            
                             });
                           } else {
                             // Modify the current loaded model
@@ -398,6 +400,8 @@
                       loader.load('collar.glb', function (glb2) {
                         glb2.scene.scale.set(1.7, 1.7, 1.7);
                         glb2.scene.position.set(0, -1.1, 0);
+
+                        setTimeout(() => {
                         scene.add(glb2.scene);
 
                         // Remove specific objects from the second GLB model
@@ -412,7 +416,7 @@
                         });
                         updateColorProperty(currentMeshColor);
                         // Render the scene after both models are loaded
-                        setTimeout(() => {
+                       
                           document.querySelector('.panel-3d').classList.remove('loading-assets');
                       
                           animateCameraToObjPosition("collar");
@@ -523,10 +527,10 @@
                         
                         setTimeout(() => {
                           document.querySelector('.panel-3d').classList.remove('loading-assets');
-                          ; 
+                          
                           animateCameraToObjPosition("cuff");
                           
-                          render()
+                          render();
                         }, 500); // Delay of 500 milliseconds
                          
 
@@ -734,6 +738,7 @@ function animateCameraToObjPosition(objType) {
                       render();
                   },
                   onComplete: function () {
+                      render();
                       controls.update();
                       controls.minDistance = 1.7; // Ensure min zoom distance is set after animation
                       controls.maxDistance = 20; // Ensure max zoom distance is set after animation
@@ -856,6 +861,7 @@ function animateCameraToObjPosition(objType) {
                         // Embriodery_plane005 use for new model and for old model use Embriodery_plane
                         if (child.isMesh && child.name === 'Embriodery_plane005') { // Ensure you have a way to identify the embroidery mesh
                             child.visible = true;
+                            document.querySelector('.panel-3d').classList.add('loading-assets');
 
                             // Load the specular map
                             // Load the specular map
@@ -920,6 +926,14 @@ function animateCameraToObjPosition(objType) {
                                 //   }
                                 // });
                             }
+
+
+                            // Remove the loading animation
+                            //add delay
+                            setTimeout(() => {
+                                document.querySelector('.panel-3d').classList.remove('loading-assets');
+                           
+                            
 
                             // Move the camera to view the embroidery
                             const embroideryPosition = child.position.clone();
@@ -1003,7 +1017,10 @@ function animateCameraToObjPosition(objType) {
                                     }
                                 }, 0); // Start at the same time as the zoom animation
 
+                                
+
                             }
+                          }, 500); // Delay of 500 milliseconds
                             render();
                         }
                     });
