@@ -32,7 +32,30 @@
         }
     }
 
+    #resetcamera {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        background-color: transparent;
+        border: none
+        /* padding: 5px 10px; */
+        /* border-radius: 5px; */
+        cursor: pointer;
+        opacity: 0.5;
+        transition: all 0.3s ease;
 
+      
+    }
+
+    #resetcamera svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    #resetcamera:hover {
+        opacity: 1;
+    }
 
     .custom-radio span i {
         width: 30px;
@@ -475,7 +498,7 @@
 
                         // Remove specific objects from the second GLB model
                         removeObjects(glb2.scene);
-
+                        setTimeout(() => {
                         // Make the specified cuff styles visible
                         const cuffStyles = cuffstyle.split(',').map(style => style.trim());
                         glb2.scene.traverse((child) => {
@@ -487,7 +510,7 @@
                         // Render the scene after both models are loaded
 
                         updateColorProperty(currentMeshColor);
-                        setTimeout(() => {
+                       
                           document.querySelector('.panel-3d').classList.remove('loading-assets');
                        
                           animateCameraToObjPosition("cuff");
@@ -559,6 +582,82 @@
                 updateColorProperty(colorValue);
             });
         });
+
+let cameraLock = false;
+
+//when click on #resetcamera button
+document.getElementById('resetcamera').addEventListener('click', function () {
+    resetCamera();
+});
+
+//functio  to reset camera and control to its original position
+function resetCamera() {
+    // If not camera lock, then return
+    // if (!cameraLock) {
+    //     return;
+    // }
+
+    // console.log('Camera reset');
+
+    // Reset orbiting up and down, left and right
+    controls.minPolarAngle = 0; // radians
+    controls.maxPolarAngle = Math.PI; // radians
+    controls.minAzimuthAngle = -Infinity; // radians
+    controls.maxAzimuthAngle = Infinity; // radians
+
+    // Define the desired values
+const desiredPosition = {
+    x: 1,
+    y: 1,
+    z: 8
+};
+
+const desiredTarget = {
+    x: 0,
+    y: 0.5,
+    z: -0.2
+};
+
+const desiredZoom = 1; // Adjust as needed
+
+// Animate camera position
+gsap.to(camera.position, {
+    duration: 1,
+    x: desiredPosition.x,
+    y: desiredPosition.y,
+    z: desiredPosition.z,
+    onUpdate: function () {
+        camera.lookAt(desiredTarget.x, desiredTarget.y, desiredTarget.z);
+        camera.updateProjectionMatrix();
+        controls.update();
+        render();
+    }
+});
+
+// Animate controls target
+gsap.to(controls.target, {
+    duration: 1,
+    x: desiredTarget.x,
+    y: desiredTarget.y,
+    z: desiredTarget.z,
+    onUpdate: function () {
+        controls.update();
+        render();
+    }
+});
+
+// Animate camera zoom
+gsap.to(camera, {
+    duration: 1,
+    zoom: desiredZoom,
+    onUpdate: function () {
+        camera.updateProjectionMatrix();
+        controls.update();
+        render();
+    }
+});
+}
+
 
         
 
@@ -632,6 +731,11 @@ function animateCameraToObjPosition(objType) {
                       y:  1.3583501306971866,
                       z: -0.7220336843873053,
                     };
+
+                    controls.minPolarAngle = Math.PI / 7; // radians, limit vertical rotation
+                    controls.maxPolarAngle = Math.PI / 2; // radians, limit vertical rotation
+                    controls.minAzimuthAngle = -Math.PI / 9; // radians, limit horizontal rotation
+                    controls.maxAzimuthAngle = Math.PI / 9; // radians, limit horizontal rotation
                 }
 
                 //if stitch
@@ -647,6 +751,12 @@ function animateCameraToObjPosition(objType) {
                       y: 0.6456255802437604,
                       z: -0.4193797814752166,
                     };
+
+                    //limit orbit control so that stiches can be view properly
+                    controls.minPolarAngle = Math.PI / 7; // radians, limit vertical rotation
+                    controls.maxPolarAngle = Math.PI / 2; // radians, limit vertical rotation
+                    controls.minAzimuthAngle = -Math.PI / 9; // radians, limit horizontal rotation
+                    controls.maxAzimuthAngle = Math.PI / 9; // radians, limit horizontal rotation
                 }
 
                 //if collar
@@ -662,6 +772,16 @@ function animateCameraToObjPosition(objType) {
                       y: 1.753887059573311,
                       z: -0.9382158849144843,
                     };
+
+
+                    // limit orbit control so that collar can be view properly
+                    controls.minPolarAngle = Math.PI / 2; // radians, limit vertical rotation
+                    controls.maxPolarAngle = Math.PI / 2; // radians, limit vertical rotation
+                    controls.minAzimuthAngle = -Math.PI / 9; // radians, limit horizontal rotation
+                    controls.maxAzimuthAngle = Math.PI / 9; // radians, limit horizontal rotation
+                    
+                    //camera lock
+                    cameraLock = true;
                 }
 
                 //if cuff
@@ -677,6 +797,12 @@ function animateCameraToObjPosition(objType) {
                     y: 0.5,
                     z: -0.20000000000000004,
                   };
+
+                  //limit orbit control so that cuff can be view properly
+                    controls.minPolarAngle = Math.PI / 7; // radians, limit vertical rotation
+                    controls.maxPolarAngle = Math.PI / 2; // radians, limit vertical rotation
+                  controls.minAzimuthAngle = -Math.PI / 4; // radians, limit horizontal rotation
+                  controls.maxAzimuthAngle = Math.PI / 4; // radians, limit horizontal rotation
                 }
 
                 //if Pleat
@@ -692,6 +818,8 @@ function animateCameraToObjPosition(objType) {
                       y: 1.601402,
                       z: 0.002886,
                     };
+
+                
                 }
                 
 
@@ -1076,17 +1204,24 @@ function animateCameraToObjPosition(objType) {
       controls.target.set(0, 0.5, -0.2);
       controls.update();
 
+      //if user tries to zoom out than resetcamera
+controls.addEventListener('change', function () {
+    if (camera.zoom < 1) {
+        resetCamera();
+    }
+});
+
 
       // get camera position and zoom level in console log when user move the camera
-      controls.addEventListener('change', function () {
-        console.log('Camera:', camera); // Check if camera is defined
-    console.log('Controls:', controls); // Check if controls are defined
-    console.log('Camera Position:', camera.position);
-    console.log('Controls Target:', controls.target);
+    //   controls.addEventListener('change', function () {
+    //     console.log('Camera:', camera); // Check if camera is defined
+    // console.log('Controls:', controls); // Check if controls are defined
+    // console.log('Camera Position:', camera.position);
+    // console.log('Controls Target:', controls.target);
  
                 
              
-            });
+    //         });
 
             // Add this function to log the camera and controls values
 // function logCameraAndControls() {
@@ -1179,6 +1314,32 @@ function animateCameraToObjPosition(objType) {
 
                 <div class="panel-3d" style="">
                   <span class="loader"></span>
+                  <a href="javascript:void(0) "class="reset-camera" id="resetcamera">
+                  <?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="512.000000pt" height="512.000000pt" viewBox="0 0 512.000000 512.000000"
+ preserveAspectRatio="xMidYMid meet">
+
+<g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M3795 4479 c-128 -30 -196 -167 -150 -299 8 -23 15 -44 15 -47 0 -2
+-26 14 -57 35 -207 139 -488 245 -763 288 -139 22 -419 22 -557 1 -419 -66
+-777 -245 -1072 -537 -560 -553 -725 -1392 -415 -2117 266 -622 841 -1059
+1513 -1148 126 -17 353 -19 471 -5 771 96 1400 625 1621 1363 60 203 97 527
+69 611 -16 48 -63 102 -111 127 -70 35 -180 20 -237 -34 -50 -46 -65 -94 -73
+-233 -14 -222 -59 -396 -155 -589 -205 -413 -580 -699 -1054 -801 -121 -27
+-439 -27 -560 0 -474 102 -849 387 -1054 801 -108 218 -156 422 -156 665 0
+709 476 1299 1179 1461 129 30 405 37 542 14 183 -30 344 -86 496 -171 l66
+-37 -29 -12 c-75 -31 -131 -128 -122 -209 8 -65 50 -130 106 -163 l47 -28 350
+-3 c417 -4 436 -2 505 68 39 38 50 58 61 104 l13 58 -122 367 c-105 317 -127
+372 -156 404 -53 58 -135 83 -211 66z"/>
+</g>
+</svg>
+
+                  </a>
+
                 </div>
                 <div class="kandora-image-select">
                     <img src="assets/images/customizeyourkandora/select-img.png" alt="">
