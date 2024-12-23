@@ -49,8 +49,8 @@
     }
 
     #resetcamera svg {
-        width: 40px;
-        height: 40px;
+        width: 25px;
+        height: 25px;
     }
 
     #resetcamera:hover {
