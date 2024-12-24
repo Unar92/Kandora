@@ -676,7 +676,10 @@ function animateCameraToObjPosition(objType) {
               // controls.minAzimuthAngle = -Infinity; // radians
               // controls.maxAzimuthAngle = Infinity; // radians
 
-
+                let  vRotationUp = ''; // radians, limit vertical rotation
+                  let vRotationDown = ''; // radians, limit vertical rotation
+                  let hRotationLeft = '';// radians, limit horizontal rotation
+                  let hRotationRight = '';// radians, limit horizontal rotation
             
          
 
@@ -686,10 +689,7 @@ function animateCameraToObjPosition(objType) {
                 // let cameraTarget = new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z);
 
                     //limit orbit control so that cuff can be view properly
-                  let  vRotationUp = 0; // radians, limit vertical rotation
-                  let vRotationDown = Math.PI; // radians, limit vertical rotation
-                  let hRotationLeft = Infinity; // radians, limit horizontal rotation
-                  let hRotationRight = Infinity; // radians, limit horizontal rotation
+                  
 
                   let cameraLock = false;
 
@@ -806,10 +806,10 @@ function animateCameraToObjPosition(objType) {
                   };
 
                   // //limit orbit control so that cuff can be view properly
-                    // vRotationUp = 0.5 ; // radians, limit vertical rotation
-                    // vRotationDown = 0.5 ; // radians, limit vertical rotation
-                  // hRotationLeft = -1; // radians, limit horizontal rotation
-                  // hRotationRight = -1; // radians, limit horizontal rotation
+                    vRotationUp = Math.PI / 7 ; // radians, limit vertical rotation
+                    vRotationDown = Math.PI / 2 ; // radians, limit vertical rotation
+                  hRotationLeft = -Math.PI / 10; // radians, limit horizontal rotation
+                  hRotationRight = Math.PI / 10; // radians, limit horizontal rotation
                
 
 
@@ -843,7 +843,7 @@ function animateCameraToObjPosition(objType) {
                     zoom: Math.max(minZoom, Math.min(maxZoom, desiredZoom)), // Ensure desiredZoom is within range
                     ease: "power2.inOut", // Use easing function for smooth animation
                     onUpdate: function () {
-                        camera.lookAt(desiredTarget.x, desiredTarget.y, desiredTarget.z); // Ensure camera looks at the desired target
+                        camera.lookAt(0,0,0); // Ensure camera looks at the desired target
                         camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom)); // Clamp the zoom level
                         camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
                     },
@@ -861,7 +861,7 @@ function animateCameraToObjPosition(objType) {
                   onUpdate: function () {
                     //camera zoom
                    
-                    camera.lookAt(desiredTarget.x, desiredTarget.y, desiredTarget.z);
+                    camera.lookAt(desiredTarget.x, desiredTarget.y, desiredTarget.z); // Ensure camera looks at the desired target
                     // camera.updateProjectionMatrix();
                     controls.update(); // Ensure controls are updated
                     render();
@@ -909,12 +909,17 @@ function animateCameraToObjPosition(objType) {
             function orbitLimit()
             {
 
-              if(cameraLock)
+              if(!cameraLock)
               {
                     controls.minPolarAngle = vRotationUp; // radians, limit vertical rotation
                     controls.maxPolarAngle = vRotationDown; // radians, limit vertical rotation
                     controls.minAzimuthAngle = hRotationLeft; // radians, limit horizontal rotation
                     controls.maxAzimuthAngle = hRotationRight; // radians, limit horizontal rotations
+              }else{
+                vRotationUp = 0; // radians, limit vertical rotation
+                  vRotationDown = Math.PI; // radians, limit vertical rotation
+                hRotationLeft = Infinity; // radians, limit horizontal rotation
+                hRotationRight = Infinity; // radians, limit horizontal rotation
               }
              
             }
@@ -1259,11 +1264,11 @@ function animateCameraToObjPosition(objType) {
       controls.update();
 
       //if user tries to zoom out than resetcamera
-controls.addEventListener('change', function () {
-    if (camera.zoom < 1) {
-        resetCamera();
-    }
-});
+      controls.addEventListener('change', function () {
+          if (camera.zoom < 1) {
+              resetCamera();
+          }
+      });
 
 
       // get camera position and zoom level in console log when user move the camera
