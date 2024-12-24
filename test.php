@@ -681,11 +681,18 @@ function animateCameraToObjPosition(objType) {
          
 
             // Check if the camera is already at the desired zoom level and position
-                const timeline = gsap.timeline();
+                
 
                 // let cameraTarget = new THREE.Vector3(desiredPosition.x, desiredPosition.y, desiredPosition.z);
 
-                
+                    //limit orbit control so that cuff can be view properly
+                  let  vRotationUp = 0; // radians, limit vertical rotation
+                  let vRotationDown = Math.PI; // radians, limit vertical rotation
+                  let hRotationLeft = Infinity; // radians, limit horizontal rotation
+                  let hRotationRight = Infinity; // radians, limit horizontal rotation
+
+                  let cameraLock = false;
+
                 controls.minDistance = minZoom; // Minimum zoom distance
                 controls.maxDistance = maxZoom; // Maximum zoom distance
 
@@ -732,7 +739,7 @@ function animateCameraToObjPosition(objType) {
                       z: -0.7220336843873053,
                     };
 
-                    controls.minPolarAngle = Math.PI / 7; // radians, limit vertical rotation
+                    controls.minPolarAngle = Math.PI / 2; // radians, limit vertical rotation
                     controls.maxPolarAngle = Math.PI / 2; // radians, limit vertical rotation
                     controls.minAzimuthAngle = -Math.PI / 9; // radians, limit horizontal rotation
                     controls.maxAzimuthAngle = Math.PI / 9; // radians, limit horizontal rotation
@@ -753,10 +760,10 @@ function animateCameraToObjPosition(objType) {
                     };
 
                     //limit orbit control so that stiches can be view properly
-                    controls.minPolarAngle = Math.PI / 7; // radians, limit vertical rotation
+                    controls.minPolarAngle = Math.PI / 2; // radians, limit vertical rotation
                     controls.maxPolarAngle = Math.PI / 2; // radians, limit vertical rotation
-                    controls.minAzimuthAngle = -Math.PI / 9; // radians, limit horizontal rotation
-                    controls.maxAzimuthAngle = Math.PI / 9; // radians, limit horizontal rotation
+                    controls.minAzimuthAngle = -Math.PI / 2; // radians, limit horizontal rotation
+                    controls.maxAzimuthAngle = Math.PI / 2; // radians, limit horizontal rotation
                 }
 
                 //if collar
@@ -798,11 +805,14 @@ function animateCameraToObjPosition(objType) {
                     z: -0.20000000000000004,
                   };
 
-                  //limit orbit control so that cuff can be view properly
-                    controls.minPolarAngle = Math.PI / 7; // radians, limit vertical rotation
-                    controls.maxPolarAngle = Math.PI / 2; // radians, limit vertical rotation
-                  controls.minAzimuthAngle = -Math.PI / 4; // radians, limit horizontal rotation
-                  controls.maxAzimuthAngle = Math.PI / 4; // radians, limit horizontal rotation
+                  // //limit orbit control so that cuff can be view properly
+                    // vRotationUp = 0.5 ; // radians, limit vertical rotation
+                    // vRotationDown = 0.5 ; // radians, limit vertical rotation
+                  // hRotationLeft = -1; // radians, limit horizontal rotation
+                  // hRotationRight = -1; // radians, limit horizontal rotation
+               
+
+
                 }
 
                 //if Pleat
@@ -820,15 +830,20 @@ function animateCameraToObjPosition(objType) {
                     };
 
                 
+                    
                 }
-                
+
+
+                // Animation timeline
+              const timeline = gsap.timeline({});
+
 
                 timeline.to(camera, {
                     duration: 1,
                     zoom: Math.max(minZoom, Math.min(maxZoom, desiredZoom)), // Ensure desiredZoom is within range
                     ease: "power2.inOut", // Use easing function for smooth animation
                     onUpdate: function () {
-                        camera.lookAt(0,0,0);
+                        camera.lookAt(desiredTarget.x, desiredTarget.y, desiredTarget.z); // Ensure camera looks at the desired target
                         camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom)); // Clamp the zoom level
                         camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
                     },
@@ -845,11 +860,25 @@ function animateCameraToObjPosition(objType) {
                   z: desiredPosition.z,
                   onUpdate: function () {
                     //camera zoom
-                    camera.lookAt(0, 0, 0);
+                   
+                    camera.lookAt(desiredTarget.x, desiredTarget.y, desiredTarget.z);
                     // camera.updateProjectionMatrix();
                     controls.update(); // Ensure controls are updated
                     render();
-                  }
+                  },
+                  onComplete: function () {
+                    //camera zoom
+                    camera.zoom = Math.max(minZoom, Math.min(maxZoom, desiredZoom)); // Ensure desiredZoom is within range
+                    camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
+                    controls.update(); // Ensure controls are updated
+                   
+                    render();
+                    
+        
+                
+                   
+                    
+                  },
                 }, 0); // Start at the same time as the zoom animation
 
                 timeline.to(controls.target, {
@@ -865,17 +894,42 @@ function animateCameraToObjPosition(objType) {
                     controls.update();
                   },
                   onComplete: function () {
+                    
                     controls.update();
                     controls.minDistance = 1.3; // Ensure min zoom distance is set after animation
                     controls.maxDistance = 20; // Ensure max zoom distance is set after animation
+                    cameraLock = true;
+                    
                   }
                 }, 0); // Start at the same time as the zoom animation
 
             render();
+            
+      
+            function orbitLimit()
+            {
+
+              if(cameraLock)
+              {
+                    controls.minPolarAngle = vRotationUp; // radians, limit vertical rotation
+                    controls.maxPolarAngle = vRotationDown; // radians, limit vertical rotation
+                    controls.minAzimuthAngle = hRotationLeft; // radians, limit horizontal rotation
+                    controls.maxAzimuthAngle = hRotationRight; // radians, limit horizontal rotations
+              }
+             
+            }
+
+            //listen for orbit control change and run orbitLimit()
+            controls.addEventListener('change', orbitLimit);
+            orbitLimit();
+
+
+            
+        
+
         }
 
        
-        
 
         // Function to update color property
         function updateColorProperty(value) {
