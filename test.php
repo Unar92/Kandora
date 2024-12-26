@@ -164,8 +164,7 @@
         camera.zoom = 1;
         camera.updateProjectionMatrix();
 
-        //console camera position
-        console.log(camera.position);
+     
 
         scene = new THREE.Scene();
 
@@ -583,13 +582,14 @@
             });
         });
 
-let cameraLock = false;
+
 
 //when click on #resetcamera button
 document.getElementById('resetcamera').addEventListener('click', function () {
     resetCamera();
 });
 
+var cameraLock = false;
 //functio  to reset camera and control to its original position
 function resetCamera() {
     // If not camera lock, then return
@@ -659,6 +659,7 @@ gsap.to(camera, {
 }
 
 
+
         
 
 function animateCameraToObjPosition(objType) {
@@ -691,10 +692,36 @@ function animateCameraToObjPosition(objType) {
                     //limit orbit control so that cuff can be view properly
                   
 
-                  let cameraLock = false;
+                
 
                 controls.minDistance = minZoom; // Minimum zoom distance
                 controls.maxDistance = maxZoom; // Maximum zoom distance
+
+           
+                const focusObjName = "collar1_1";
+            const focusObj = scene.getObjectByName(focusObjName);
+
+                let objPosition = new THREE.Vector3(0, 0, 0); 
+                let  target = new THREE.Vector3();
+
+               // If objType is a custom object with a position property
+               if (focusObj) {
+                   
+                    focusObj.getWorldPosition(target);
+                    console.log("Object Position target:", target);
+              } else {
+                
+                  console.error("objType does not have a position property");
+              }
+
+            //   // Ensure objType is a THREE.Object3D or its subclass
+            //   if (focusObj instanceof THREE.Object3D) {
+            //       const target = new THREE.Vector3();
+            //       let objPosition = focusObj.getWorldPosition(target);
+            //       console.log("Object Position:", objPosition);
+            //   } else {
+            //       console.error("objType is not an instance of THREE.Object3D");
+            //   }
 
                 // Desired camera position, zoom level, and controls target
                 let desiredPosition = {
@@ -739,10 +766,7 @@ function animateCameraToObjPosition(objType) {
                       z: -0.7220336843873053,
                     };
 
-                    controls.minPolarAngle = Math.PI / 2; // radians, limit vertical rotation
-                    controls.maxPolarAngle = Math.PI / 2; // radians, limit vertical rotation
-                    controls.minAzimuthAngle = -Math.PI / 9; // radians, limit horizontal rotation
-                    controls.maxAzimuthAngle = Math.PI / 9; // radians, limit horizontal rotation
+                
                 }
 
                 //if stitch
@@ -759,11 +783,7 @@ function animateCameraToObjPosition(objType) {
                       z: -0.4193797814752166,
                     };
 
-                    //limit orbit control so that stiches can be view properly
-                    controls.minPolarAngle = Math.PI / 2; // radians, limit vertical rotation
-                    controls.maxPolarAngle = Math.PI / 2; // radians, limit vertical rotation
-                    controls.minAzimuthAngle = -Math.PI / 2; // radians, limit horizontal rotation
-                    controls.maxAzimuthAngle = Math.PI / 2; // radians, limit horizontal rotation
+        
                 }
 
                 //if collar
@@ -782,14 +802,13 @@ function animateCameraToObjPosition(objType) {
 
 
                     // limit orbit control so that collar can be view properly
-                    controls.minPolarAngle = Math.PI / 2; // radians, limit vertical rotation
-                    controls.maxPolarAngle = Math.PI / 2; // radians, limit vertical rotation
-                    controls.minAzimuthAngle = -Math.PI / 9; // radians, limit horizontal rotation
-                    controls.maxAzimuthAngle = Math.PI / 9; // radians, limit horizontal rotation
+               
                     
                     //camera lock
-                    cameraLock = true;
+                 
                 }
+
+                
 
                 //if cuff
                 if (objType.includes('cuff')) {
@@ -805,12 +824,14 @@ function animateCameraToObjPosition(objType) {
                     z: -0.20000000000000004,
                   };
 
-                  // //limit orbit control so that cuff can be view properly
-                    vRotationUp = Math.PI / 7 ; // radians, limit vertical rotation
-                    vRotationDown = Math.PI / 2 ; // radians, limit vertical rotation
-                  hRotationLeft = -Math.PI / 10; // radians, limit horizontal rotation
-                  hRotationRight = Math.PI / 10; // radians, limit horizontal rotation
+                  //limit orbit control so that cuff can be view properly
+                   vRotationUp = Math.PI / 7 ; // radians, limit vertical rotation
+                   vRotationDown = Math.PI / 2 ; // radians, limit vertical rotation
+                 hRotationLeft = -Math.PI / 10; // radians, limit horizontal rotation
+                 hRotationRight = Math.PI / 10; // radians, limit horizontal rotation
                
+                 limitCameraControls()
+
 
 
                 }
@@ -837,13 +858,18 @@ function animateCameraToObjPosition(objType) {
                 // Animation timeline
               const timeline = gsap.timeline({});
 
+                
+
+  
+
 
                 timeline.to(camera, {
                     duration: 1,
                     zoom: Math.max(minZoom, Math.min(maxZoom, desiredZoom)), // Ensure desiredZoom is within range
                     ease: "power2.inOut", // Use easing function for smooth animation
                     onUpdate: function () {
-                        camera.lookAt(0,0,0); // Ensure camera looks at the desired target
+                        // camera.lookAt(0,0,0); // Ensure camera looks at the desired target
+                        // camera.lookAt(target);  // Ensure camera looks at the target object
                         camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom)); // Clamp the zoom level
                         camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
                     },
@@ -858,75 +884,88 @@ function animateCameraToObjPosition(objType) {
                   x: desiredPosition.x,
                   y: desiredPosition.y,
                   z: desiredPosition.z,
+
+                  ease: "power2.inOut", // Use easing function for smooth animation
                   onUpdate: function () {
                     //camera zoom
-                   
-                    camera.lookAt(desiredTarget.x, desiredTarget.y, desiredTarget.z); // Ensure camera looks at the desired target
-                    // camera.updateProjectionMatrix();
-                    controls.update(); // Ensure controls are updated
+
+                    // camera.lookAt(target);  // Ensure camera looks at the target object
+
+                    // camera.lookAt(0,0,0); 
+                    camera.updateProjectionMatrix();
+            
                     render();
                   },
                   onComplete: function () {
                     //camera zoom
-                    camera.zoom = Math.max(minZoom, Math.min(maxZoom, desiredZoom)); // Ensure desiredZoom is within range
-                    camera.updateProjectionMatrix(); // Ensure the camera's projection matrix is updated
+               
                     controls.update(); // Ensure controls are updated
-                   
+              
                     render();
                     
-        
+                   
                 
                    
                     
                   },
-                }, 0); // Start at the same time as the zoom animation
+                },0); // Start at the same time as the zoom animation
 
                 timeline.to(controls.target, {
                   duration: 1,
                   x: desiredTarget.x,
                   y: desiredTarget.y,
                   z: desiredTarget.z,
+               
                   onStart: function () {
                     controls.minDistance = 1.3; // Ensure min zoom distance is set before animation
                     controls.maxDistance = 20; // Ensure max zoom distance is set before animation
+
                   },
                   onUpdate: function () {
                     controls.update();
                   },
                   onComplete: function () {
-                    
+                    // Ensure the camera is correctly looking at the final target
+                    //  camera.lookAt(controls.target);
+                    // limitCameraControls()
+                  
                     controls.update();
                     controls.minDistance = 1.3; // Ensure min zoom distance is set after animation
                     controls.maxDistance = 20; // Ensure max zoom distance is set after animation
-                    cameraLock = true;
-                    
-                  }
-                }, 0); // Start at the same time as the zoom animation
 
-            render();
+                    cameraLock = true;
+                    console.log("Final Target Position:", controls.target);
+
+
+                  
+                  }
+                },0); // Start at the same time as the zoom animation
+
+              
+
+// Function to limit the camera controls
+function limitCameraControls() {
+  // Set bounds or limitations for the OrbitControls here
+  setTimeout(function() {
+  controls.maxPolarAngle = Math.PI / 2; // Limit vertical rotation to prevent flipping
+  controls.minPolarAngle = Math.PI / 7; // Limit upward tilt
+  controls.maxAzimuthAngle = Math.PI / 3; // Limit left and right rotation
+  controls.minAzimuthAngle = Math.PI / 2; // Limit left and right rotation
+  console.log('Camera controls limited');
+  //constrols position console.log
+  // console.log(controls.position0);
+  }, 100);
+
+  
+  // Optionally, enable controls damping for better feeling
+  // controls.enableDamping = true;
+}
+
+     
+
+render();
             
       
-            function orbitLimit()
-            {
-
-              if(!cameraLock)
-              {
-                    controls.minPolarAngle = vRotationUp; // radians, limit vertical rotation
-                    controls.maxPolarAngle = vRotationDown; // radians, limit vertical rotation
-                    controls.minAzimuthAngle = hRotationLeft; // radians, limit horizontal rotation
-                    controls.maxAzimuthAngle = hRotationRight; // radians, limit horizontal rotations
-              }else{
-                vRotationUp = 0; // radians, limit vertical rotation
-                  vRotationDown = Math.PI; // radians, limit vertical rotation
-                hRotationLeft = Infinity; // radians, limit horizontal rotation
-                hRotationRight = Infinity; // radians, limit horizontal rotation
-              }
-             
-            }
-
-            //listen for orbit control change and run orbitLimit()
-            controls.addEventListener('change', orbitLimit);
-            orbitLimit();
 
 
             
@@ -1263,12 +1302,26 @@ function animateCameraToObjPosition(objType) {
       controls.target.set(0, 0.5, -0.2);
       controls.update();
 
-      //if user tries to zoom out than resetcamera
+     //if camera zoom is below 1.2 then reset camera
       controls.addEventListener('change', function () {
-          if (camera.zoom < 1) {
-              resetCamera();
+          //if cameralock is true then reset camera
+          if (cameraLock) {
+                    if (camera.position.z > 3 ) {
+                      cameraLock = false;
+                    resetCamera();
+                    console.log('Camera reset');
+                  } else {
+                    console.log('Camera position.z:', camera.position.z);
+                  }
+          }else
+          {
+            console.log('camera lock', cameraLock);
           }
       });
+
+
+      //if camera position.z become greater than 1.7 than reset camera
+     
 
 
       // get camera position and zoom level in console log when user move the camera
