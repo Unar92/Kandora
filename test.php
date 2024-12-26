@@ -831,7 +831,7 @@ function animateCameraToObjPosition(objType) {
                  hRotationRight = Math.PI / 10; // radians, limit horizontal rotation
                
                  limitCameraControls()
-
+                 
 
 
                 }
@@ -933,10 +933,13 @@ function animateCameraToObjPosition(objType) {
                     controls.minDistance = 1.3; // Ensure min zoom distance is set after animation
                     controls.maxDistance = 20; // Ensure max zoom distance is set after animation
 
-                    cameraLock = true;
+                    
                     console.log("Final Target Position:", controls.target);
 
-
+                    //if cuff camera lock
+                    if (objType.includes('cuff')) {
+                      cameraLock = true;
+                    } 
                   
                   }
                 },0); // Start at the same time as the zoom animation
