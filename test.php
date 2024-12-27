@@ -919,6 +919,7 @@ function animateCameraToObjPosition(objType) {
                   onStart: function () {
                     controls.minDistance = 1.3; // Ensure min zoom distance is set before animation
                     controls.maxDistance = 20; // Ensure max zoom distance is set before animation
+                    cameraLock = false; // Unlock the camera
 
                   },
                   onUpdate: function () {
